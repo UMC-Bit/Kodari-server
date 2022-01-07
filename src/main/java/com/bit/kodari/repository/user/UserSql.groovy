@@ -18,10 +18,10 @@ class UserSql {
     public static final String FIND_BY_EMAIL = """
 			SELECT * from user where email = :email
 """
-    public static final String GET_EMAIL ="""
+    public static final String GET_EMAIL = """
 			SELECT email from user where userId = :userId
 """
     public static final String FIND_BY_NICKNAME = """
 			SELECT * from user where nickName = :nickName
 """
-
+}
