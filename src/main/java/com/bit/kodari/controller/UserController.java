@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.bit.kodari.utils.ValidationRegex.isRegexEmail;
 
+// 커밋 되는지 확인하기
 @RestController
 @RequestMapping("/app/users")
 public class UserController {
