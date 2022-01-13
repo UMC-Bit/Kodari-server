@@ -21,18 +21,15 @@ import static com.bit.kodari.utils.ValidationRegex.isRegexEmail;
 @RequestMapping("/app/users")
 public class UserController {
     // *********************** 동작에 있어 필요한 요소들을 불러옵니다. *************************
-    final Logger logger = LoggerFactory.getLogger(this.getClass()); // Log를 남기기:
-
     @Autowired
     private final UserService userService;
     @Autowired
-    private final JwtService jwtService; // JWT부분은
+    private final JwtService jwtService; // JWT부분
 
     public UserController( UserService userService, JwtService jwtService) {
         this.userService = userService;
-        this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
+        this.jwtService = jwtService; // JWT부분
     }
-
     // ******************************************************************************
 
     /**
@@ -40,11 +37,9 @@ public class UserController {
      * [POST] /users/
      */
     // Body
-    @ResponseBody
     @PostMapping("/sign-up")
     @ApiOperation(value = "유저등록", notes = "유저를 새로 등록함.")
     public BaseResponse<UserDto.PostUserRes> createUser(@RequestBody UserDto.PostUserReq postUserReq) {
-        //  @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
         // TODO: email 관련한 짧은 validation 예시입니다. 그 외 더 부가적으로 추가해주세요!
 
         // 회원가입 validation : email null값 예외
@@ -79,7 +74,6 @@ public class UserController {
      * 로그인 API
      * [POST] /users/logIn
      */
-    @ResponseBody
     @PostMapping("/log-in")
     @ApiOperation(value = "로그인", notes = "로그인하는 유저를 새로 등록함.")
     public BaseResponse<UserDto.PostLoginRes> logIn(@RequestBody UserDto.PostLoginReq postLoginReq) {
@@ -119,7 +113,6 @@ public class UserController {
      * 해당 닉네임을 같는 유저들의 정보 조회 API
      * [GET] /users/get/:nickName
      */
-    @ResponseBody   // return되는 자바 객체를 JSON으로 바꿔서 HTTP body에 담는 어노테이션.
     @GetMapping("/get") // (GET) /app/users/get
     @ApiOperation(value = "유저 조회", notes = "닉네임으로 유저를 조회함, 닉네임을 안적으면 전체 유저 리스트를 반환한다.")
     public BaseResponse<List<UserDto.GetUserRes>> getUsers(@RequestParam(required = false) String nickName,@RequestParam(required = false) String email) {
@@ -153,12 +146,11 @@ public class UserController {
      * 유저 삭제 : 유저활성상태변경 API
      * [PATCH] /users/delete/:userIdx?status=
      */
-    @ResponseBody // return되는 자바 객체를 JSON으로 바꿔서 HTTP body에 담는 어노테이션.
     @PatchMapping("/delete/{userIdx}")
     public BaseResponse<String> deleteUser (@PathVariable("userIdx") int userIdx) {
         try {
 
- //**********해당 부분은 7 주차 - JWT 수업 후 주석해체 해주세요 ! ****************
+            // jwt 부분
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
@@ -191,7 +183,7 @@ public class UserController {
     public BaseResponse<String> updateNickName (@PathVariable("userIdx") int userIdx,@RequestParam String nickName) {
         try {
 
- //*********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+            // jwt 부분
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
@@ -225,7 +217,7 @@ public class UserController {
     public BaseResponse<String> updatePassword (@PathVariable("userIdx") int userIdx,@RequestParam String password) {
         try {
 
-// *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+            // jwt 부분
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
@@ -260,7 +252,7 @@ public class UserController {
     @PatchMapping("/update/profileImgUrl/{userIdx}")
     public BaseResponse<String> updateProfileImgUrl (@PathVariable("userIdx") int userIdx,@RequestParam String profileImgUrl) {
         try {
-// *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+            // jwt 부분
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
@@ -280,9 +272,5 @@ public class UserController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
-
-
-
 
 }
