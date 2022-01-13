@@ -12,17 +12,5 @@ public class UserRepository {
     public UserRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
-    // User 레코드 추가
-    public User.RegisterRes insert(User.RegisterReq user) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        SqlParameterSource parameterSource = new MapSqlParameterSource("name", user.getName())
-                .addValue("nickName", user.getNickName())
-                .addValue("profileImgUrl", user.getProfileImgUrl())
-                .addValue("email", user.getEmail())
-                .addValue("password", user.getPassword())
-                .addValue("phoneNumber", user.getPhoneNumber())
-                .addValue("deleteYN", "N");
-        int affectedRows = namedParameterJdbcTemplate.update(userSql.INSERT, parameterSource, keyHolder);
-        return User.RegisterRes.builder().name(user.getName()).build();
-    }
+
 }
