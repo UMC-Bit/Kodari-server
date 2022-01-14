@@ -17,8 +17,7 @@ import java.util.List;
 @Repository
 public class UserRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    UserSql userSql; // sql문 모아놓은 클래스
-    // 생성자 의존주입
+    UserSql userSql;
     public UserRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
