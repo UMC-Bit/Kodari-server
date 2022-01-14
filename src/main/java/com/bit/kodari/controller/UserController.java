@@ -147,6 +147,7 @@ public class UserController {
      * [PATCH] /users/delete/:userIdx?status=
      */
     @PatchMapping("/delete/{userIdx}")
+    @ApiOperation(value = "유저삭제", notes = "유저삭제, status를 inactiv로 변경")
     public BaseResponse<String> deleteUser (@PathVariable("userIdx") int userIdx) {
         try {
 
@@ -178,8 +179,8 @@ public class UserController {
      * 유저 정보 업데이트: 유저 닉네임변경 API
      * [PATCH] /users/update/nickName/:userIdx?nickName=
      */
-    @ResponseBody // return되는 자바 객체를 JSON으로 바꿔서 HTTP body에 담는 어노테이션.
     @PatchMapping("/update/nickName/{userIdx}")
+    @ApiOperation(value = "유저 닉네임", notes = "유저 닉네임 변경")
     public BaseResponse<String> updateNickName (@PathVariable("userIdx") int userIdx,@RequestParam String nickName) {
         try {
 
@@ -212,8 +213,8 @@ public class UserController {
      * 유저 정보 업데이트: 유저 비밀번호 변경 API
      * [PATCH] /users/update/password/:userIdx?password
      */
-    @ResponseBody // return되는 자바 객체를 JSON으로 바꿔서 HTTP body에 담는 어노테이션.
     @PatchMapping("/update/password/{userIdx}")
+    @ApiOperation(value = "유저 패스워드", notes = "유저 패스워드 변경")
     public BaseResponse<String> updatePassword (@PathVariable("userIdx") int userIdx,@RequestParam String password) {
         try {
 
@@ -250,6 +251,7 @@ public class UserController {
      */
     @ResponseBody // return되는 자바 객체를 JSON으로 바꿔서 HTTP body에 담는 어노테이션.
     @PatchMapping("/update/profileImgUrl/{userIdx}")
+    @ApiOperation(value = "유저 프로필 사진 URL", notes = "유저 프로필사진 변경")
     public BaseResponse<String> updateProfileImgUrl (@PathVariable("userIdx") int userIdx,@RequestParam String profileImgUrl) {
         try {
             // jwt 부분
