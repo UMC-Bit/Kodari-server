@@ -45,11 +45,13 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
 
+
     // [GET] /users
     GET_USERS_NOT_EXISTS(false,3015,"등록된 유저가 없습니다."),
     GET_USERS_NOT_EXISTS_NICKNAME(false,3016,"없는 닉네임 입니다."),
     GET_USERS_NOT_EXISTS_EMAIL(false,3017,"없는 이메일 입니다."),
 
+    FAILED_TO_PROPERTY_RES(false,3040,"없는 계좌입니다."),
 
 
     /**
@@ -57,17 +59,25 @@ public enum BaseResponseStatus {
      */
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다."),
     SERVER_ERROR(false, 4001, "서버와의 연결에 실패하였습니다."),
-
+    PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
+    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패하였습니다."),
+    //40-69
+    MODIFY_FAIL_ACCOUNTNAME(false, 4040, "계좌 이름 수정 실패"),
+    MODIFY_FAIL_PROPERTY(false, 4041, "현금 자산 수정 실패"),
+    MODIFY_FAIL_ACCOUNT_STATUS(false, 4042, "계좌 활성 상태 수정 실패"),
+    DUPLICATED_ACCOUNT_NAME(false, 4043, "계좌 이름 중복으로 수정 실패"),
+    PROPERTY_RANGE_ERROR(false, 4044, "현금 자산 범위 오류로 수정 실패"),
+
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
     DELETE_FAIL_POST(false, 4071, "게시글 삭제에 실패하였습니다."),
     USER_NOT_EQUAL(false, 4072, "게시글 유저가 아닙니다."),
     EMPTY_CONTENT(false, 4073, "게시글 내용이 없습니다."),
-    IMPOSSIBLE_POST(false, 4074, "게시글이 존재하지 않습니다."),
+    IMPOSSIBLE_POST(false, 4074, "게시글이 존재하지 않습니다.");
 
-    PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다.");
+
+
 
 
 

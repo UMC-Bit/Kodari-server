@@ -42,3 +42,4 @@ package com.bit.kodari.repository.user
 """
 
 }
+>>>>>>>>> Temporary merge branch 2
