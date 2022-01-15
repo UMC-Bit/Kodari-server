@@ -20,6 +20,7 @@ import static com.bit.kodari.utils.ValidationRegex.isRegexEmail;
 @RestController
 @RequestMapping("/app/users")
 public class UserController {
+    // git ignore후 커밋 테스트용 주석
     // *********************** 동작에 있어 필요한 요소들을 불러옵니다. *************************
     @Autowired
     private final UserService userService;
