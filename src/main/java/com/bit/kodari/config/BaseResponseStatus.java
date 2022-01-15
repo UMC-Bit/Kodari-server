@@ -49,6 +49,7 @@ public enum BaseResponseStatus {
     GET_USERS_NOT_EXISTS(false,3015,"등록된 유저가 없습니다."),
     GET_USERS_NOT_EXISTS_NICKNAME(false,3016,"없는 닉네임 입니다."),
     GET_USERS_NOT_EXISTS_EMAIL(false,3017,"없는 이메일 입니다."),
+    GET_TRADES_NOT_EXISTS(false,3018,"없는 포트폴리오 및 코인 입니다."),
 
 
 
