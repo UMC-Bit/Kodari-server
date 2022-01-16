@@ -72,7 +72,7 @@ class AccountSql {
         SELECT accountIdx from Portfolio where portIdx = :portIdx
     """;
 
-    // portIdx로 accountIdx 가져오기
+    // portIdx로 userIdx 가져오기
     public static final String GET_USER_IDX_BY_PORT ="""
         SELECT userIdx from Portfolio where portIdx = :portIdx
     """;
