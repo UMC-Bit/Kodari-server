@@ -46,27 +46,14 @@ public class TradeRepository {
 
         int affectedRows = namedParameterJdbcTemplate.update(TradeSql.INSERT,parameterSource,keyHolder);
 
-        //String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
-        //int lastInsertIdx = namedParameterJdbcTemplate.getJdbcTemplate().queryForObject(TradeSql.FIND_LAST_INSERT_ID,int.class);
-        //int lastInsertIdx = namedParameterJdbcTemplate.getJdbcOperations().queryForObject(TradeSql.FIND_LAST_INSERT_ID,int.class);
-        //return lastInsertIdx;
-        // 추가된 정보를 postUserRes 형태로 반환
-        //String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
-        //int lastInsertIdx = namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_LAST_INSERT_ID ,int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
-        //"SELECT count(tradeIdx) FROM Trade"
-        int lastInsertIdx = keyHolder.getKey().intValue();
-
-        //return lastInsertIdx;
-//        String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
-//
-//        int lastInsertIdx = this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
+        // 해당 tradeIdx 의 거래내역을 PostTradeRes 형태로 반환
+        int lastInsertIdx = keyHolder.getKey().intValue(); // 마지막 들어간 idx 조회
         SqlParameterSource parameterSource1 = new MapSqlParameterSource("tradeIdx",lastInsertIdx);
         TradeDto.PostTradeRes postTradeRes = namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_BY_TRADEIDX,parameterSource1,
                 (rs,rowNum) -> new TradeDto.PostTradeRes(
                         rs.getInt("tradeIdx")
                 ));
         return postTradeRes;
-
     }
 
 

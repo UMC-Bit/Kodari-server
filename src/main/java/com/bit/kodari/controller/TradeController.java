@@ -41,7 +41,7 @@ public class TradeController {
     @PostMapping("/post")
     @ApiOperation(value = "거래내역", notes = "거래내역을 새로 등록함.")
     public BaseResponse createTrade(@RequestBody TradeDto.PostTradeReq postTradeReq) {
-        //int userIdx = postAccountReq.getUserIdx();
+//        int userIdx = postTradeReq.getUserIdx();
         try {
 //            //jwt에서 idx 추출.
 //            int userIdxByJwt = jwtService.getUserIdx();

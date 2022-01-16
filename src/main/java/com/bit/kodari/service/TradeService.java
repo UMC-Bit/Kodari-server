@@ -88,7 +88,7 @@ public class TradeService {
     @Transactional
     public List<TradeDto.GetTradeRes> getTradeByPortIdxCoinIdx(TradeDto.GetTradeReq getTradeReq) throws BaseException {
         List<TradeDto.GetTradeRes> getTradeRes = tradeRepository.getTradeByPortIdxCoinIdx(getTradeReq);
-        // 예외처리: 없는 닉네임일 경우
+        // 거래내역 없는 경우 validation
         if(getTradeRes.size() == 0) {
             throw new BaseException(BaseResponseStatus.GET_TRADES_NOT_EXISTS);
         }

@@ -19,7 +19,7 @@ class TradeSql {
     public static final String FIND_BY_PORTIDX_COINIDX = """
          SELECT t.tradeIdx, c.coinName, t.price, t.amount, t.fee, t.category, t.memo, t.date, t.status 
          FROM Trade as t join Portfolio as p on t.portIdx = p.portIdx join Coin as c on t.coinIdx = c.coinIdx 
-         WHERE t.portIdx = :portIdx AND t.coinIdx = :coinIdx
+         WHERE t.portIdx = :portIdx AND t.coinIdx = :coinIdx AND t.status = "active"
          ORDER BY t.date desc,t.tradeIdx desc
          """
 
