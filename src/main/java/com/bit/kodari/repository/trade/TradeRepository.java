@@ -117,6 +117,16 @@ public class TradeRepository {
 
 
 
+    // 거래내역 수정 : 수수료 수정
+    public int updateFee(TradeDto.PatchFeeReq patchFeeReq){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", patchFeeReq.getTradeIdx())
+                .addValue("fee", patchFeeReq.getFee());
+
+        return namedParameterJdbcTemplate.update(TradeSql.UPDATE_FEE, parameterSource);
+    }
+
+
+
     // 거래내역 수정 : 매수/매도 수정(Patch)
     public int updateCategory(TradeDto.PatchCategoryReq patchCategoryReq){
         SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", patchCategoryReq.getTradeIdx())
@@ -142,6 +152,15 @@ public class TradeRepository {
                 .addValue("date", patchDateReq.getDate());
 
         return namedParameterJdbcTemplate.update(TradeSql.UPDATE_DATE, parameterSource);
+    }
+
+
+
+    // 거래내역 삭제 : status 수정
+    public int deleteTrade(TradeDto.PatchStatusReq patchStatusReq){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", patchStatusReq.getTradeIdx());
+
+        return namedParameterJdbcTemplate.update(TradeSql.DELETE, parameterSource);
     }
 
 }

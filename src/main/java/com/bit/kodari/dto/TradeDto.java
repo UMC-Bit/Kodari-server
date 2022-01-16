@@ -99,6 +99,17 @@ public class TradeDto {
 
 
 
+    // 거래내역 수수료 수정 REQUEST DTO
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class PatchFeeReq{
+        private int tradeIdx;
+        private double fee;
+    }
+
+
+
     // 거래내역 코인 갯수 수정 REQUEST DTO
     @Data // @Getter @Setter 포함
     @AllArgsConstructor // 인자 포함한 생성자 생성
@@ -127,5 +138,15 @@ public class TradeDto {
     public static class PatchDateReq{
         private int tradeIdx;
         private String date ;
+    }
+
+
+
+    // 거래내역 삭제 REQUEST DTO
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class PatchStatusReq{
+        private int tradeIdx;
     }
 }

@@ -88,6 +88,18 @@ public class TradeService {
 
 
 
+    // 거래내역 수정 : 수수료 수정
+    @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
+    public void updateFee(TradeDto.PatchFeeReq patchFeeReq) throws BaseException{
+
+        int result = tradeRepository.updateFee(patchFeeReq);
+        if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+        }
+    }
+
+
+
     // 거래내역 수정 : 매수/매도 수정(Patch)
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void updateCategory(TradeDto.PatchCategoryReq patchCategoryReq) throws BaseException{
@@ -117,6 +129,18 @@ public class TradeService {
     public void updateDate(TradeDto.PatchDateReq patchDateReq) throws BaseException{
 
         int result = tradeRepository.updateDate(patchDateReq);
+        if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+        }
+    }
+
+
+
+    // 거래내역 삭제 : status 수정
+    @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
+    public void deleteTrade(TradeDto.PatchStatusReq patchStatusReq) throws BaseException{
+
+        int result = tradeRepository.deleteTrade(patchStatusReq);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }

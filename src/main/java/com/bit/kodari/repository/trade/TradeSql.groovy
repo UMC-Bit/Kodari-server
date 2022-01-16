@@ -33,6 +33,11 @@ class TradeSql {
 			UPDATE Trade SET amount = :amount WHERE tradeIdx = :tradeIdx
 """
 
+    // 거래내역 수정 : 수수료 수정(Patch)
+    public static final String UPDATE_FEE = """
+			UPDATE Trade SET fee = :fee WHERE tradeIdx = :tradeIdx
+"""
+
     // 거래내역 수정 : 매수/매도 수정(Patch)
     public static final String UPDATE_CATEGORY = """
 			UPDATE Trade SET category = :category WHERE tradeIdx = :tradeIdx
@@ -46,6 +51,12 @@ class TradeSql {
     // 거래내역 수정 : 거래시각 수정(Patch)
     public static final String UPDATE_DATE = """
 			UPDATE Trade SET date = :date WHERE tradeIdx = :tradeIdx
+"""
+
+
+    // 거래내역 삭제 : status 수정
+    public static final String DELETE = """
+			UPDATE Trade SET status = "inactive" WHERE tradeIdx = :tradeIdx
 """
 
 

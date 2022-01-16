@@ -147,6 +147,37 @@ public class TradeController {
 
 
     /**
+     * 거래내역 수정 : 수수료 수정
+     * [PATCH] /trades/update/fee/:tradeIdx
+     */
+    @PatchMapping("/update/fee/{tradeIdx}")
+    @ApiOperation(value = "거래내역의 수수료", notes = "수수료 수정")
+    public BaseResponse<String> updateFee (@PathVariable("tradeIdx") int tradeIdx, @RequestBody TradeDto.PatchFeeReq patchFeeReq) {
+        try {
+
+//            // jwt 부분
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if (userIdx != userIdxByJwt) {
+//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+//            }
+
+            //**************************************************************************
+            //같다면 코인 갯수 수정
+            TradeDto.PatchFeeReq patchFeeReq1 = new TradeDto.PatchFeeReq(tradeIdx, patchFeeReq.getFee());
+            tradeService.updateFee(patchFeeReq1);
+
+            String result = "거래내역의 수수료가 변경되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+
+    /**
      * 거래내역 수정 : 매수/매도 수정
      * [PATCH] /trades/update/category/:tradeIdx
      */
@@ -230,6 +261,36 @@ public class TradeController {
             tradeService.updateDate(patchDateReq1);
 
             String result = "거래내역의 시각이 변경되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+    /**
+     * 거래내역 삭제 : status 수정
+     * [PATCH] /trades/delete/:tradeIdx
+     */
+    @PatchMapping("/delete/{tradeIdx}")
+    @ApiOperation(value = "거래내역", notes = "거래내역 삭제,status를 inactive로 수정")
+    public BaseResponse<String> deleteTrade (@PathVariable("tradeIdx") int tradeIdx) {
+        try {
+
+//            // jwt 부분
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if (userIdx != userIdxByJwt) {
+//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+//            }
+
+            //**************************************************************************
+            //같다면 거래내역 삭제
+            TradeDto.PatchStatusReq patchStatusReq = new TradeDto.PatchStatusReq(tradeIdx);
+            tradeService.deleteTrade(patchStatusReq);
+
+            String result = "거래내역이 삭제되었습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
