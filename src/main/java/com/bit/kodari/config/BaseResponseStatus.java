@@ -60,6 +60,13 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_ACCOUNT_STATUS(false, 4042, "계좌 활성 상태 수정 실패"),
     DUPLICATED_ACCOUNT_NAME(false, 4043, "계좌 이름 중복으로 수정 실패"),
     PROPERTY_RANGE_ERROR(false, 4044, "현금 자산 범위 오류로 수정 실패"),
+    MODIFY_FAIL_USERCOIN_STATUS(false, 4045, "소유 코인 삭제 실패"),
+    MODIFY_FAIL_ALL_USERCOIN_STATUS(false, 4046, "소유 코인 삭제 실패"),
+    MODIFY_FAIL_USERCOIN(false, 4047, "소유 코인 수정 실패"),
+    MODIFY_FAIL_PRICE_AVG(false, 4048, "매수평단가 수정 실패"),
+
+    PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
+    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다.");
