@@ -23,6 +23,22 @@ class TradeSql {
          ORDER BY t.date desc,t.tradeIdx desc
          """
 
+    //유저 인덱스 조회:
+    public static final String FIND_USERIDX_BY_TRADEIDX = """
+         SELECT p.userIdx
+         FROM Trade as t join Portfolio as p on t.portIdx = p.portIdx join Coin as c on t.coinIdx = c.coinIdx 
+         WHERE t.tradeIdx = :tradeIdx 
+         """
+
+    //유저 인덱스 조회: 거래내역 생성 시 포트폴리오인덱스로 한명만 조회
+    public static final String FIND_USERIDX_BY_PORTIDX = """
+         SELECT p.userIdx
+         FROM Portfolio as p
+         WHERE p.portIdx = :portIdx
+         """
+
+
+
 
     // 거래내역 수정 : 코인 가격 수정(Patch)
     public static final String UPDATE_PRICE = """

@@ -115,6 +115,29 @@ public class TradeRepository {
     }
 
 
+
+    //  거래인덱스로 해당 유저인덱스 조회
+    public int getUserIdxByTradeIdx(int tradeIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);
+
+        return namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_USERIDX_BY_TRADEIDX,parameterSource,int.class);
+
+        //return namedParameterJdbcTemplate.update(TradeSql.UPDATE_PRICE, parameterSource);
+    }
+
+
+    //  거래내역 생성 시 포트폴리오 인덱스로 유저 1명 조회
+    public int getUserIdxByPortIdx(int portIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+
+
+        return namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_USERIDX_BY_PORTIDX,parameterSource,int.class);
+
+        //return namedParameterJdbcTemplate.update(TradeSql.UPDATE_PRICE, parameterSource);
+    }
+
+
+
     // 거래내역 수정 : 코인 가격 수정(Patch)
     public int updatePrice(TradeDto.PatchPriceReq patchPriceReq){
         SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", patchPriceReq.getTradeIdx())
