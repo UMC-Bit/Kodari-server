@@ -114,7 +114,7 @@ public class UserController {
      * [GET] /users/get/:nickName
      */
     @GetMapping("/get") // (GET) /app/users/get
-    @ApiOperation(value = "유저 조회", notes = "닉네임으로 유저를 조회함, 닉네임을 안적으면 전체 유저 리스트를 반환한다.")
+    @ApiOperation(value = "유저 조회", notes = "닉네임 또는 이메일로 유저를 조회함, 닉네임을 안적으면 전체 유저 리스트를 반환한다.")
     public BaseResponse<List<UserDto.GetUserRes>> getUsers(@RequestParam(required = false) String nickName,@RequestParam(required = false) String email) {
         //  @RequestParam은, 1개의 HTTP Request 파라미터를 받을 수 있는 어노테이션(?뒤의 값). default로 RequestParam은 반드시 값이 존재해야 하도록 설정되어 있지만, (전송 안되면 400 Error 유발)
         try {

@@ -31,40 +31,41 @@ public class TradeRepository {
     }
 
     // 거래내역 생성:  레코드 추가
-    public int createTrade(TradeDto.PostTradeReq postTradeReq){
+    public TradeDto.PostTradeRes createTrade(TradeDto.PostTradeReq postTradeReq){
         // TradeReq 레코드 추가
         //KeyHolder keyHolder = new GeneratedKeyHolder();
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", postTradeReq.getPortIdx())
                 .addValue("coinIdx", postTradeReq.getCoinIdx())
                 .addValue("price", postTradeReq.getPrice())
                 .addValue("amount", postTradeReq.getAmount())
                 .addValue("fee", postTradeReq.getFee())
                 .addValue("category", postTradeReq.getCategory())
-                .addValue("memo", postTradeReq.getMemo());
+                .addValue("memo", postTradeReq.getMemo())
+                .addValue("date", postTradeReq.getDate());
 
         int affectedRows = namedParameterJdbcTemplate.update(TradeSql.INSERT,parameterSource,keyHolder);
 
-        String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
+        //String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
         //int lastInsertIdx = namedParameterJdbcTemplate.getJdbcTemplate().queryForObject(TradeSql.FIND_LAST_INSERT_ID,int.class);
-        int lastInsertIdx = namedParameterJdbcTemplate.getJdbcOperations().queryForObject(TradeSql.FIND_LAST_INSERT_ID,int.class);
-        return lastInsertIdx;
+        //int lastInsertIdx = namedParameterJdbcTemplate.getJdbcOperations().queryForObject(TradeSql.FIND_LAST_INSERT_ID,int.class);
+        //return lastInsertIdx;
         // 추가된 정보를 postUserRes 형태로 반환
         //String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
         //int lastInsertIdx = namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_LAST_INSERT_ID ,int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
         //"SELECT count(tradeIdx) FROM Trade"
-        //int lastInsertIdx = keyHolder.getKey().intValue();
+        int lastInsertIdx = keyHolder.getKey().intValue();
+
+        //return lastInsertIdx;
 //        String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
 //
 //        int lastInsertIdx = this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userIdx번호를 반환한다.
-        /*SqlParameterSource parameterSource1 = new MapSqlParameterSource("tradeIdx",lastInsertIdx);
+        SqlParameterSource parameterSource1 = new MapSqlParameterSource("tradeIdx",lastInsertIdx);
         TradeDto.PostTradeRes postTradeRes = namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_BY_TRADEIDX,parameterSource1,
                 (rs,rowNum) -> new TradeDto.PostTradeRes(
-                        rs.getInt("tradeIdx"),
-                        rs.getInt("portIdx"),
-                        rs.getInt("coinIdx")
+                        rs.getInt("tradeIdx")
                 ));
-        return postTradeRes;*/
+        return postTradeRes;
 
     }
 
@@ -81,6 +82,35 @@ public class TradeRepository {
                     (rs, rowNum) -> new TradeDto.GetTradeRes(
                             rs.getInt("tradeIdx"),
                             rs.getString("coinName"),
+                            rs.getDouble("price"),
+                            rs.getDouble("amount"),
+                            rs.getDouble("fee"),
+                            rs.getString("category"),
+                            rs.getString("memo"),
+                            rs.getString("date"),
+                            rs.getString("status")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+            );
+            return getTradeRes;
+        }
+        catch (EmptyResultDataAccessException e) {
+            // EmptyResultDataAccessException 예외 발생시 null 리턴
+            return null;
+        }
+    }
+
+
+
+    // Trade 조회: 특정 거래내역 조회
+    public TradeDto.Trade getTradeByTradeIdx(int tradeIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx",tradeIdx );
+        try{
+            // Trade 조회: 특정 거래내역 조회
+            TradeDto.Trade getTradeRes = namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_BY_TRADEIDX, parameterSource,
+                    // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
+                    (rs, rowNum) -> new TradeDto.Trade(
+                            rs.getInt("tradeIdx"),
+                            rs.getInt("portIdx"),
+                            rs.getInt("coinIdx"),
                             rs.getDouble("price"),
                             rs.getDouble("amount"),
                             rs.getDouble("fee"),

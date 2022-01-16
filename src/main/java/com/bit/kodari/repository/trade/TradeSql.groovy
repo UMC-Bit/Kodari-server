@@ -2,8 +2,8 @@ package com.bit.kodari.repository.trade
 
 class TradeSql {
     public static final String INSERT = """
-			INSERT INTO Trade (portIdx,coinIdx,price, amount, fee, category, memo)
-			values (:portIdx, :coinIdx,  :price, :amount, :fee, :category, :memo)
+			INSERT INTO Trade (portIdx,coinIdx,price, amount, fee, category, memo, date)
+			values (:portIdx, :coinIdx,  :price, :amount, :fee, :category, :memo, :date)
 			"""
 
 
@@ -22,6 +22,7 @@ class TradeSql {
          WHERE t.portIdx = :portIdx AND t.coinIdx = :coinIdx
          ORDER BY t.date desc,t.tradeIdx desc
          """
+
 
     // 거래내역 수정 : 코인 가격 수정(Patch)
     public static final String UPDATE_PRICE = """

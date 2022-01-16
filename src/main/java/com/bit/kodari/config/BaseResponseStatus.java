@@ -33,6 +33,15 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PASSWORD(false, 2019, "비밀번호를 입력해주세요."),
     POST_USERS_EXISTS_NICKNAME(false,2020,"중복된 닉네임입니다."),
 
+    // [Patch] /trades
+    PRICE_RANGE_ERROR(false,2021,"가격의 크기를 확인해주세요."),
+    AMOUNT_RANGE_ERROR(false,2022,"코인 갯수를 확인해주세요."),
+    FEE_RANGE_ERROR(false,2023,"수수료를 확인해주세요."),
+    EMPTY_CATEGORY(false, 2024, "매수/매도를 입력해주세요."),
+    PORTIDX_RANGE_ERROR(false,2025,"포트폴리오 인덱스를 확인해주세요."),
+    COINIDX_RANGE_ERROR(false,2026,"코인 인덱스를 확인해주세요."),
+    EMPTY_DATE(false,2027,"거래시각을 입력해주세요."),
+
 
 
     /**

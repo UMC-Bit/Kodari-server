@@ -34,7 +34,7 @@ public class TradeDto {
         private double fee; // 코인 수수료
         private String category; //매수 or 매도 : “buy”, “sell”
         private String memo; //메모( 유저가 직접 기록)
-        //private String date; //거래일자(YYYY-MM-DD)
+        private String date; //거래일자(YYYY-MM-DD HH:MM:SS)
     }
 
 
