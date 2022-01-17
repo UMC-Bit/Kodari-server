@@ -2,6 +2,7 @@ package com.bit.kodari.repository.portfolio;
 
 import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.dto.UserCoinDto;
+import com.bit.kodari.repository.account.AccountSql;
 import com.bit.kodari.repository.usercoin.UserCoinSql;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -45,6 +46,19 @@ public class PortfolioRepository {
             }
 
             return status;
+        });
+    }
+
+    // portIdx로 userIdx 가져오기
+    public int getUserIdxByPortIdx(int portIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        return namedParameterJdbcTemplate.query(PortfolioSql.GET_USER_IDX, parameterSource, rs -> {
+            int userIdx = 0;
+            if (rs.next()) {
+                userIdx = rs.getInt("userIdx");
+            }
+
+            return userIdx;
         });
     }
 }

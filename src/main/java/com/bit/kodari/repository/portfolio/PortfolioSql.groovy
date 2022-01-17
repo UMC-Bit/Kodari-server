@@ -16,4 +16,9 @@ class PortfolioSql {
     public static final String GET_ACCOUNT_STATUS ="""
         SELECT status from Account where accountIdx = :accountIdx
     """;
+
+    //portIdx로 userIdx 가져오기
+    public static final String GET_USER_IDX ="""
+        SELECT userIdx from Portfolio where portIdx = :portIdx
+    """;
 }
