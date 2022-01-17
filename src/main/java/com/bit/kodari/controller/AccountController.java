@@ -156,14 +156,14 @@ public class AccountController {
     public BaseResponse<String> modifyTradeProperty(@PathVariable("tradeIdx") int tradeIdx) {
         int portIdx = accountRepository.getPortIdx(tradeIdx);
         int accountIdx = accountRepository.getAccountIdx(portIdx);
-        //int userIdx = accountRepository.getUserIdxByPort(accountIdx);
+        int userIdx = accountRepository.getUserIdxByPort(accountIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             AccountDto.PatchTradePropertyReq patchTradePropertyReq = new AccountDto.PatchTradePropertyReq(tradeIdx, accountIdx);
             accountService.updateTradeProperty(patchTradePropertyReq);
 
