@@ -25,7 +25,6 @@ public class BoardController {
     /*
         토론장 카테고리 조회
      */
-    @ResponseBody   // return되는 자바 객체를 JSON으로 바꿔서 HTTP body에 담는 어노테이션.
     @GetMapping("") // (GET) 127.0.0.1:9000/boards
     @ApiOperation(value = "카테고리 조회", notes = "토론장 카테고리 조회함")
     public BaseResponse<List<BoardDto.GetBoardRes>> getBoards(@RequestParam(required = false) Integer boardIdx) {

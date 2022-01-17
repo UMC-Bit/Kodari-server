@@ -33,8 +33,11 @@ public class PostService {
     public RegisterRes insertPost(RegisterReq registerReq) throws BaseException {
 
         String content = registerReq.getContent();
-        if(content.isEmpty()) {
+        if(content.isEmpty()) { //게시글 내용이 없는 경우 validation 처리
             throw new BaseException(EMPTY_CONTENT); //4073
+        }
+        else if(content.length() >= 500) { //게시글 500자 이내 제한
+            throw new BaseException(OVER_CONTENT); //4075
         }
         try {
             return postRepository.insert(registerReq);
@@ -50,14 +53,17 @@ public class PostService {
         String content = post.getContent();
         int user = postRepository.getUserIdxByPostIdx(postIdx);
         String status = postRepository.getStatusByPostIdx(postIdx);
-        if(status.equals("inactive")) {
+        if(status.equals("inactive")) { //삭제된 글은 수정 불가
             throw new BaseException(IMPOSSIBLE_POST); //4074
         }
-        else if(userIdx != user) {
+        else if(userIdx != user) { //글쓴 유저가 아닌 경우 수정 불가
             throw new BaseException(USER_NOT_EQUAL); //4072
         }
-        else if(content.isEmpty()) {
+        else if(content.isEmpty()) { //게시글 내용 입력 없을 경우 validation 처리
             throw new BaseException(EMPTY_CONTENT); //4073
+        }
+        else if(content.length() >= 500) { //게시글 500자 이내 제한
+            throw new BaseException(OVER_CONTENT); //4075
         }
         else{
             int result = postRepository.modifyPost(post);
@@ -78,7 +84,7 @@ public class PostService {
         int postIdx = post.getPostIdx();
         int userIdx = post.getUserIdx();
         int user = postRepository.getUserIdxByPostIdx(postIdx);
-        if(userIdx != user) {
+        if(userIdx != user) { //글쓴 유저가 아닌 경우 삭제 불가
             throw new BaseException(USER_NOT_EQUAL); //4072
         }
         else{

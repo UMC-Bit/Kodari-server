@@ -8,6 +8,17 @@ class PostSql {
         values (:boardIdx, :userIdx, :content)
         """
 
+    //postIdx로 userIdx 받아오기
+    public static final String GET_USER_IDX = """
+        SELECT userIdx from Post WHERE postIdx = :postIdx 
+        """
+
+    //postIdx로 status 받아오기
+    public static final String GET_STATUS = """
+        SELECT status FROM Post WHERE postIdx = :postIdx
+        """
+
+
     //토론장 게시글 수정
     public static final String UPDATE_POST = """
          UPDATE Post SET  content = :content
@@ -32,15 +43,6 @@ class PostSql {
          WHERE p.userIdx = :userIdx
          """
 
-    //postIdx로 userIdx 받아오기
-    public static final String GET_USER_IDX = """
-        SELECT userIdx from Post WHERE postIdx = :postIdx 
-        """
-
-    //postIdx로 status 받아오기
-    public static final String GET_STATUS = """
-        SELECT status FROM Post WHERE postIdx = :postIdx
-        """
 
 
 

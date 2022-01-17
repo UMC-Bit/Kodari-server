@@ -25,7 +25,7 @@ public class PostController {
     @Autowired
     PostService postService;
     @Autowired
-    PostRepository PostRepository;
+    PostRepository postRepository;
     @Autowired
     private final JwtService jwtService;
 
@@ -38,7 +38,6 @@ public class PostController {
     /*
         토론장 게시글 작성
       */
-    @ResponseBody
     @PostMapping(value="/register")
     @ApiOperation(value = "게시글 등록", notes = "토론장 게시글 등록함.")
     public BaseResponse<PostDto.RegisterRes> createPost(@RequestBody PostDto.RegisterReq registerReq){
@@ -61,10 +60,10 @@ public class PostController {
     /*
         토론장 게시글 수정
      */
-    @ResponseBody
-    @PatchMapping("/update/{postIdx}/{userIdx}")
+    @PatchMapping("/update/{postIdx}")
     @ApiOperation(value = "게시글 수정", notes = "토론장 게시글 수정함.")
-    public BaseResponse<String> UpdatePost(@PathVariable("postIdx") int postIdx, @PathVariable("userIdx") int userIdx, @RequestBody PostDto.PatchPostReq post){
+    public BaseResponse<String> UpdatePost(@PathVariable("postIdx") int postIdx, @RequestBody PostDto.PatchPostReq post){
+        int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -84,10 +83,10 @@ public class PostController {
     /*
         토론장 게시글 삭제
      */
-    @ResponseBody
     @PatchMapping("/status/{postIdx}/{userIdx}")
     @ApiOperation(value = "토론장 게시글 삭제", notes = "토론장 게시글 삭제함.")
-    public BaseResponse<String> modifyPostStatus(@PathVariable("postIdx") int postIdx, @PathVariable("userIdx") int userIdx) {
+    public BaseResponse<String> modifyPostStatus(@PathVariable("postIdx") int postIdx) {
+        int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -110,7 +109,6 @@ public class PostController {
     /*
         토론장 게시글 조회
      */
-    @ResponseBody   // return되는 자바 객체를 JSON으로 바꿔서 HTTP body에 담는 어노테이션.
     @GetMapping("") // (GET) 127.0.0.1:9000/posts
     @ApiOperation(value = "토론장 게시글 목록 조회", notes = "토론장 게시글 전체 조회함")
     public BaseResponse<List<PostDto.GetPostRes>> getPosts(@RequestParam(required = false) Integer userIdx) {
