@@ -6,14 +6,13 @@ import com.bit.kodari.dto.PostCommentDto;
 import com.bit.kodari.repository.postcomment.PostCommentRepository;
 import com.bit.kodari.service.PostCommentService;
 import com.bit.kodari.utils.JwtService;
-import groovy.util.logging.Slf4j;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
+
 @RestController
 @RequestMapping("/comments")
 public class PostCommentController {
@@ -105,7 +104,7 @@ public class PostCommentController {
     /*
         토론장 게시글별 댓글 조회
      */
-    @GetMapping("/?postIdx") // (GET) 127.0.0.1:9000/comments
+    @GetMapping("/post") // (GET) 127.0.0.1:9000/comments
     @ApiOperation(value = "토론장 게시글별 댓글 목록 조회", notes = "토론장 게시글 전체 조회함")
     public BaseResponse<List<PostCommentDto.GetCommentRes>> getComments(@RequestParam int postIdx) {
         try {
@@ -117,7 +116,7 @@ public class PostCommentController {
     }
 
     //토론장 게시글 유저별 댓글 조회
-    @GetMapping("/?userIdx") // (GET) 127.0.0.1:9000/comments
+    @GetMapping("/user") // (GET) 127.0.0.1:9000/comments
     @ApiOperation(value = "유저별 댓글 목록 조회", notes = "토론장 게시글 유저별 댓글을 조회함")
     public BaseResponse<List<PostCommentDto.GetCommentRes>> getPosts(@RequestParam int userIdx) {
         try {

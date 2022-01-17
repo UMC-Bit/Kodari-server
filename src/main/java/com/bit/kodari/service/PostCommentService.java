@@ -39,7 +39,8 @@ public class PostCommentService {
             throw new BaseException(OVER_CONTENT); //4076
         }
         try {
-            return postCommentRepository.insertComment(registerCommentReq);
+            PostCommentDto.RegisterCommentRes registerCommentRes = postCommentRepository.insertComment(registerCommentReq);
+            return registerCommentRes;
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
         }

@@ -25,14 +25,14 @@ public class PostCommentRepository {
                 .addValue("userIdx", post.getUserIdx())
                 .addValue("postIdx", post.getPostIdx())
                 .addValue("content", post.getContent());
-        int affectedRows = namedParameterJdbcTemplate.update(PostCommentSql.INSERT_COMMENT, parameterSource, keyHolder);
+        int affectedRows = namedParameterJdbcTemplate.update(postCommentSql.INSERT_COMMENT, parameterSource, keyHolder);
         return PostCommentDto.RegisterCommentRes.builder().userIdx(post.getUserIdx()).build();
     }
 
     //postCommentIdx로 댓글 쓴 userIdx 가져오기
     public int getUserIdxByPostCommentIdx(int postCommentIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
-        return namedParameterJdbcTemplate.query(PostCommentSql.GET_USER_IDX, parameterSource, rs -> {
+        return namedParameterJdbcTemplate.query(postCommentSql.GET_USER_IDX, parameterSource, rs -> {
             int userIdx = 0;
             if (rs.next()) {
                 userIdx = rs.getInt("userIdx");
@@ -45,7 +45,7 @@ public class PostCommentRepository {
     //postCommentIdx로 댓글 쓴 postIdx 가져오기
     public int getPostIdxByPostCommentIdx(int postCommentIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
-        return namedParameterJdbcTemplate.query(PostCommentSql.GET_POST_IDX, parameterSource, rs -> {
+        return namedParameterJdbcTemplate.query(postCommentSql.GET_POST_IDX, parameterSource, rs -> {
             int postIdx = 0;
             if (rs.next()) {
                 postIdx = rs.getInt("postIdx");
@@ -58,7 +58,7 @@ public class PostCommentRepository {
     //postCommentIdx로 댓글 Status 가져오기
     public String getStatusByPostCommentIdx(int postCommentIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
-        return namedParameterJdbcTemplate.query(PostCommentSql.GET_STATUS, parameterSource, rs -> {
+        return namedParameterJdbcTemplate.query(postCommentSql.GET_STATUS, parameterSource, rs -> {
             String status = " ";
             if (rs.next()) {
                 status = rs.getString("status");
@@ -71,7 +71,7 @@ public class PostCommentRepository {
     //postIdx로 댓글쓴 게시글의 status 가져오기
     public String getStatusByPostIdx(int postIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
-        return namedParameterJdbcTemplate.query(PostCommentSql.GET_POST_STATUS, parameterSource, rs -> {
+        return namedParameterJdbcTemplate.query(postCommentSql.GET_POST_STATUS, parameterSource, rs -> {
             String post_status = " ";
             if (rs.next()) {
                 post_status = rs.getString("status");
@@ -86,6 +86,8 @@ public class PostCommentRepository {
     public int modifyComment(PostCommentDto.PatchCommentReq patchCommentReq) {
         String qry = PostCommentSql.UPDATE_COMMENT;
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", patchCommentReq.getPostCommentIdx())
+                .addValue("userIdx", patchCommentReq.getUserIdx())
+                .addValue("postIdx", patchCommentReq.getPostIdx())
                 .addValue("content", patchCommentReq.getContent());
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
@@ -102,9 +104,10 @@ public class PostCommentRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
         List<PostCommentDto.GetCommentRes> getCommentRes = namedParameterJdbcTemplate.query(PostCommentSql.LIST_POST_COMMENT,parameterSource,
                 (rs, rowNum) -> new PostCommentDto.GetCommentRes(
+                        rs.getInt("boardIdx"),
                         rs.getString("nickName"),
-                        rs.getString("content"),
-                        rs.getInt("likeCnt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getInt("likeCnt"),
+                        rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
         return getCommentRes;
@@ -113,14 +116,15 @@ public class PostCommentRepository {
     //토론장 특정 유저의 게시글 조회
     public List<PostCommentDto.GetCommentRes> getCommentsByUserIdx(int userIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
-        List<PostCommentDto.GetCommentRes> getCommentRes = namedParameterJdbcTemplate.query(PostCommentSql.LIST_USER_COMMENT, parameterSource,
+        List<PostCommentDto.GetCommentRes> getCommentsRes = namedParameterJdbcTemplate.query(PostCommentSql.LIST_USER_COMMENT, parameterSource,
                 (rs, rowNum) -> new PostCommentDto.GetCommentRes(
+                        rs.getInt("boardIdx"),
                         rs.getString("nickName"),
-                        rs.getString("content"),
-                        rs.getInt("likeCnt"))
+                        rs.getInt("likeCnt"),
+                        rs.getString("content"))
         );
 
-        return getCommentRes;
+        return getCommentsRes;
     }
 
 }

@@ -59,9 +59,11 @@ public class PostCommentDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetCommentRes{
+        private int boardIdx;
         private String nickName;
-        private String content;
         private int likeCnt;
+        private String content;
+
     }
 
 }

@@ -101,7 +101,7 @@ public class PostLikeController {
     /*
         게시글별 좋아요 조회
      */
-    @GetMapping("/like?postIdx") // (GET) 127.0.0.1:9000/comments
+    @GetMapping("/like?postIdx") // (GET) 127.0.0.1:9000/likes
     @ApiOperation(value = "좋아요 목록 조회", notes = "게시글별 좋아요 목록 조회함")
     public BaseResponse<List<PostLikeDto.GetLikeRes>> getLikes(@RequestParam int postIdx) {
         try {
@@ -115,7 +115,7 @@ public class PostLikeController {
     /*
         게시글별 싫어요 조회
      */
-    @GetMapping("/dislike?postIdx") // (GET) 127.0.0.1:9000/comments
+    @GetMapping("/dislike?postIdx") // (GET) 127.0.0.1:9000/likes
     @ApiOperation(value = "싫어요 목록 조회", notes = "게시글별 싫어요 목록 조회함")
     public BaseResponse<List<PostLikeDto.GetDislikeRes>> getDislikes(@RequestParam int postIdx) {
         try {
