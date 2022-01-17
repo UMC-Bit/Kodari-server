@@ -4,12 +4,13 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+##Secret,Constant,Application.yml 오류로 마지막에 주석 해제 예정##
 ### Secret ###
-Secret.java
+#Secret.java
 ### Constant ###
-Constant.java
+#Constant.java
 ### Application.yml ###
-application.yml
+#application.yml
 ### STS ###
 .apt_generated
 .classpath
