@@ -11,6 +11,7 @@ public enum BaseResponseStatus {
      * 1000 : 요청 성공
      */
     SUCCESS(true, 1000, "요청에 성공하였습니다."),
+    //REGISTER_ACCOUNT_SUCCESS(true, 1040, "계좌 등록에 성공하였습니다."),
 
 
     /**
@@ -54,6 +55,7 @@ public enum BaseResponseStatus {
     FAILED_TO_PROPERTY_RES(false,3040,"없는 계좌입니다."),
 
 
+
     /**
      * 4000 : Database, Server 오류
      */
@@ -62,7 +64,7 @@ public enum BaseResponseStatus {
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
     //[PATCH] /users/{userIdx}
-    MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패하였습니다."),
+    MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
     //40-69
     MODIFY_FAIL_ACCOUNTNAME(false, 4040, "계좌 이름 수정 실패"),
     MODIFY_FAIL_PROPERTY(false, 4041, "현금 자산 수정 실패"),

@@ -4,4 +4,3 @@ package com.bit.kodari.config;
 public class Constant {
     // 예시 public static final String IP_ADDRESS = "127.0.0.1";
 }
-

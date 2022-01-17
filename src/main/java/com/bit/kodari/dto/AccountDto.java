@@ -2,7 +2,7 @@ package com.bit.kodari.dto;
 
 import lombok.*;
 
-public class AccountDto {
+ public class AccountDto {
 
     // 계좌 기본정보
     @Data
