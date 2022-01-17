@@ -40,12 +40,17 @@ public class PortfolioDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class GetPortfolioRes{
+        private int portIdx;
         private int accountIdx;
         private String accountName;
+        private double property;
         private int userIdx;
-        private int marketIdx;
-        private String property;
-        private String status;
+        private String marketName;
+        private int userCoinIdx;
+        private String coinName;
+        private String coinImg;
+        private double priceAvg;
+        private double amount;
         //    private String jwt;
     }
 

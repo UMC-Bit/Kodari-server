@@ -34,23 +34,28 @@ public class PortfolioRepository {
         return PortfolioDto.PostPortfolioRes.builder().accountIdx(portfolio.getAccountIdx()).build();
     }
 
-    /**
+
     //포트폴리오 조회
-    public List<AccountDto.GetAccountRes> getAccountByUserIdx(int userIdx){
-        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
-        List<AccountDto.GetAccountRes> getAccountRes = namedParameterJdbcTemplate.query(AccountSql.FIND_USER_ACCOUNT, parameterSource,
-                (rs, rowNum) -> new AccountDto.GetAccountRes(
+    public List<PortfolioDto.GetPortfolioRes> getPortfolio(int portIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        List<PortfolioDto.GetPortfolioRes> getPortfolioRes = namedParameterJdbcTemplate.query(PortfolioSql.GET_PORTFOLIO, parameterSource,
+                (rs, rowNum) -> new PortfolioDto.GetPortfolioRes(
+                        rs.getInt("portIdx"),
                         rs.getInt("accountIdx"),
                         rs.getString("accountName"),
+                        rs.getDouble("property"),
                         rs.getInt("userIdx"),
-                        rs.getInt("marketIdx"),
-                        rs.getString("property"),
-                        rs.getString("status")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getString("marketName"),
+                        rs.getInt("userCoinIdx"),
+                        rs.getString("coinName"),
+                        rs.getString("coinImg"),
+                        rs.getDouble("priceAvg"),
+                        rs.getDouble("amount")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
-        return getAccountRes;
+        return getPortfolioRes;
     }
-*/
+
     //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록
     public int deleteByPortIdx(int portIdx, int accountIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx)

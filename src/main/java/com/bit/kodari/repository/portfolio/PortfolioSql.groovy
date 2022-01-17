@@ -7,10 +7,20 @@ class PortfolioSql {
 			values (:userIdx, :accountIdx)
 	"""
 
-    //포트폴리오 조회
+    //포트폴리오 조회 - portIdx, accountIdx, accountName, userIdx, marketIdx, userCoinIdx, coinName, coinImg, proprerty, priceAvg, amount
     public static final String GET_PORTFOLIO = """
-			SELECT Portfolio SET status = 'inactive' WHERE portIdx = :portIdx
-			SELECT c.coinName, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userIdx = :userIdx AND u.status = 'active'
+			select p.portIdx, a.accountIdx, a.accountName, a.property, p.userIdx, m.marketName, u.userCoinIdx, c.coinName, c.coinImg, u.priceAvg, u.amount
+            from Portfolio p
+                join (select accountIdx, accountName, property, marketIdx, status from Account) as a on a.accountIdx = p.accountIdx
+                join (select userCoinIdx, accountIdx, coinIdx, priceAvg, amount, status from UserCoin) as u on u.accountIdx = p.accountIdx
+                join (select marketIdx, marketName, status from Market) as m on m.marketIdx = a.marketIdx
+                join (select coinIdx, coinName, coinImg, status from Coin) as c on c.coinIdx = u.coinIdx
+            WHERE p.status = 'active'
+            AND a.status = 'active'
+            AND u.status = 'active'
+            AND m.status = 'active'
+            AND c.status = 'active'
+            AND p.portIdx = :portIdx
     """
 
     //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록

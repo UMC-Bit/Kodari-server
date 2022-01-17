@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.bit.kodari.config.BaseResponseStatus.INVALID_USER_JWT;
 
 @RestController
@@ -62,6 +64,25 @@ public class PortfolioController {
      */
     //포트폴리오 조회하기
     //계좌 이름, 현금자산, 대표코인, 소유코인 등등 모든 정보들
+    //Query String
+    @ResponseBody
+    @GetMapping("/all/{portIdx}")
+    public BaseResponse<List<PortfolioDto.GetPortfolioRes>> getPortfolio(@PathVariable("portIdx") int portIdx) {
+
+        try {
+            // 해당 accountIdx를 만족하는 계좌의 현금 자산 정보를 불러온다.
+            //jwt에서 idx 추출.
+            //int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
+            List<PortfolioDto.GetPortfolioRes> getPortfolioRes = portfolioService.getPortfolio(portIdx);
+            return new BaseResponse<>(getPortfolioRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 
     /**

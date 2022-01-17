@@ -48,22 +48,22 @@ public class PortfolioService {
 
     }
 
-    /**
+
     //포트폴리오 조회
-    public  List<AccountDto.GetPropertyRes> getProperty(int accountIdx) throws BaseException {
+    public  List<PortfolioDto.GetPortfolioRes> getPortfolio(int portIdx) throws BaseException {
         //status가 inactive인 account는 오류 메시지
-        String status = accountRepository.getStatusByAccountIdx(accountIdx);
-        if(status.equals("inactive")){
-            throw new BaseException(FAILED_TO_PROPERTY_RES); //3040
-        }
+        //String status = accountRepository.getStatusByAccountIdx(accountIdx);
+        //if(status.equals("inactive")){
+            //throw new BaseException(FAILED_TO_PROPERTY_RES); //3040
+        //}
         try {
-            List<AccountDto.GetPropertyRes> getPropertyRes = accountRepository.getProperty(accountIdx);
-            return getPropertyRes;
+            List<PortfolioDto.GetPortfolioRes> getPortfolioRes = portfolioRepository.getPortfolio(portIdx);
+            return getPortfolioRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-*/
+
 
     //포트폴리오 삭제
     public void deleteByPortIdx(PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq) throws BaseException{
