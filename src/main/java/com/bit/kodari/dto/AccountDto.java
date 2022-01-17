@@ -104,6 +104,26 @@ import lombok.*;
         //    private String jwt;
     }
 
+     // Trade - 현금 자산 수정 REQUEST DTO
+     @Data
+     @AllArgsConstructor
+     @NoArgsConstructor
+     public static class PatchTradePropertyReq{
+         private int tradeIdx;
+         private int accountIdx;
+         //    private String jwt;
+     }
+
+     // Trade - 현금 자산 수정 RESPONSE DTO
+     @Data
+     @Builder // 빌더 클래스 자동 생성
+     public static class PatchTradePropertyRes{
+         private int accountIdx;
+         private int userIdx; // 추가해야함
+         private double property;
+         //    private String jwt;
+     }
+
     // 계좌 삭제 REQUEST DTO
     @Data
     @AllArgsConstructor

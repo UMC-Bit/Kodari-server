@@ -98,6 +98,39 @@ public class AccountService {
         }
     }
 
+    // Trade - 현금 자산 수정
+    public void updateTradeProperty(PatchTradePropertyReq account) throws BaseException{
+        double property = accountRepository.getPropertyByAccount(account.getAccountIdx());
+        String category = accountRepository.getCategory(account.getTradeIdx()); //매수인지 매도인지
+        double price = accountRepository.getPrice(account.getTradeIdx());
+        double amount = accountRepository.getAmount(account.getTradeIdx()); //새로 산 코인 갯수
+        double fee = accountRepository.getFee(account.getTradeIdx());
+
+        double newProperty = 0;
+
+        long max = 100000000000L;
+
+        //매수일때
+        if(category.equals("buy")){
+            //현금 자산 새로 계산해서 업데이트
+            newProperty = property - (price * amount) - (price * amount * fee);
+            if(newProperty < 0 || newProperty > max){
+                throw new BaseException(PROPERTY_RANGE_ERROR); //4044
+            }
+        }else{
+            throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
+        }
+
+        try {
+            int result = accountRepository.modifyTradeProperty(newProperty, account.getAccountIdx());
+            if(result == 0){ // 0이면 에러가 발생
+                throw new BaseException(MODIFY_FAIL_PROPERTY); //4041
+            }
+        } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     //계좌 삭제
     public void deleteByName(PatchAccountDelReq patchAccountDelReq) throws BaseException{
         //유저 확인 추가

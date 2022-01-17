@@ -1,9 +1,10 @@
 package com.bit.kodari.repository.account;
 
 import com.bit.kodari.config.BaseException;
-import com.bit.kodari.config.secret.Secret;
+//import com.bit.kodari.config.secret.Secret;
 import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.repository.account.AccountSql;
+import com.bit.kodari.repository.usercoin.UserCoinSql;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -87,18 +88,20 @@ public class AccountRepository {
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
+    // Trade - 현금 자산 수정
+    public int modifyTradeProperty(double property, int accountIdx) {
+        String qry = AccountSql.UPDATE_TRADE_PROPERTY;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("property", property)
+                .addValue("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
+
     //계좌 삭제
     public int deleteByName(AccountDto.PatchAccountDelReq patchAccountDelReq) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", patchAccountDelReq.getAccountIdx());
         return namedParameterJdbcTemplate.update(AccountSql.DELETE, parameterSource);
     }
-/*
-    // accountIdx로 accountDTO 반환
-    public List<Room.Info> findByName(String name) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("name", "%"+name+"%");
-        return namedParameterJdbcTemplate.query(RoomSql.FIND_BY_NAME,parameterSource, new roomMapper());
-    }
-*/
+
     // accountIdx로 userIdx 가져오기
     public int getUserIdxByAccountIdx(int accountIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
@@ -154,6 +157,122 @@ public class AccountRepository {
         });
     }
 
+    // accountIdx로 property 가져오기
+    public double getPropertyByAccount(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_PROPERTY, parameterSource, rs -> {
+            double property = 0;
+            if (rs.next()) {
+                property = rs.getInt("property");
+            }
+
+            return property;
+        });
+    }
+
+    // tradeIdx로 portIdx 가져오기
+    public int getPortIdx(int tradeIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_PORT_IDX, parameterSource, rs -> {
+            int portIdx = 0;
+            if (rs.next()) {
+                portIdx = rs.getInt("portIdx");
+            }
+
+            return portIdx;
+        });
+    }
+
+    // tradeIdx로 coinIdx 가져오기
+    public int getCoinIdx(int tradeIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_COIN_IDX, parameterSource, rs -> {
+            int coinIdx = 0;
+            if (rs.next()) {
+                coinIdx = rs.getInt("coinIdx");
+            }
+
+            return coinIdx;
+        });
+    }
+
+    // portIdx로 userIdx 가져오기
+    public int getUserIdxByPort(int portIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_USER_IDX_BY_PORT, parameterSource, rs -> {
+            int userIdx = 0;
+            if (rs.next()) {
+                userIdx = rs.getInt("userIdx");
+            }
+
+            return userIdx;
+        });
+    }
+
+    // portIdx로 accountIdx 가져오기
+    public int getAccountIdx(int portIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_ACCOUNT_IDX, parameterSource, rs -> {
+            int accountIdx = 0;
+            if (rs.next()) {
+                accountIdx = rs.getInt("accountIdx");
+            }
+
+            return accountIdx;
+        });
+    }
+
+    //tradeIdx로 trade 테이블의 category 가져오기
+    public String getCategory(int tradeIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_TRADE_CATEGORY, parameterSource, rs -> {
+            String category = "";
+            if (rs.next()) {
+                category = rs.getString("category");
+            }
+
+            return category;
+        });
+    }
+
+    //tradeIdx로 trade 테이블의 price 가져오기
+    public double getPrice(int tradeIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_TRADE_PRICE, parameterSource, rs -> {
+            double price = 0;
+            if (rs.next()) {
+                price = rs.getDouble("price");
+            }
+
+            return price;
+        });
+    }
+
+    //tradeIdx로 trade 테이블의 amount 가져오기
+    public double getAmount(int tradeIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_TRADE_AMOUNT, parameterSource, rs -> {
+            double amount = 0;
+            if (rs.next()) {
+                amount = rs.getDouble("amount");
+            }
+
+            return amount;
+        });
+    }
+
+    //tradeIdx로 trade 테이블의 fee 가져오기
+    public double getFee(int tradeIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_TRADE_FEE, parameterSource, rs -> {
+            double fee = 0;
+            if (rs.next()) {
+                fee = rs.getDouble("fee");
+            }
+
+            return fee;
+        });
+    }
 
 
 }

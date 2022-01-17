@@ -150,6 +150,30 @@ public class AccountController {
         }
     }
 
+    // Trade - 현금 자산 수정하기
+    @ResponseBody
+    @PatchMapping("/modify/property/{tradeIdx}")
+    public BaseResponse<String> modifyTradeProperty(@PathVariable("tradeIdx") int tradeIdx) {
+        int portIdx = accountRepository.getPortIdx(tradeIdx);
+        int accountIdx = accountRepository.getAccountIdx(portIdx);
+        int userIdx = accountRepository.getUserIdxByPort(accountIdx);
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            AccountDto.PatchTradePropertyReq patchTradePropertyReq = new AccountDto.PatchTradePropertyReq(tradeIdx, accountIdx);
+            accountService.updateTradeProperty(patchTradePropertyReq);
+
+            String result = "현금 자산이 변경되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
     //계좌 삭제하기 - PATCH
     @ResponseBody
     @PatchMapping("/delAccount/{accountIdx}")
@@ -171,5 +195,7 @@ public class AccountController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+
 
 }
