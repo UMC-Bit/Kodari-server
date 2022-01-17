@@ -42,14 +42,14 @@ public class PortfolioController {
     @ResponseBody
     @PostMapping("/post")
     public BaseResponse registerPortfolio(@RequestBody PortfolioDto.PostPortfolioReq postPortfolioReq) {
-        int userIdx = postPortfolioReq.getUserIdx();
+        //int userIdx = postPortfolioReq.getUserIdx();
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
             PortfolioDto.PostPortfolioRes postPortfolioRes = portfolioService.registerPortfolio(postPortfolioReq);
             return new BaseResponse<>(postPortfolioRes);
         } catch (BaseException exception) {
@@ -58,22 +58,29 @@ public class PortfolioController {
     }
 
     /**
+     * [GET]
+     */
+    //포트폴리오 조회하기
+    //계좌 이름, 현금자산, 대표코인, 소유코인 등등 모든 정보들
+
+
+    /**
      * [PATCH]
      */
     //포트폴리오 삭제하기 - PATCH
     @ResponseBody
     @PatchMapping("/delPortfolio/{portIdx}")
     public BaseResponse<String> deleteByPortIdx(@PathVariable("portIdx") int portIdx) {
-        int userIdx = portfolioRepository.getUserIdxByPortIdx(portIdx);
+        //int userIdx = portfolioRepository.getUserIdxByPortIdx(portIdx);
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
             PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq = new PortfolioDto.PatchPortfolioDelReq(portIdx);
-            portfolioRepository.deleteByPortIdx(patchPortfolioDelReq);
+            portfolioService.deleteByPortIdx(patchPortfolioDelReq);
 
             String result = "포트폴리오가 삭제되었습니다.";
             return new BaseResponse<>(result);

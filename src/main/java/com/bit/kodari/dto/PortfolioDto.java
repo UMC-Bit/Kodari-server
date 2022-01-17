@@ -55,5 +55,14 @@ public class PortfolioDto {
         //    private String jwt;
     }
 
+    // 모든 포트폴리오 userIdx, accountIdx RESPONSE DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetAllPortfolioRes{
+        private int userIdx;
+        private int accountIdx;
+    }
+
 
 }
