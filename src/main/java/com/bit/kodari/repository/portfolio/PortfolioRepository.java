@@ -34,4 +34,17 @@ public class PortfolioRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", patchPortfolioDelReq.getPortIdx());
         return namedParameterJdbcTemplate.update(PortfolioSql.DELETE, parameterSource);
     }
+
+    //accountIdx로 계좌 status 가져오기
+    public String getAccountStatus(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(PortfolioSql.GET_ACCOUNT_STATUS, parameterSource, rs -> {
+            String status = "";
+            if (rs.next()) {
+                status = rs.getString("status");
+            }
+
+            return status;
+        });
+    }
 }

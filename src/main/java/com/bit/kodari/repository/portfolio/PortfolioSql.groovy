@@ -11,4 +11,9 @@ class PortfolioSql {
     public static final String DELETE = """
 			UPDATE Portfolio SET status = 'inactive' WHERE portIdx = :portIdx
     """
+
+    //accountIdx로 계좌 status 가져오기
+    public static final String GET_ACCOUNT_STATUS ="""
+        SELECT status from Account where accountIdx = :accountIdx
+    """;
 }
