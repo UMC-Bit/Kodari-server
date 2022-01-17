@@ -33,8 +33,13 @@ class AccountSql {
 			"""
 
     //계좌 삭제
+    //포트폴리오랑 소유코인도 다 삭제되게 바꾸기
     public static final String DELETE = """
-			UPDATE Account SET status = 'inactive' WHERE accountIdx = :accountIdx
+			UPDATE UserCoin AS u, Portfolio AS p, Account AS a 
+			SET u.status = 'inactive', p.status = 'inactive', a.status = 'inactive' 
+			WHERE u.accountIdx = :accountIdx
+			AND p.accountIdx = :accountIdx
+			AND a.accountIdx = :accountIdx
     """
 
     //accountIdx로 userIdx 가져오기

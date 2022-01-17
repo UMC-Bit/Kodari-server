@@ -67,9 +67,10 @@ public class PortfolioService {
 
     //포트폴리오 삭제
     public void deleteByPortIdx(PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq) throws BaseException{
-
+        int portIdx = patchPortfolioDelReq.getPortIdx();
+        int accountIdx = portfolioRepository.getAccountIdx(portIdx);
         try {
-            int result = portfolioRepository.deleteByPortIdx(patchPortfolioDelReq);
+            int result = portfolioRepository.deleteByPortIdx(portIdx, accountIdx);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_PORTFOLIO); //4049
             }

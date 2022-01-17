@@ -51,9 +51,10 @@ public class PortfolioRepository {
         return getAccountRes;
     }
 */
-    //포트폴리오 삭제
-    public int deleteByPortIdx(PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", patchPortfolioDelReq.getPortIdx());
+    //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록
+    public int deleteByPortIdx(int portIdx, int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx)
+                .addValue("accountIdx", accountIdx);
         return namedParameterJdbcTemplate.update(PortfolioSql.DELETE, parameterSource);
     }
 
@@ -83,6 +84,19 @@ public class PortfolioRepository {
         });
     }
 
+    // portIdx로 accountIdx 가져오기
+    public int getAccountIdx(int portIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        return namedParameterJdbcTemplate.query(PortfolioSql.GET_ACCOUNT_IDX, parameterSource, rs -> {
+            int accountIdx = 0;
+            if (rs.next()) {
+                accountIdx = rs.getInt("accountIdx");
+            }
+
+            return accountIdx;
+        });
+    }
+
     // 모든 포트폴리오 가져오기 - List
     public List<PortfolioDto.GetAllPortfolioRes> getAllPortfolio(){
         try {
@@ -97,6 +111,5 @@ public class PortfolioRepository {
             return null;
         }
     }
-
 
 }

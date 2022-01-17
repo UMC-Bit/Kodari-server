@@ -106,8 +106,8 @@ public class UserCoinService {
         int userCoinIdx = patchBuySellReq.getUserCoinIdx();
         int coinIdx = userCoinRepository.getCoinIdxByUserCoinIdx(userCoinIdx);
         int accountIdx = userCoinRepository.getAccountIdxByUserCoinIdx(userCoinIdx);
-        int portIdx = userCoinRepository.getPortIdx(accountIdx);
-        int tradeIdx = userCoinRepository.getTradeIdx(coinIdx, portIdx);
+        int portIdx = userCoinRepository.getPortIdx(accountIdx); //빼야함
+        int tradeIdx = userCoinRepository.getTradeIdx(coinIdx, portIdx); // portIdx를 accountIdx로 바꿔야함
         String category = userCoinRepository.getCategory(tradeIdx); //매수인지 매도인지
         double price = userCoinRepository.getPrice(tradeIdx);
         double amount2 = userCoinRepository.getAmount(tradeIdx); //새로 산 코인 갯수

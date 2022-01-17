@@ -35,6 +35,20 @@ public class PortfolioDto {
         private int accountIdx;
     }
 
+    // 포트폴리오 조회 RESPONSE DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetPortfolioRes{
+        private int accountIdx;
+        private String accountName;
+        private int userIdx;
+        private int marketIdx;
+        private String property;
+        private String status;
+        //    private String jwt;
+    }
+
     //포트폴리오 삭제 Request Dto
     @Data
     @AllArgsConstructor
