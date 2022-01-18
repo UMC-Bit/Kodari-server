@@ -3,14 +3,19 @@ package com.bit.kodari.repository.account
 class AccountSql {
     //계좌 등록
     public static final String INSERT = """
-			INSERT INTO Account (accountName, userIdx, marketIdx, property)
-			values (:accountName, :userIdx, :marketIdx, :property)
+			INSERT INTO Account (accountName, userIdx, marketIdx, property, totalProperty)
+			values (:accountName, :userIdx, :marketIdx, :property, :property)
 			"""
 
     //유저 계좌 조회
     public static final String FIND_USER_ACCOUNT = """
-			SELECT accountIdx, accountName, userIdx, marketIdx, concat(format(property, 0), '원') as property, status FROM Account WHERE userIdx = :userIdx AND status = 'active'
+			SELECT accountIdx, accountName, userIdx, marketIdx, concat(format(property, 0), '원') as property, totalProperty, status FROM Account WHERE userIdx = :userIdx AND status = 'active'
 			"""
+
+    //총자산 수정
+    public static final String UPDATE_TOTAL_PROPERTY = """
+			UPDATE Account SET totalProperty = :totalProperty WHERE accountIdx = :accountIdx
+    """
 
     //계좌 이름 수정
     public static final String UPDATE_ACCOUNT_NAME = """
@@ -29,7 +34,7 @@ class AccountSql {
 
     //현금 자산 조회
     public static final String FIND_PROPERTY = """
-			SELECT accountIdx, concat(format(property, 0), '원') as property, status FROM Account WHERE accountIdx = :accountIdx
+			SELECT accountIdx, concat(format(property, 0), '원') as property, totalProperty, status FROM Account WHERE accountIdx = :accountIdx
 			"""
 
     //계좌 삭제
@@ -110,6 +115,21 @@ class AccountSql {
     //tradeIdx로 trade 테이블의 fee 가져오기
     public static final String GET_TRADE_FEE ="""
         SELECT fee from Trade where tradeIdx = :tradeIdx
+    """;
+
+    //accountIdx로 accountName 가져오기
+    public static final String GET_NAME_BY_ACCOUNT_IDX = """
+        SELECT accountName from Account where accountIdx = :accountIdx
+    """
+
+    //accountIdx로 totalProperty 가져오기
+    public static final String GET_TOTAL_BY_ACCOUNT_IDX = """
+        SELECT totalProperty from Account where accountIdx = :accountIdx
+    """
+
+    // userIdx, accountIdx로 UserCoin 가져오기
+    public static final String GET_USER_COIN ="""
+        SELECT priceAvg, amount from UserCoin where userIdx = :userIdx AND accountIdx = :accountIdx
     """;
 
 }

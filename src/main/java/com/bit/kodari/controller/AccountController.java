@@ -44,17 +44,18 @@ public class AccountController {
         int userIdx = postAccountReq.getUserIdx();
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
             AccountDto.PostAccountRes postAccountRes = accountService.registerAccount(postAccountReq);
             return new BaseResponse<>(postAccountRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
 
     /**
      * [GET]
@@ -68,11 +69,11 @@ public class AccountController {
 
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
             List<AccountDto.GetAccountRes> getAccountRes = accountService.getAccountByUserIdx(userIdx);
             return new BaseResponse<>(getAccountRes);
         } catch (BaseException exception) {
@@ -90,11 +91,11 @@ public class AccountController {
         try {
             // 해당 accountIdx를 만족하는 계좌의 현금 자산 정보를 불러온다.
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
             List<AccountDto.GetPropertyRes> getPropertyRes = accountService.getProperty(accountIdx);
             return new BaseResponse<>(getPropertyRes);
         } catch (BaseException exception) {
@@ -125,6 +126,29 @@ public class AccountController {
                 return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    //총자산 수정 API
+    //Query String
+    @ResponseBody
+    @PatchMapping("/total/{accountIdx}")
+    public BaseResponse<String> modifyTotal(@PathVariable("accountIdx") int accountIdx) {
+        int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
+        try {
+            //jwt에서 idx 추출.
+            //int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            //if(userIdx != userIdxByJwt){
+            //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
+            AccountDto.PatchTotalReq patchTotalReq = new AccountDto.PatchTotalReq(accountIdx);
+            accountService.updateTotal(patchTotalReq);
+
+            String result = "총자산이 수정되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
         }
     }
 

@@ -50,6 +50,35 @@ public class AccountService {
 
     }
 
+    //총자산 수정
+    public void updateTotal(PatchTotalReq account) throws BaseException {
+        int accountIdx = account.getAccountIdx();
+        String accountName = accountRepository.getAccountNameByAccountIdx(accountIdx);
+        double totalProperty = accountRepository.getTotalPropertyByAccount(accountIdx);
+        int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
+        double property = accountRepository.getPropertyByAccount(accountIdx);
+        double priceAvg = 0;
+        double amount = 0;
+
+        List<AccountDto.GetUserCoinRes> getUserCoinRes = accountRepository.getUserCoinByIdx(userIdx, accountIdx);
+
+        for(int i=0; i< getUserCoinRes.size(); i++){
+            priceAvg = getUserCoinRes.get(i).getPriceAvg();
+            amount = getUserCoinRes.get(i).getAmount();
+            totalProperty = totalProperty + (priceAvg * amount);
+        }
+
+        try {
+            int result = accountRepository.modifyTotal(accountIdx, totalProperty);
+            if (result == 0) { // 0이면 에러가 발생
+                throw new BaseException(MODIFY_FAIL_TOTAL); //4051
+            }
+        } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
     //계좌 이름 수정
     public void updateAccountName(PatchAccountNameReq account) throws BaseException{
         //같은 이름은 안되게 validation 추가

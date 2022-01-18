@@ -14,6 +14,7 @@ import lombok.*;
         private int userIdx;
         private int marketIdx;
         private long property;
+        private double totalProperty;
         private String status;
     }
 
@@ -37,6 +38,24 @@ import lombok.*;
         //    private String jwt;
     }
 
+     // 총자산 등록 REQUEST DTO
+     @Data
+     @AllArgsConstructor
+     @NoArgsConstructor
+     public static class PatchTotalReq{
+         private int accountIdx;
+     }
+
+     // 총자산 등록 RESPONSE DTO
+     @Data
+     @Builder // 빌더 클래스 자동 생성
+     public static class PatchTotalRes{
+         private int accountIdx; // 추가해야함
+         private String accountName;
+         private double totalProperty;
+         //    private String jwt;
+     }
+
     // 유저 계좌 조회 RESPONSE DTO
     @Data
     @AllArgsConstructor
@@ -47,6 +66,7 @@ import lombok.*;
         private int userIdx;
         private int marketIdx;
         private String property;
+        private double totalProperty;
         private String status;
         //    private String jwt;
     }
@@ -60,6 +80,7 @@ import lombok.*;
         private int accountIdx;
         private int userIdx; // 추가해야함
         private String property;
+        private double totalProperty;
         private String status;
         //    private String jwt;
     }
@@ -150,4 +171,13 @@ import lombok.*;
     public static class GetAccountNameRes{
         private String accountName;
     }
+
+     // userIdx, accountIdx로 해당 유저의 소유 코인 RESPONSE DTO
+     @Data
+     @AllArgsConstructor
+     @NoArgsConstructor
+     public static class GetUserCoinRes{
+         private double priceAvg;
+         private double amount;
+     }
 }

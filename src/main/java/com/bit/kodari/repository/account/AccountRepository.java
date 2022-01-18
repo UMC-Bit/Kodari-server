@@ -40,6 +40,16 @@ public class AccountRepository {
         return AccountDto.PostAccountRes.builder().accountName(account.getAccountName()).build();
     }
 
+    // Account 총자산 수정
+    public int modifyTotal(int accountIdx, double totalProperty) {
+        String qry = AccountSql.UPDATE_TOTAL_PROPERTY;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx)
+                .addValue("accountIdx", accountIdx)
+                .addValue("totalProperty", totalProperty);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
+
+
     //유저 계좌 조회
     public List<AccountDto.GetAccountRes> getAccountByUserIdx(int userIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
@@ -50,6 +60,7 @@ public class AccountRepository {
                         rs.getInt("userIdx"),
                         rs.getInt("marketIdx"),
                         rs.getString("property"),
+                        rs.getDouble("totalProperty"),
                         rs.getString("status")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
@@ -64,6 +75,7 @@ public class AccountRepository {
                         rs.getInt("accountIdx"),
                         rs.getInt("userIdx"),
                         rs.getString("property"),
+                        rs.getDouble("totalProperty"),
                         rs.getString("status")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
@@ -144,6 +156,23 @@ public class AccountRepository {
         }
     }
 
+    // userIdx, accountIdx로 userCoin 전달
+    public List<AccountDto.GetUserCoinRes> getUserCoinByIdx(int userIdx, int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
+                .addValue("accountIdx", accountIdx);
+        try {
+            List<AccountDto.GetUserCoinRes> getUserCoinRes =  namedParameterJdbcTemplate.query(AccountSql.GET_USER_COIN, parameterSource,
+                    (rs, rowNum) -> new AccountDto.GetUserCoinRes(
+                            rs.getDouble("priceAvg"),
+                            rs.getDouble("amount"))
+            );
+            return getUserCoinRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
     // accountIdx로 status 가져오기
     public String getStatusByAccountIdx(int accountIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
@@ -157,6 +186,19 @@ public class AccountRepository {
         });
     }
 
+    // accountIdx로 accountName 가져오기
+    public String getAccountNameByAccountIdx(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_NAME_BY_ACCOUNT_IDX, parameterSource, rs -> {
+            String accountName = "";
+            if (rs.next()) {
+                accountName = rs.getString("accountName");
+            }
+
+            return accountName;
+        });
+    }
+
     // accountIdx로 property 가져오기
     public double getPropertyByAccount(int accountIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
@@ -167,6 +209,19 @@ public class AccountRepository {
             }
 
             return property;
+        });
+    }
+
+    // accountIdx로 totalProperty 가져오기
+    public double getTotalPropertyByAccount(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_TOTAL_BY_ACCOUNT_IDX, parameterSource, rs -> {
+            double totalProperty = 0;
+            if (rs.next()) {
+                totalProperty = rs.getInt("totalProperty");
+            }
+
+            return totalProperty;
         });
     }
 

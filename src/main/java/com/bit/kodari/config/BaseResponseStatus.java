@@ -77,6 +77,7 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_PRICE_AVG(false, 4048, "매수평단가 수정 실패"),
     MODIFY_FAIL_PORTFOLIO(false, 4049, "포트폴리오 삭제 실패"),
     DUPLICATED_PORTFOLIO(false, 4050, "포트폴리오 중복으로 생성 실패"),
+    MODIFY_FAIL_TOTAL(false, 4051, "총자산 수정 실패"),
 
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
     DELETE_FAIL_POST(false, 4071, "게시글 삭제에 실패하였습니다."),
