@@ -264,5 +264,29 @@ public class UserCoinRepository {
         });
     }
 
+    //accountIdx로 Account의 totalProperty 가져오기
+    public double getTotalProperty(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(UserCoinSql.GET_TOTAL_PROPERTY, parameterSource, rs -> {
+            double totalProperty = 0;
+            if (rs.next()) {
+                totalProperty = rs.getDouble("totalProperty");
+            }
 
+            return totalProperty;
+        });
+    }
+
+    //accountIdx로 Account의 property 가져오기
+    public double getProperty(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(UserCoinSql.GET_PROPERTY, parameterSource, rs -> {
+            double property = 0;
+            if (rs.next()) {
+                property = rs.getDouble("property");
+            }
+
+            return property;
+        });
+    }
 }

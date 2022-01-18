@@ -102,6 +102,12 @@ public class UserCoinService {
 
     //매수, 매도 계산(매수 평단가), 수수료 0.05%
     //계산하는거 여기에
+
+    /**
+     * 수정할것
+     * 매수평단가 수정하면서 property(현금자산)도 수정되게 - 매수(-), 매도(+)
+     * 총자산 업데이트
+     */
     public void updatePriceAvg(UserCoinDto.PatchBuySellReq patchBuySellReq) throws BaseException{
         int userCoinIdx = patchBuySellReq.getUserCoinIdx();
         int coinIdx = userCoinRepository.getCoinIdxByUserCoinIdx(userCoinIdx);
@@ -113,12 +119,17 @@ public class UserCoinService {
         double amount2 = userCoinRepository.getAmount(tradeIdx); //새로 산 코인 갯수
         double fee = userCoinRepository.getFee(tradeIdx);
 
+        //기존 총자산
+        double totalProperty = userCoinRepository.getTotalProperty(accountIdx);
+        //기존 현금자산
+        double property = userCoinRepository.getProperty(accountIdx);
         //기존 코인 갯수
         double amount1 = userCoinRepository.getAmountByUserCoinIdx(userCoinIdx);
         //기존 매수평단가
         double priceAvg = userCoinRepository.getPriceAvg(userCoinIdx);
-        double total = 0;
-        double amount3 = 0;
+        double total = 0; //새로운 매수평단가
+        double amount3 = 0; //새로운 코인 전체 갯수
+        double newTotal = 0; //새로운 총자산
 
         //매수일때
         if(category.equals("buy")){

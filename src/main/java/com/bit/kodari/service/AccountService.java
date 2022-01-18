@@ -142,10 +142,15 @@ public class AccountService {
         //매수일때
         if(category.equals("buy")){
             //현금 자산 새로 계산해서 업데이트
+            //총자산 새로 업데이트
             newProperty = property - (price * amount) - (price * amount * fee);
             if(newProperty < 0 || newProperty > max){
                 throw new BaseException(PROPERTY_RANGE_ERROR); //4044
             }
+        }else if(category.equals("sell")){
+            //매도일때
+            //현금 자산 새로 계산해서 업데이트
+            newProperty = property + (price * amount) - (price * amount * fee);
         }else{
             throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
         }

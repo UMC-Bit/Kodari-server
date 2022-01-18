@@ -104,4 +104,14 @@ class UserCoinSql {
         SELECT amount from UserCoin where userCoinIdx = :userCoinIdx
     """;
 
+    //accountIdx로 Account의 totalProperty 가져오기
+    public static final String GET_TOTAL_PROPERTY ="""
+        SELECT totalProperty from Account where accountIdx = :accountIdx
+    """;
+
+    //accountIdx로 Account의 property 가져오기
+    public static final String GET_PROPERTY ="""
+        SELECT property from Account where accountIdx = :accountIdx
+    """;
+
 }
