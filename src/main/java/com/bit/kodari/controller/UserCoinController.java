@@ -204,11 +204,11 @@ public class UserCoinController {
         double priceAvg = userCoinRepository.getPriceAvg(userCoinIdx);
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
             UserCoinDto.PatchBuySellReq patchBuySellReq = new UserCoinDto.PatchBuySellReq(userCoinIdx, priceAvg, amount);
             userCoinService.updatePriceAvg(patchBuySellReq);
 

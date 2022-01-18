@@ -128,6 +128,9 @@ public class UserCoinService {
         }else if(category.equals("sell")) {
             amount3 = amount1 - amount2;
             total = (priceAvg * amount1 - price * amount2) / amount3;
+            if(total < 0){
+                throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
+            }
         }
         else{
             throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
