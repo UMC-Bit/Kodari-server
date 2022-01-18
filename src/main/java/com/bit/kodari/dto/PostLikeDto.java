@@ -49,13 +49,14 @@ public class PostLikeDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class DeleteLikeReq{
+        private int postLikeIdx;
         private int postIdx;
     }
 
     //토론장 게시글별 좋아요 조회
     @Data
     @AllArgsConstructor
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor
     public static class GetLikeRes{
         private int likeType;
     }

@@ -30,8 +30,16 @@ public class PostLikeService {
 
     // 토론장 게시글 좋아요/싫어요 선택(POST)
     public PostLikeDto.RegisterLikeRes chooseLike(PostLikeDto.RegisterLikeReq registerLikeReq) throws BaseException {
-
-
+        int postIdx = registerLikeReq.getPostIdx();
+        int userIdx = registerLikeReq.getUserIdx();
+        String status = postLikeRepository.getStatusByPostIdx(postIdx);
+        int cnt = postLikeRepository.getUserByIdx(userIdx, postIdx);
+        if(status.equals("inactive")) {
+            throw new BaseException(IMPOSSIBLE_POST);
+        }
+        else if(cnt >= 1) {
+            throw new BaseException(EXIST_USER);
+        }
         try {
             return postLikeRepository.chooseLike(registerLikeReq);
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
@@ -77,7 +85,7 @@ public class PostLikeService {
         if(post_status.equals("active")) {
             throw new BaseException(IMPOSSIBLE_POST_LIKE_DELETE);
         }
-        else if(post_status.equals("inactive")){
+        else {
             int result = postLikeRepository.deleteLike(post);
             if (result == 0) { // 0이면 에러가 발생
                 throw new BaseException(DELETE_FAIL_POST_LIKE);
@@ -95,6 +103,10 @@ public class PostLikeService {
 
     // 특정 게시글별 좋아요 조회
     public List<PostLikeDto.GetLikeRes> getLikesByPostIdx(int postIdx) throws BaseException {
+        String status = postLikeRepository.getStatusByPostIdx(postIdx);
+        if(status.equals("inactive")) {
+            throw new BaseException(IMPOSSIBLE_POST); // 게시글이 존재하지 않음.
+        }
         try {
             List<PostLikeDto.GetLikeRes> getLikeRes = postLikeRepository.getLikesByPostIdx(postIdx);
             return getLikeRes;
@@ -105,6 +117,10 @@ public class PostLikeService {
 
     // 특정 게시글별 싫어요 조회
     public List<PostLikeDto.GetDislikeRes> getDislikesByPostIdx(int postIdx) throws BaseException {
+        String status = postLikeRepository.getStatusByPostIdx(postIdx);
+        if(status.equals("inactive")) {
+            throw new BaseException(IMPOSSIBLE_POST); // 게시글이 존재하지 않음.
+        }
         try {
             List<PostLikeDto.GetDislikeRes> getDislikeRes = postLikeRepository.getDislikesByPostIdx(postIdx);
             return getDislikeRes;

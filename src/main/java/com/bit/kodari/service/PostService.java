@@ -90,7 +90,10 @@ public class PostService {
         else{
             int result = postRepository.modifyPostStatus(post);
             if(result == 0){ // 0이면 에러가 발생
-                throw new BaseException(DELETE_FAIL_POST); //4071
+                throw new BaseException(DELETE_FAIL_POST); //407
+            }
+            else {
+
             }
         }
 

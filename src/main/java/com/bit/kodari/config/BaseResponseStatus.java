@@ -65,23 +65,24 @@ public enum BaseResponseStatus {
     USER_NOT_EQUAL(false, 4075, "게시글 유저가 아닙니다."),
     USER_NOT_EQUAL_COMMENT(false, 4076, "댓글 유저가 아닙니다."),
     USER_NOT_EQUAL_LIKE(false, 4077, "좋아요 누른 유저가 아닙니다."),
+    EXIST_USER(false, 4078, "이미 누르셨습니다."),
 
     //내용확인
-    EMPTY_CONTENT(false, 4078, "내용이 없습니다."),
+    EMPTY_CONTENT(false, 4079, "내용이 없습니다."),
 
     //글 존재여부
-    IMPOSSIBLE_POST(false, 4079, "게시글이 존재하지 않습니다."),
-    IMPOSSIBLE_POST_COMMENT(false, 4080, "댓글이 존재하지 않습니다."),
-    IMPOSSIBLE_POST_LIKE_DELETE(false, 4081, "게시글이 존재하기때문에 삭제가 불가능합니다."),
+    IMPOSSIBLE_POST(false, 4080, "게시글이 존재하지 않습니다."),
+    IMPOSSIBLE_POST_COMMENT(false, 4081, "댓글이 존재하지 않습니다."),
+    IMPOSSIBLE_POST_LIKE_DELETE(false, 4082, "게시글이 존재하기때문에 삭제가 불가능합니다."),
 
     //글자수 확인
-    OVER_CONTENT(false, 4082, "글자수가 초과되었습니다."),
+    OVER_CONTENT(false, 4083, "글자수가 초과되었습니다."),
 
     //같은 LIKE 타입을 고른 경우
-    EQUAL_LIKE_TYPE(false, 4083, "이전과 같습니다."),
+    EQUAL_LIKE_TYPE(false, 4084, "이전과 같습니다."),
 
     //삭제 불가
-    DELETE_FAIL_POST_LIKE(false, 4084, "삭제가 되지 않았습니다."),
+    DELETE_FAIL_POST_LIKE(false, 4085, "삭제가 되지 않았습니다."),
 
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),

@@ -71,6 +71,22 @@ public class PostRepository {
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
+    //postIdx로 postCommentIdx 받아오기
+    public List<PostDto.CommentDeleteReq> getCommentIdxByPostIdx(int postIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx)
+        try {
+            List<PostDto.CommentDeleteReq> getAccountNameRes =  namedParameterJdbcTemplate.query(AccountSql.GET_ACCOUNT_NAME, parameterSource,
+                    (rs, rowNum) -> new AccountDto.GetAccountNameRes(
+                            rs.getString("accountName"))
+            );
+            return getAccountNameRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+
+    }
+
     //토론장 게시글 조회
     public List<PostDto.GetPostRes> getPosts(){
         SqlParameterSource parameterSource = new MapSqlParameterSource();

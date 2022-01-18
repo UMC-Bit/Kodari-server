@@ -44,14 +44,14 @@ class PostCommentSql {
     public static final String LIST_POST_COMMENT = """
          SELECT p.boardIdx, u.nickName,  c.likeCnt, c.content
          FROM PostComment as c join Post as p on c.postIdx = p.postIdx join User as u on c.userIdx = u.userIdx
-         WHERE c.postIdx = :postIdx 
+         WHERE c.postIdx = :postIdx and c.status = 'active'
          """
 
     //토론장 유저 게시글 조회
     public static final String LIST_USER_COMMENT = """
          SELECT p.boardIdx, u.nickName, c.likeCnt, c.content
          FROM PostComment as c join Post as p on c.postIdx = p.postIdx join User as u on c.userIdx = u.userIdx 
-         WHERE c.userIdx = :userIdx
+         WHERE c.userIdx = :userIdx and p.status = 'active' and c.status = 'active'
          """
 
 

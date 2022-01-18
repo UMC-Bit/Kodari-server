@@ -1,6 +1,8 @@
 package com.bit.kodari.repository.postlike;
 
+import com.bit.kodari.dto.PostDto;
 import com.bit.kodari.dto.PostLikeDto;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -8,6 +10,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -29,11 +34,26 @@ public class PostLikeRepository {
         return PostLikeDto.RegisterLikeRes.builder().likeType(post.getLikeType()).build();
     }
 
+    //user 확인
+    public int getUserByIdx(int userIdx, int postIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("userIdx", userIdx)
+                .addValue("postIdx", postIdx);
+        return namedParameterJdbcTemplate.query(postLikeSql.EXIST_USER, parameterSource, rs -> {
+            int cnt = 0;
+            if (rs.next()) {
+                cnt = rs.getInt("cnt");
+            }
+
+            return cnt;
+        });
+    }
+
 
     //postLikeIdx로 좋아요/싫어요한 userIdx 가져오기
     public int getUserIdxByPostLikeIdx(int postLikeIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", postLikeIdx);
-        return namedParameterJdbcTemplate.query(PostLikeSql.GET_LIKE_USER_IDX, parameterSource, rs -> {
+        return namedParameterJdbcTemplate.query(postLikeSql.GET_LIKE_USER_IDX, parameterSource, rs -> {
             int userIdx = 0;
             if (rs.next()) {
                 userIdx = rs.getInt("userIdx");
@@ -46,7 +66,7 @@ public class PostLikeRepository {
     //postLikeIdx로 좋아요/싫어요한 postIdx 가져오기
     public int getPostIdxByPostLikeIdx(int postLikeIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", postLikeIdx);
-        return namedParameterJdbcTemplate.query(PostLikeSql.GET_LIKE_POST_IDX, parameterSource, rs -> {
+        return namedParameterJdbcTemplate.query(postLikeSql.GET_LIKE_POST_IDX, parameterSource, rs -> {
             int postIdx = 0;
             if (rs.next()) {
                 postIdx = rs.getInt("postIdx");
@@ -56,10 +76,12 @@ public class PostLikeRepository {
         });
     }
 
+
+
     //postIdx로 게시글의 Status 가져오기
     public String getStatusByPostIdx(int postIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
-        return namedParameterJdbcTemplate.query(PostLikeSql.GET_POST_STATUS, parameterSource, rs -> {
+        return namedParameterJdbcTemplate.query(postLikeSql.GET_POST_STATUS, parameterSource, rs -> {
             String post_status = " ";
             if (rs.next()) {
                 post_status = rs.getString("status");
@@ -72,7 +94,7 @@ public class PostLikeRepository {
     //postLikeIdx로 Status 가져오기
     public String getStatusByPostLikeIdx(int postLikeIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", postLikeIdx);
-        return namedParameterJdbcTemplate.query(PostLikeSql.GET_LIKE_STATUS, parameterSource, rs -> {
+        return namedParameterJdbcTemplate.query(postLikeSql.GET_LIKE_STATUS, parameterSource, rs -> {
             String status = " ";
             if (rs.next()) {
                 status = rs.getString("status");
@@ -85,7 +107,7 @@ public class PostLikeRepository {
     //postLikeIdx로 likeType 가져오기
     public int getLikeTypeByPostLikeIdx(int postLikeIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", postLikeIdx);
-        return namedParameterJdbcTemplate.query(PostLikeSql.GET_LIKE_TYPE, parameterSource, rs -> {
+        return namedParameterJdbcTemplate.query(postLikeSql.GET_LIKE_TYPE, parameterSource, rs -> {
             int likeType = 1;
             if (rs.next()) {
                 likeType = rs.getInt("likeType");
@@ -106,27 +128,26 @@ public class PostLikeRepository {
     //게시글 좋아요/싫어요 삭제
     public int deleteLike(PostLikeDto.DeleteLikeReq deleteLikeReq) {
         String qry = PostLikeSql.DELETE_POST_LIKE;
-        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", deleteLikeReq.getPostIdx());
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", deleteLikeReq.getPostLikeIdx());
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
     //토론장 게시글별 좋아요 조회
     public List<PostLikeDto.GetLikeRes> getLikesByPostIdx(int postIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
-        List<PostLikeDto.GetLikeRes> getLikeRes = namedParameterJdbcTemplate.query(PostLikeSql.LIST_POST_LIKE,parameterSource,
+        List<PostLikeDto.GetLikeRes> getLikeRes = namedParameterJdbcTemplate.query(postLikeSql.LIST_POST_LIKE,parameterSource,
                 (rs, rowNum) -> new PostLikeDto.GetLikeRes(
-                        rs.getInt("likeType")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getInt("true_cnt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
-
         return getLikeRes;
     }
 
     //토론장 게시글별 싫어요 조회
     public List<PostLikeDto.GetDislikeRes> getDislikesByPostIdx(int postIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
-        List<PostLikeDto.GetDislikeRes> getDislikeRes = namedParameterJdbcTemplate.query(PostLikeSql.LIST_POST_DISLIKE,parameterSource,
+        List<PostLikeDto.GetDislikeRes> getDislikeRes = namedParameterJdbcTemplate.query(postLikeSql.LIST_POST_DISLIKE,parameterSource,
                 (rs, rowNum) -> new PostLikeDto.GetDislikeRes(
-                        rs.getInt("likeType")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getInt("dislikeCnt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
         return getDislikeRes;

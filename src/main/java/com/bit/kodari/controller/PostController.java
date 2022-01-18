@@ -83,7 +83,7 @@ public class PostController {
     /*
         토론장 게시글 삭제
      */
-    @PatchMapping("/status/{postIdx}/{userIdx}")
+    @PatchMapping("/status/{postIdx}")
     @ApiOperation(value = "토론장 게시글 삭제", notes = "토론장 게시글 삭제함.")
     public BaseResponse<String> modifyPostStatus(@PathVariable("postIdx") int postIdx) {
         int userIdx = postRepository.getUserIdxByPostIdx(postIdx);

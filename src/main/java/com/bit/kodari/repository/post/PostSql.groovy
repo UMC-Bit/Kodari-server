@@ -34,13 +34,14 @@ class PostSql {
     public static final String LIST_POST = """
          SELECT b.boardName, u.nickName, content, p.status 
          FROM Post as p join Board as b on p.boardIdx = b.boardIdx join User as u on p.userIdx = u.userIdx 
+         WHERE p.status = 'active'
          """
 
     //토론장 유저 게시글 조회
     public static final String LIST_USER_POST = """
          SELECT b.boardName, u.nickName, content, p.status
          FROM Post as p join Board as b on p.boardIdx = b.boardIdx join User as u on p.userIdx = u.userIdx 
-         WHERE p.userIdx = :userIdx
+         WHERE p.userIdx = :userIdx and p.status = 'active'
          """
 
 

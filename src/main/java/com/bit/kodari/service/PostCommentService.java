@@ -96,7 +96,7 @@ public class PostCommentService {
         else if(userIdx != user) {
             throw new BaseException(USER_NOT_EQUAL_COMMENT); //4073
         }
-        else{
+        else {
             int result = postCommentRepository.modifyCommentStatus(post);
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(DELETE_FAIL_POST_COMMENT); //4078
@@ -112,6 +112,10 @@ public class PostCommentService {
 
     // 특정 게시글별 댓글 조회
     public List<PostCommentDto.GetCommentRes> getCommentsByPostIdx(int postIdx) throws BaseException {
+        String status = postCommentRepository.getStatusByPostIdx(postIdx);
+        if(status.equals("inactive")) {
+            throw new BaseException(IMPOSSIBLE_POST); //게시글이 존재하지 않음
+        }
         try {
             List<PostCommentDto.GetCommentRes> getCommentRes = postCommentRepository.getCommentsByPostIdx(postIdx);
             return getCommentRes;

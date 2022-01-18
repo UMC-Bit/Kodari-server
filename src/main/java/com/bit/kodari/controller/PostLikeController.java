@@ -54,10 +54,11 @@ public class PostLikeController {
     /*
         토론장 게시글 좋아요/싫어요 수정
      */
-    @PatchMapping("/update/{postLikeIdx}/{postIdx}")
+    @PatchMapping("/update/{postLikeIdx}")
     @ApiOperation(value = "좋아요/싫어요 수정", notes = "토론장 게시글의 좋아요/싫어요 수정함.")
-    public BaseResponse<String> UpdatePostLike(@PathVariable("postLikeIdx") int postLikeIdx, @PathVariable("postIdx") int postIdx, @RequestBody PostLikeDto.PatchLikeReq post){
+    public BaseResponse<String> UpdatePostLike(@PathVariable("postLikeIdx") int postLikeIdx, @RequestBody PostLikeDto.PatchLikeReq post){
         int userIdx = postLikeRepository.getUserIdxByPostLikeIdx(postLikeIdx);
+        int postIdx = postLikeRepository.getPostIdxByPostLikeIdx(postLikeIdx);
         try {
 //            //jwt에서 idx 추출.
 //            int userIdxByJwt = jwtService.getUserIdx();
@@ -78,9 +79,10 @@ public class PostLikeController {
     /*
         토론장 게시글 좋아요/싫어요 삭제
      */
-    @DeleteMapping("/delete/{postIdx}")
+    @DeleteMapping("/delete")
     @ApiOperation(value = "좋아요/싫어요 삭제", notes = "토론장 게시글의 좋아요/싫어요 삭제함.")
-    public BaseResponse<String> DeletePostLike(@PathVariable("postIdx") int postIdx, @RequestBody PostLikeDto.PatchLikeReq post){
+    public BaseResponse<String> DeletePostLike(@RequestParam int postLikeIdx){
+        int postIdx = postLikeRepository.getPostIdxByPostLikeIdx(postLikeIdx);
         try {
 //            //jwt에서 idx 추출.
 //            int userIdxByJwt = jwtService.getUserIdx();
@@ -89,7 +91,7 @@ public class PostLikeController {
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
             //같다면 유저네임 변경
-            PostLikeDto.DeleteLikeReq deleteLikeReq = new PostLikeDto.DeleteLikeReq(postIdx);
+            PostLikeDto.DeleteLikeReq deleteLikeReq = new PostLikeDto.DeleteLikeReq(postLikeIdx, postIdx);
             postLikeService.deleteLike(deleteLikeReq);
             String result = "토론장 게시글의 좋아요/싫어요가 삭제되었습니다.";
             return new BaseResponse<>(result);
@@ -101,12 +103,12 @@ public class PostLikeController {
     /*
         게시글별 좋아요 조회
      */
-    @GetMapping("/like?postIdx") // (GET) 127.0.0.1:9000/likes
+    @GetMapping("/like") // (GET) 127.0.0.1:9000/likes
     @ApiOperation(value = "좋아요 목록 조회", notes = "게시글별 좋아요 목록 조회함")
     public BaseResponse<List<PostLikeDto.GetLikeRes>> getLikes(@RequestParam int postIdx) {
         try {
-            List<PostLikeDto.GetLikeRes> getLikesRes = postLikeService.getLikesByPostIdx(postIdx);
-            return new BaseResponse<>(getLikesRes);
+            List<PostLikeDto.GetLikeRes> getLikeRes = postLikeService.getLikesByPostIdx(postIdx);
+            return new BaseResponse<>(getLikeRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
@@ -115,12 +117,12 @@ public class PostLikeController {
     /*
         게시글별 싫어요 조회
      */
-    @GetMapping("/dislike?postIdx") // (GET) 127.0.0.1:9000/likes
+    @GetMapping("/dislike") // (GET) 127.0.0.1:9000/likes
     @ApiOperation(value = "싫어요 목록 조회", notes = "게시글별 싫어요 목록 조회함")
     public BaseResponse<List<PostLikeDto.GetDislikeRes>> getDislikes(@RequestParam int postIdx) {
         try {
-            List<PostLikeDto.GetDislikeRes> getDislikesRes = postLikeService.getDislikesByPostIdx(postIdx);
-            return new BaseResponse<>(getDislikesRes);
+            List<PostLikeDto.GetDislikeRes> getDislikeRes = postLikeService.getDislikesByPostIdx(postIdx);
+            return new BaseResponse<>(getDislikeRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
