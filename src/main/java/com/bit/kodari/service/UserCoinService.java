@@ -118,13 +118,18 @@ public class UserCoinService {
         //기존 매수평단가
         double priceAvg = userCoinRepository.getPriceAvg(userCoinIdx);
         double total = 0;
-        double amount3 = amount1 + amount2;
+        double amount3 = 0;
 
         //매수일때
         if(category.equals("buy")){
             //매수평단가 새로 계산해서 업데이트
+            amount3 = amount1 + amount2;
             total = (priceAvg * amount1 + price * amount2) / amount3;
-        }else{
+        }else if(category.equals("sell")) {
+            amount3 = amount1 - amount2;
+            total = (priceAvg * amount1 - price * amount2) / amount3;
+        }
+        else{
             throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
         }
 
