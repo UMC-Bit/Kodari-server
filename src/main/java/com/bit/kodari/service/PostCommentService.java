@@ -67,7 +67,7 @@ public class PostCommentService {
         else if(content.isEmpty()) {
             throw new BaseException(EMPTY_CONTENT); //4074
         }
-        else if(content.length() >= 500) {
+        else if(content.length() >= 100) {
             throw new BaseException(OVER_CONTENT); //4076
         }
         else{

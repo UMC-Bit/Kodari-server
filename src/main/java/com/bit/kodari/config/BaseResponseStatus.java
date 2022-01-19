@@ -56,16 +56,16 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
     MODIFY_FAIL_POST_COMMENT(false, 4071, "게시글 댓글 수정에 실패하였습니다."),
     MODIFY_FAIL_POST_LIKE(false, 4072, "좋아요 수정에 실패하였습니다."),
+    MODIFY_FAIL_POST_REPLY(false, 4073, "답글 수정에 실패하였습니다."),
 
     //삭제
-    DELETE_FAIL_POST(false, 4073, "게시글 삭제에 실패하였습니다."),
-    DELETE_FAIL_POST_COMMENT(false, 4074, "게시글 댓글 삭제에 실패하였습니다."),
+    DELETE_FAIL_POST(false, 4074, "게시글 삭제에 실패하였습니다."),
+    DELETE_FAIL_POST_COMMENT(false, 4075, "게시글 댓글 삭제에 실패하였습니다."),
 
     //USER 확인
-    USER_NOT_EQUAL(false, 4075, "게시글 유저가 아닙니다."),
-    USER_NOT_EQUAL_COMMENT(false, 4076, "댓글 유저가 아닙니다."),
-    USER_NOT_EQUAL_LIKE(false, 4077, "좋아요 누른 유저가 아닙니다."),
-    EXIST_USER(false, 4078, "이미 누르셨습니다."),
+    USER_NOT_EQUAL(false, 4076, "게시글 유저가 아닙니다."),
+    USER_NOT_EQUAL_COMMENT(false, 4077, "댓글 유저가 아닙니다."),
+    USER_NOT_EQUAL_LIKE(false, 4078, "좋아요 누른 유저가 아닙니다."),
 
     //내용확인
     EMPTY_CONTENT(false, 4079, "내용이 없습니다."),
@@ -83,6 +83,7 @@ public enum BaseResponseStatus {
 
     //삭제 불가
     DELETE_FAIL_POST_LIKE(false, 4085, "삭제가 되지 않았습니다."),
+    DELETE_FAIL_COMMENT_REPLY(false, 4086, "답글 삭제가 되지 않았습니다."),
 
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),

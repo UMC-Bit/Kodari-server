@@ -82,8 +82,11 @@ public class PostService {
     //토론장 게시글 삭제
     public void modifyPostStatus(PatchDeleteReq post) throws BaseException{
         int postIdx = post.getPostIdx();
-        int userIdx = post.getUserIdx();
+        int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
         int user = postRepository.getUserIdxByPostIdx(postIdx);
+        List<PostDto.GetCommentDeleteRes> getCommentDeleteRes = postRepository.getPostCommentIdxByPostIdx(postIdx);
+        List<PostDto.GetLikeDeleteRes> getLikeDeleteRes = postRepository.getPostLikeIdxByPostIdx(postIdx);
+        List<PostDto.GetReplyDeleteRes> getReplyDeleteRes = postRepository.getReplyIdxByPostIdx(postIdx);
         if(userIdx != user) { //글쓴 유저가 아닌 경우 삭제 불가
             throw new BaseException(USER_NOT_EQUAL); //4072
         }
@@ -92,8 +95,23 @@ public class PostService {
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(DELETE_FAIL_POST); //407
             }
-            else {
-
+            for(int i=0; i< getCommentDeleteRes.size(); i++){
+                int resultComment = postRepository.modifyCommentStatus(getCommentDeleteRes.get(i).getPostCommentIdx());
+                if(resultComment == 0) {
+                    throw new BaseException(DELETE_FAIL_POST_COMMENT);
+                }
+            }
+            for(int i=0; i< getLikeDeleteRes.size(); i++){
+                int resultLike = postRepository.deleteLikeStatus(getLikeDeleteRes.get(i).getPostLikeIdx());
+                if(resultLike == 0) {
+                    throw new BaseException(DELETE_FAIL_POST_LIKE);
+                }
+            }
+            for(int i=0; i< getReplyDeleteRes.size(); i++){
+                int resultReply = postRepository.modifyReplyStatus(getReplyDeleteRes.get(i).getPostReplyIdx());
+                if(resultReply == 0) {
+                    throw new BaseException(DELETE_FAIL_COMMENT_REPLY);
+                }
             }
         }
 

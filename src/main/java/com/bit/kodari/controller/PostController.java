@@ -95,7 +95,7 @@ public class PostController {
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
             //같다면 유저네임 변경
-            PostDto.PatchDeleteReq patchDeleteReq = new PostDto.PatchDeleteReq(postIdx, userIdx);
+            PostDto.PatchDeleteReq patchDeleteReq = new PostDto.PatchDeleteReq(postIdx);
             postService.modifyPostStatus(patchDeleteReq);
             String result = "토론장 게시글이 삭제되었습니다.";
             return new BaseResponse<>(result);

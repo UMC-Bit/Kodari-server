@@ -33,12 +33,8 @@ public class PostLikeService {
         int postIdx = registerLikeReq.getPostIdx();
         int userIdx = registerLikeReq.getUserIdx();
         String status = postLikeRepository.getStatusByPostIdx(postIdx);
-        int cnt = postLikeRepository.getUserByIdx(userIdx, postIdx);
         if(status.equals("inactive")) {
             throw new BaseException(IMPOSSIBLE_POST);
-        }
-        else if(cnt >= 1) {
-            throw new BaseException(EXIST_USER);
         }
         try {
             return postLikeRepository.chooseLike(registerLikeReq);

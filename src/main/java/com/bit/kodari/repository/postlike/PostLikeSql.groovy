@@ -7,12 +7,7 @@ class PostLikeSql {
         values (:userIdx, :postIdx, :likeType)
         """
 
-    //user 확인
-    public static final String EXIST_USER = """
-        SELECT COUNT(*) as 'cnt'
-        FROM PostLike as l
-        WHERE l.postIdx = :postIdx and l.userIdx = userIdx
-        """
+
 
     //postLikeIdx로 userIdx 받아오기
     public static final String GET_LIKE_USER_IDX = """

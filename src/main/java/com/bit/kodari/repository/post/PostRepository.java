@@ -2,6 +2,7 @@ package com.bit.kodari.repository.post;
 
 import com.bit.kodari.dto.PostDto;
 import com.bit.kodari.repository.post.PostSql;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -43,6 +44,52 @@ public class PostRepository {
         });
     }
 
+    //postIdx 게시글 삭제 시 댓글 삭제
+    public List<PostDto.GetCommentDeleteRes> getPostCommentIdxByPostIdx(int postIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        try {
+            List<PostDto.GetCommentDeleteRes> getCommentDeleteRes =  namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_IDX, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetCommentDeleteRes(
+                            rs.getInt("postCommentIdx"))
+            );
+            return getCommentDeleteRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    //postIdx 게시글 삭제 시 라이크 삭제
+    public List<PostDto.GetLikeDeleteRes> getPostLikeIdxByPostIdx(int postIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        try {
+            List<PostDto.GetLikeDeleteRes> getLikeDeleteRes =  namedParameterJdbcTemplate.query(PostSql.GET_LIKE_IDX, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetLikeDeleteRes(
+                            rs.getInt("postLikeIdx"))
+            );
+            return getLikeDeleteRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    //postIdx 게시글 삭제 시 답글 삭제
+    public List<PostDto.GetReplyDeleteRes> getReplyIdxByPostIdx(int postIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        try {
+            List<PostDto.GetReplyDeleteRes> getReplyDeleteRes =  namedParameterJdbcTemplate.query(PostSql.GET_REPLY_IDX, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetReplyDeleteRes(
+                            rs.getInt("postReplyIdx"))
+            );
+            return getReplyDeleteRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+
     //postIdx로 Status 가져오기
     public String getStatusByPostIdx(int postIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
@@ -71,21 +118,26 @@ public class PostRepository {
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
-    //postIdx로 postCommentIdx 받아오기
-    public List<PostDto.CommentDeleteReq> getCommentIdxByPostIdx(int postIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx)
-        try {
-            List<PostDto.CommentDeleteReq> getAccountNameRes =  namedParameterJdbcTemplate.query(AccountSql.GET_ACCOUNT_NAME, parameterSource,
-                    (rs, rowNum) -> new AccountDto.GetAccountNameRes(
-                            rs.getString("accountName"))
-            );
-            return getAccountNameRes;
-
-        }catch(EmptyResultDataAccessException e){
-            return null;
-        }
-
+    //게시글 댓글 삭제
+    public int modifyCommentStatus(int postCommentIdx) {
+        String qry = PostSql.DELETE_COMMENT;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
+    //게시글 싫어요/좋아요 삭제
+    public int deleteLikeStatus(int postLikeIdx) {
+        String qry = PostSql.DELETE_LIKE;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", postLikeIdx);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
+    //게시글 답글 삭제
+    public int modifyReplyStatus(int postReplyIdx) {
+        String qry = PostSql.DELETE_REPLY;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
+
+
 
     //토론장 게시글 조회
     public List<PostDto.GetPostRes> getPosts(){

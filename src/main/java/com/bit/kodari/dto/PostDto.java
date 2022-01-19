@@ -50,26 +50,35 @@ public class PostDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
     public static class PatchDeleteReq{
         private int postIdx;
-        private int userIdx;
     }
 
+    //토론장 게시글 댓글 삭제
     @Data
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
-    public static class CommentDeleteReq{
-        private int postIdx;
+    public static class GetCommentDeleteRes{
         private int postCommentIdx;
-
     }
 
+    //토론장 게시글 좋아요/싫어요 삭제
     @Data
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
-    public static class LikeDeleteReq{
-        private int postIdx;
+    public static class GetLikeDeleteRes{
         private int postLikeIdx;
-
     }
+
+
+    //토론장 게시글 답글 삭제
+    @Data
+    @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
+    public static class GetReplyDeleteRes{
+        private int postReplyIdx;
+    }
+
+
+
 
 
     //토론장 게시글 조회

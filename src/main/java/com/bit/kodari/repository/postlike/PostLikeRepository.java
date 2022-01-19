@@ -34,20 +34,6 @@ public class PostLikeRepository {
         return PostLikeDto.RegisterLikeRes.builder().likeType(post.getLikeType()).build();
     }
 
-    //user 확인
-    public int getUserByIdx(int userIdx, int postIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("userIdx", userIdx)
-                .addValue("postIdx", postIdx);
-        return namedParameterJdbcTemplate.query(postLikeSql.EXIST_USER, parameterSource, rs -> {
-            int cnt = 0;
-            if (rs.next()) {
-                cnt = rs.getInt("cnt");
-            }
-
-            return cnt;
-        });
-    }
 
 
     //postLikeIdx로 좋아요/싫어요한 userIdx 가져오기
