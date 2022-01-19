@@ -79,7 +79,7 @@ public class PostService {
         }
     }
 
-    //토론장 게시글 삭제
+    //토론장 게시글 다 삭제
     public void modifyPostStatus(PatchDeleteReq post) throws BaseException{
         int postIdx = post.getPostIdx();
         int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
