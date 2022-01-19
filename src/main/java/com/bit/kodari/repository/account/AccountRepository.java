@@ -101,9 +101,10 @@ public class AccountRepository {
     }
 
     // Trade - 현금 자산 수정
-    public int modifyTradeProperty(double property, int accountIdx) {
+    public int modifyTradeProperty(double property, double totalProperty, int accountIdx) {
         String qry = AccountSql.UPDATE_TRADE_PROPERTY;
         SqlParameterSource parameterSource = new MapSqlParameterSource("property", property)
+                .addValue("totalProperty", totalProperty)
                 .addValue("accountIdx", accountIdx);
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }

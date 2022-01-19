@@ -134,6 +134,7 @@ public class AccountService {
         double price = accountRepository.getPrice(account.getTradeIdx());
         double amount = accountRepository.getAmount(account.getTradeIdx()); //새로 산 코인 갯수
         double fee = accountRepository.getFee(account.getTradeIdx());
+        double totalProperty = accountRepository.getTotalPropertyByAccount(account.getAccountIdx());
 
         double newProperty = 0;
 
@@ -144,6 +145,7 @@ public class AccountService {
             //현금 자산 새로 계산해서 업데이트
             //총자산 새로 업데이트
             newProperty = property - (price * amount) - (price * amount * fee);
+            totalProperty = totalProperty - property + newProperty + (price * amount);
             if(newProperty < 0 || newProperty > max){
                 throw new BaseException(PROPERTY_RANGE_ERROR); //4044
             }
@@ -151,12 +153,13 @@ public class AccountService {
             //매도일때
             //현금 자산 새로 계산해서 업데이트
             newProperty = property + (price * amount) - (price * amount * fee);
+            totalProperty = totalProperty - property + newProperty - (price * amount);
         }else{
             throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
         }
 
         try {
-            int result = accountRepository.modifyTradeProperty(newProperty, account.getAccountIdx());
+            int result = accountRepository.modifyTradeProperty(newProperty, totalProperty, account.getAccountIdx());
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(MODIFY_FAIL_PROPERTY); //4041
             }
