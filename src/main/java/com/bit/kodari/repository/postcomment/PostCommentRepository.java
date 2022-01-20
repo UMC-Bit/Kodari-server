@@ -104,7 +104,6 @@ public class PostCommentRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
         List<PostCommentDto.GetCommentRes> getCommentRes = namedParameterJdbcTemplate.query(PostCommentSql.LIST_POST_COMMENT,parameterSource,
                 (rs, rowNum) -> new PostCommentDto.GetCommentRes(
-                        rs.getInt("boardIdx"),
                         rs.getString("nickName"),
                         rs.getInt("likeCnt"),
                         rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
@@ -118,7 +117,6 @@ public class PostCommentRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
         List<PostCommentDto.GetCommentRes> getCommentsRes = namedParameterJdbcTemplate.query(PostCommentSql.LIST_USER_COMMENT, parameterSource,
                 (rs, rowNum) -> new PostCommentDto.GetCommentRes(
-                        rs.getInt("boardIdx"),
                         rs.getString("nickName"),
                         rs.getInt("likeCnt"),
                         rs.getString("content"))

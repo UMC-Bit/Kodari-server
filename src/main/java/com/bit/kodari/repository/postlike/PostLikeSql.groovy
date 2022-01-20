@@ -39,14 +39,15 @@ class PostLikeSql {
 
     //토론장 게시글 좋아요/싫어요 수정
     public static final String UPDATE_POST_LIKE = """
-         UPDATE PostLike SET likeType = :likeType
+         UPDATE PostLike
+         SET likeType = :likeType
          WHERE postIdx = :postIdx
     """
 
     //토론장 게시글 좋아요/싫어요 삭제
     public static final String DELETE_POST_LIKE = """
-         DELETE FROM PostLike as l join Post as p on l.postIdx = p.postIdx 
-         WHERE l.postLikeIdx = :postLikeIdx and p.status = 'inactive' 
+         DELETE FROM PostLike 
+         WHERE postLikeIdx = :postLikeIdx
     """
 
     //토론장 게시글별 좋아요 조회

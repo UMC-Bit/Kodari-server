@@ -106,10 +106,11 @@ public class PostLikeRepository {
     //게시글 좋아요/싫어요 수정
     public int modifyLike(PostLikeDto.PatchLikeReq patchLikeReq) {
         String qry = PostLikeSql.UPDATE_POST_LIKE;
-        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", patchLikeReq.getPostIdx())
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", patchLikeReq.getPostLikeIdx())
                 .addValue("likeType", patchLikeReq.getLikeType());
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
+
 
     //게시글 좋아요/싫어요 삭제
     public int deleteLike(PostLikeDto.DeleteLikeReq deleteLikeReq) {

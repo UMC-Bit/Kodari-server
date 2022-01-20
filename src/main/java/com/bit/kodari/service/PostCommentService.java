@@ -30,9 +30,13 @@ public class PostCommentService {
     // 토론장 게시글 댓글 등록 (POST)
     //토론장 게시글 댓글 등록
     public PostCommentDto.RegisterCommentRes insertPostComment(PostCommentDto.RegisterCommentReq registerCommentReq) throws BaseException {
-
+        int postIdx = registerCommentReq.getPostIdx();
+        String post_status = postCommentRepository.getStatusByPostIdx(postIdx);
         String content = registerCommentReq.getContent();
-        if(content.isEmpty()) {
+        if(post_status.equals("inactive")) {
+            throw new BaseException(IMPOSSIBLE_POST);
+        }
+        else if(content.isEmpty()) {
             throw new BaseException(EMPTY_CONTENT); //4074
         }
         else if(content.length() >= 100) {

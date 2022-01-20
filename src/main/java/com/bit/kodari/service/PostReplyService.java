@@ -28,7 +28,10 @@ public class PostReplyService {
 
     //토론장 게시글 답글 등록
     public PostReplyDto.RegisterReplyRes insertCommentReply(PostReplyDto.RegisterReplyReq registerReplyReq) throws BaseException {
+        int postCommentIdx = registerReplyReq.getPostCommentIdx();
         String content = registerReplyReq.getContent();
+        String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
+
         if(content.isEmpty()) {
             throw new BaseException(EMPTY_CONTENT);
         }

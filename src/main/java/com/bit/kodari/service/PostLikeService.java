@@ -44,26 +44,31 @@ public class PostLikeService {
     }
 
     //토론장 게시글 좋아요/싫어요 수정
-    public void modifyLike(PostLikeDto.PatchLikeReq post) throws BaseException {
+    public void modifyLike(PostLikeDto.PatchLikeReq post, PostLikeDto.DeleteLikeReq delete) throws BaseException {
         int postLikeIdx = post.getPostLikeIdx();
         int userIdx = post.getUserIdx();
         int likeType = post.getLikeType();
         int user = postLikeRepository.getUserIdxByPostLikeIdx(postLikeIdx);
         String status = postLikeRepository.getStatusByPostLikeIdx(postLikeIdx);
-        int exist_likeType = postLikeRepository.getLikeTypeByPostLikeIdx(postLikeIdx);
+        int equal_likeType = postLikeRepository.getLikeTypeByPostLikeIdx(postLikeIdx);
         if(status.equals("inactive")) {
             throw new BaseException(IMPOSSIBLE_POST);
-        }
-        else if(likeType == exist_likeType) {
-            throw new BaseException(EQUAL_LIKE_TYPE);
         }
         else if(userIdx != user) {
             throw new BaseException(USER_NOT_EQUAL_LIKE); //4073
         }
         else {
-            int result = postLikeRepository.modifyLike(post);
-            if (result == 0) { // 0이면 에러가 발생
-                throw new BaseException(MODIFY_FAIL_POST_LIKE); //4070
+            if(likeType == equal_likeType){
+                int result = postLikeRepository.deleteLike(delete);
+                if(result == 0) {
+                    throw new BaseException(DELETE_FAIL_POST_LIKE);
+                }
+            }
+            else {
+                int result = postLikeRepository.modifyLike(post);
+                if (result == 0) { // 0이면 에러가 발생
+                    throw new BaseException(MODIFY_FAIL_POST_LIKE); //4070
+                }
             }
         }
         try {
@@ -76,18 +81,11 @@ public class PostLikeService {
 
     //토론장 게시글 좋아요/싫어요 삭제
     public void deleteLike(PostLikeDto.DeleteLikeReq post) throws BaseException {
-        int postIdx = post.getPostIdx();
-        String post_status = postLikeRepository.getStatusByPostIdx(postIdx);
-        if(post_status.equals("active")) {
-            throw new BaseException(IMPOSSIBLE_POST_LIKE_DELETE);
-        }
-        else {
+        try {
             int result = postLikeRepository.deleteLike(post);
             if (result == 0) { // 0이면 에러가 발생
                 throw new BaseException(DELETE_FAIL_POST_LIKE);
             }
-        }
-        try {
 
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);

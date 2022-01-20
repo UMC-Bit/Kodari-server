@@ -130,6 +130,7 @@ public class PostRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", postLikeIdx);
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
+
     //게시글 답글 삭제
     public int modifyReplyStatus(int postReplyIdx) {
         String qry = PostSql.DELETE_REPLY;

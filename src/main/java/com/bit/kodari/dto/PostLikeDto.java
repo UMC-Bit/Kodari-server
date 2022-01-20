@@ -50,8 +50,17 @@ public class PostLikeDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class DeleteLikeReq{
         private int postLikeIdx;
-        private int postIdx;
     }
+
+    //토론장 게시글 좋아요/싫어요 수정 시 중복 삭제
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class DeleteReq{
+        private int postLikeIdx;
+    }
+
+
 
     //토론장 게시글별 좋아요 조회
     @Data

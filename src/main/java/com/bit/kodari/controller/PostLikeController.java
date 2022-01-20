@@ -68,7 +68,8 @@ public class PostLikeController {
 //            }
             //같다면 유저네임 변경
             PostLikeDto.PatchLikeReq patchLikeReq = new PostLikeDto.PatchLikeReq(postLikeIdx, userIdx, postIdx, post.getLikeType());
-            postLikeService.modifyLike(patchLikeReq);
+            PostLikeDto.DeleteLikeReq deleteLikeReq = new PostLikeDto.DeleteLikeReq(postLikeIdx);
+            postLikeService.modifyLike(patchLikeReq, deleteLikeReq);
             String result = "토론장 게시글의 찬성/반대가 수정되었습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
@@ -91,7 +92,7 @@ public class PostLikeController {
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
             //같다면 유저네임 변경
-            PostLikeDto.DeleteLikeReq deleteLikeReq = new PostLikeDto.DeleteLikeReq(postLikeIdx, postIdx);
+            PostLikeDto.DeleteLikeReq deleteLikeReq = new PostLikeDto.DeleteLikeReq(postLikeIdx);
             postLikeService.deleteLike(deleteLikeReq);
             String result = "토론장 게시글의 좋아요/싫어요가 삭제되었습니다.";
             return new BaseResponse<>(result);
