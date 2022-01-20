@@ -145,8 +145,9 @@ public class PostRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource();
         List<PostDto.GetPostRes> getPostRes = namedParameterJdbcTemplate.query(PostSql.LIST_POST,parameterSource,
                 (rs, rowNum) -> new PostDto.GetPostRes(
-                        rs.getString("boardName"),
+                        rs.getString("symbol"),
                         rs.getString("nickName"),
+                        rs.getString("profileImgUrl"),
                         rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
@@ -158,8 +159,23 @@ public class PostRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
         List<PostDto.GetPostRes> getPostRes = namedParameterJdbcTemplate.query(PostSql.LIST_USER_POST, parameterSource,
                 (rs, rowNum) -> new PostDto.GetPostRes(
-                        rs.getString("boardName"),
+                        rs.getString("symbol"),
                         rs.getString("nickName"),
+                        rs.getString("profileImgUrl"),
+                        rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        );
+
+        return getPostRes;
+    }
+
+    //토론장 특정 게시글의 게시글 조회
+    public List<PostDto.GetPostRes> getPostsByPostIdx(int postIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        List<PostDto.GetPostRes> getPostRes = namedParameterJdbcTemplate.query(PostSql.LIST_POSTS, parameterSource,
+                (rs, rowNum) -> new PostDto.GetPostRes(
+                        rs.getString("symbol"),
+                        rs.getString("nickName"),
+                        rs.getString("profileImgUrl"),
                         rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 

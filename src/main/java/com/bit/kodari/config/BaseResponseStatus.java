@@ -65,22 +65,23 @@ public enum BaseResponseStatus {
     DELETE_FAIL_POST_COMMENT(false, 4075, "댓글 삭제에 실패하였습니다."),
     DELETE_FAIL_POST_LIKE(false, 4076, "좋아요/싫어요 삭제에 실패하였습니다."),
     DELETE_FAIL_COMMENT_REPLY(false, 4077, "답글 삭제에 실패하였습니다."),
+    DELETE_FAIL_COMMENT_LIKE(false, 4078, "댓글의 좋아요 삭제에 실패하였습니다."),
 
     //USER 확인
-    USER_NOT_EQUAL(false, 4078, "게시글 유저가 아닙니다."),
-    USER_NOT_EQUAL_COMMENT(false, 4079, "댓글 유저가 아닙니다."),
-    USER_NOT_EQUAL_LIKE(false, 4080, "좋아요/싫어요 누른 유저가 아닙니다."),
-    USER_NOT_EQUAL_REPLY(false, 4081, "답근 유저가 아닙니다."),
+    USER_NOT_EQUAL(false, 4079, "게시글 유저가 아닙니다."),
+    USER_NOT_EQUAL_COMMENT(false, 4080, "댓글 유저가 아닙니다."),
+    USER_NOT_EQUAL_LIKE(false, 4081, "좋아요/싫어요 누른 유저가 아닙니다."),
+    USER_NOT_EQUAL_REPLY(false, 4082, "답근 유저가 아닙니다."),
 
     //글 존재여부
-    IMPOSSIBLE_POST(false, 4082, "게시글이 존재하지 않습니다."),
-    IMPOSSIBLE_POST_COMMENT(false, 4083, "댓글이 존재하지 않습니다."),
+    IMPOSSIBLE_POST(false, 4083, "게시글이 존재하지 않습니다."),
+    IMPOSSIBLE_POST_COMMENT(false, 4084, "댓글이 존재하지 않습니다."),
 
     //내용확인
-    EMPTY_CONTENT(false, 4084, "내용이 없습니다."),
+    EMPTY_CONTENT(false, 4085, "내용이 없습니다."),
 
     //글자수 확인
-    OVER_CONTENT(false, 4085, "글자수가 초과되었습니다."),
+    OVER_CONTENT(false, 4086, "글자수가 초과되었습니다."),
 
 
 

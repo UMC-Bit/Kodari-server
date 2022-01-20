@@ -2,6 +2,7 @@ package com.bit.kodari.controller;
 
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponse;
+import com.bit.kodari.dto.PostCommentDto;
 import com.bit.kodari.dto.PostDto;
 import com.bit.kodari.repository.post.PostRepository;
 import com.bit.kodari.service.PostService;
@@ -119,6 +120,20 @@ public class PostController {
             }
             // query string인 userIdx이 있을 경우, 조건을 만족하는 상품정보들을 불러온다.
             List<PostDto.GetPostRes> getPostsRes = postService.getPostsByUserIdx(userIdx);
+            return new BaseResponse<>(getPostsRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /*
+        토론장 게시글별 조회
+     */
+    @GetMapping("/post") // (GET) 127.0.0.1:9000/posts
+    @ApiOperation(value = "게시글별 조회", notes = "토론장 게시글별 조회함")
+    public BaseResponse<List<PostDto.GetPostRes>> getComments(@RequestParam int postIdx) {
+        try {
+            List<PostDto.GetPostRes> getPostsRes = postService.getPostsByPostIdx(postIdx);
             return new BaseResponse<>(getPostsRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

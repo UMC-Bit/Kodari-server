@@ -31,7 +31,11 @@ public class PostReplyService {
         int postCommentIdx = registerReplyReq.getPostCommentIdx();
         String content = registerReplyReq.getContent();
         String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
-        if(comment_status.equals("inactive")) { //삭제된 댓글에 답글 등록 불가
+        String post_status = postReplyRepository.getPostStatusByPostCommentIdx(postCommentIdx);
+        if(post_status.equals("inactive")) {//삭제된 게시글에 답글 등록 불가
+            throw new BaseException(IMPOSSIBLE_POST);
+        }
+        else if(comment_status.equals("inactive")) { //삭제된 댓글에 답글 등록 불가
             throw new BaseException(IMPOSSIBLE_POST_COMMENT);
         }
         else if(content.isEmpty()) { //빈 내용은 등록 불가
@@ -52,10 +56,19 @@ public class PostReplyService {
     public void modifyReply(PostReplyDto.PatchReplyReq post) throws BaseException{
         int postReplyIdx = post.getPostReplyIdx();
         int userIdx = post.getUserIdx();
+        int postCommentIdx = post.getPostCommentIdx();
         String content = post.getContent();
+        String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
+        String post_status = postReplyRepository.getPostStatusByPostCommentIdx(postCommentIdx);
         int user = postReplyRepository.getUserIdxByPostReplyIdx(postReplyIdx);
         if(userIdx != user) { //답글 쓴 유저가 아니면 수정불가
             throw new BaseException(USER_NOT_EQUAL_REPLY);
+        }
+        else if(post_status.equals("inactive")) {//삭제된 게시글에 답글 수정 불가
+            throw new BaseException(IMPOSSIBLE_POST);
+        }
+        else if(comment_status.equals("inactive")) { //삭제된 댓글에 답글 수정 불가
+            throw new BaseException(IMPOSSIBLE_POST_COMMENT);
         }
         else if(content.isEmpty()) { //빈 내용이면 수정 불가
             throw new BaseException(EMPTY_CONTENT);

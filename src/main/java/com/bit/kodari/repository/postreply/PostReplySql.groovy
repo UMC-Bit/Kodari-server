@@ -23,6 +23,13 @@ class PostReplySql {
         WHERE r.postCommentIdx = :postCommentIdx
         """
 
+    //postCommentIdx로 status 받아오기
+    public static final String GET_POST_STATUS = """
+        SELECT DISTINCT p.status FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx
+               join Post as p on c.postIdx = p.postIdx
+        WHERE r.postCommentIdx = :postCommentIdx;
+        """
+
     //토론장 게시글 답글 수정
     public static final String UPDATE_REPLY = """
          UPDATE PostReply SET content = :content

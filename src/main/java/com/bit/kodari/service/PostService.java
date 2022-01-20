@@ -60,6 +60,7 @@ public class PostService {
         else if(content.isEmpty()) { //게시글 내용 입력 없을 경우 validation 처리
             throw new BaseException(EMPTY_CONTENT);
         }
+        //게시글 내용 0자 이하 제한
         else if(content.length() >= 500) { //게시글 500자 이내 제한
             throw new BaseException(OVER_CONTENT);
         }
@@ -142,5 +143,20 @@ public class PostService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    // 특정 게시글의 게시글 조회
+    public List<GetPostRes> getPostsByPostIdx(int postIdx) throws BaseException {
+        String status = postRepository.getStatusByPostIdx(postIdx);
+        if(status.equals("inactive")) { //삭제된 게시글이면 조회 불가
+            throw new BaseException(IMPOSSIBLE_POST);
+        }
+        try {
+            List<GetPostRes> getPostsRes = postRepository.getPostsByPostIdx(postIdx);
+            return getPostsRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 
 }

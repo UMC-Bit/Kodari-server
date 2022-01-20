@@ -70,6 +70,20 @@ public class PostReplyRepository {
 
     }
 
+    //postCommentIdx로 게시글의 status 가져오기
+    public String getPostStatusByPostCommentIdx(int postCommentIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
+        return namedParameterJdbcTemplate.query(postReplySql.GET_POST_STATUS, parameterSource, rs -> {
+            String post_status = " ";
+            if (rs.next()) {
+                post_status = rs.getString("status");
+            }
+
+            return post_status;
+        });
+
+    }
+
     //답글 수정
     public int modifyReply(PostReplyDto.PatchReplyReq patchReplyReq) {
         String qry = PostReplySql.UPDATE_REPLY;

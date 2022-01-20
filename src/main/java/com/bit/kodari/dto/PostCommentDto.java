@@ -60,7 +60,7 @@ public class PostCommentDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetCommentRes{
         private String nickName;
-        private int likeCnt;
+        private String profileImgUrl;
         private String content;
 
     }

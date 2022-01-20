@@ -86,9 +86,10 @@ public class PostDto {
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetPostRes{
-        private String boardName;
-        private String nickName;
-        private String content;
+        private String symbol; //코인 심볼
+        private String nickName; //유저 닉네임
+        private String profileImgUrl; //유저 프로필
+        private String content; //게시글 내용
     }
 
 

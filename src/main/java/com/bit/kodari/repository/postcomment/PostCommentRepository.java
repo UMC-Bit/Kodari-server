@@ -105,7 +105,7 @@ public class PostCommentRepository {
         List<PostCommentDto.GetCommentRes> getCommentRes = namedParameterJdbcTemplate.query(PostCommentSql.LIST_POST_COMMENT,parameterSource,
                 (rs, rowNum) -> new PostCommentDto.GetCommentRes(
                         rs.getString("nickName"),
-                        rs.getInt("likeCnt"),
+                        rs.getString("profileImgUrl"),
                         rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
@@ -118,7 +118,7 @@ public class PostCommentRepository {
         List<PostCommentDto.GetCommentRes> getCommentsRes = namedParameterJdbcTemplate.query(PostCommentSql.LIST_USER_COMMENT, parameterSource,
                 (rs, rowNum) -> new PostCommentDto.GetCommentRes(
                         rs.getString("nickName"),
-                        rs.getInt("likeCnt"),
+                        rs.getString("profileImgUrl"),
                         rs.getString("content"))
         );
 
