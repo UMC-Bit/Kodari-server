@@ -37,7 +37,8 @@ public class AccountRepository {
                 .addValue("marketIdx", account.getMarketIdx())
                 .addValue("property", account.getProperty());
         namedParameterJdbcTemplate.update(accountSql.INSERT, parameterSource, keyHolder);
-        return AccountDto.PostAccountRes.builder().accountName(account.getAccountName()).build();
+        int pk = keyHolder.getKey().intValue();
+        return AccountDto.PostAccountRes.builder().accountIdx(pk).accountName(account.getAccountName()).build();
     }
 
     // Account 총자산 수정

@@ -20,6 +20,8 @@ public class UserCoinService {
     private UserCoinRepository userCoinRepository;
 
     //소유 코인 등록
+
+    // TODO 매수평단가, amount 0, 음수는 안됨, max 값 수정
     public UserCoinDto.PostUserCoinRes registerUserCoin(UserCoinDto.PostUserCoinReq postUserCoinReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postUserCoinReq.getAccountIdx();
@@ -116,7 +118,7 @@ public class UserCoinService {
         int tradeIdx = userCoinRepository.getTradeIdx(coinIdx, portIdx); // portIdx를 accountIdx로 바꿔야함
         String category = userCoinRepository.getCategory(tradeIdx); //매수인지 매도인지
         double price = userCoinRepository.getPrice(tradeIdx);
-        double amount2 = userCoinRepository.getAmount(tradeIdx); //새로 산 코인 갯수
+        double newCoinAmount = userCoinRepository.getAmount(tradeIdx); //새로 산 코인 갯수
         double fee = userCoinRepository.getFee(tradeIdx);
 
         //기존 총자산
@@ -124,21 +126,25 @@ public class UserCoinService {
         //기존 현금자산
         double property = userCoinRepository.getProperty(accountIdx);
         //기존 코인 갯수
-        double amount1 = userCoinRepository.getAmountByUserCoinIdx(userCoinIdx);
+        double existCoinAmount = userCoinRepository.getAmountByUserCoinIdx(userCoinIdx);
         //기존 매수평단가
         double priceAvg = userCoinRepository.getPriceAvg(userCoinIdx);
         double total = 0; //새로운 매수평단가
-        double amount3 = 0; //새로운 코인 전체 갯수
+        double sumCoinAmount = 0; //새로운 코인 전체 갯수
         double newTotal = 0; //새로운 총자산
 
         //매수일때
         if(category.equals("buy")){
             //매수평단가 새로 계산해서 업데이트
-            amount3 = amount1 + amount2;
-            total = (priceAvg * amount1 + price * amount2) / amount3;
+            sumCoinAmount = existCoinAmount + newCoinAmount;
+            total = (priceAvg * existCoinAmount + price * newCoinAmount) / sumCoinAmount;
         }else if(category.equals("sell")) {
-            amount3 = amount1 - amount2;
-            total = (priceAvg * amount1 - price * amount2) / amount3;
+            sumCoinAmount = existCoinAmount - newCoinAmount;
+            // TODO 기존 수량보다 new가 더 크면 안됨. 오류 이름 수정
+            if(sumCoinAmount < 0){
+                throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
+            }
+            total = (priceAvg * existCoinAmount - price * newCoinAmount) / sumCoinAmount;
             if(total < 0){
                 throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
             }
@@ -148,7 +154,7 @@ public class UserCoinService {
         }
 
         try {
-            int result = userCoinRepository.updatePriceAvg(userCoinIdx, total, amount3);
+            int result = userCoinRepository.updatePriceAvg(userCoinIdx, total, sumCoinAmount);
             if(result == 0) { // 0이면 에러가 발생
                 throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
             }

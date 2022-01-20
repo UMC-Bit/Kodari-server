@@ -114,11 +114,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
                 AccountDto.PatchAccountNameReq patchAccountNameReq = new AccountDto.PatchAccountNameReq(account.getAccountName(), accountIdx);
                 accountService.updateAccountName(patchAccountNameReq);
 
@@ -159,11 +159,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
             AccountDto.PatchPropertyReq patchPropertyReq = new AccountDto.PatchPropertyReq(accountIdx, account.getProperty());
             accountService.updateProperty(patchPropertyReq);
 
@@ -174,6 +174,10 @@ public class AccountController {
         }
     }
 
+
+    /**
+     * Trade에서 AccountService 받아서 동시에 돌아가게 만듦.
+     */
     // Trade - 현금 자산 수정하기
     @ResponseBody
     @PatchMapping("/modify/property/{tradeIdx}")
@@ -183,11 +187,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByPort(accountIdx);
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
             AccountDto.PatchTradePropertyReq patchTradePropertyReq = new AccountDto.PatchTradePropertyReq(tradeIdx, accountIdx);
             accountService.updateTradeProperty(patchTradePropertyReq);
 
@@ -205,11 +209,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
         try {
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            //int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+            //if(userIdx != userIdxByJwt){
+                //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
             AccountDto.PatchAccountDelReq patchAccountDelReq = new AccountDto.PatchAccountDelReq(accountIdx);
             accountService.deleteByName(patchAccountDelReq);
 

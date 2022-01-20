@@ -24,7 +24,7 @@ class AccountSql {
 
     //현금 자산 수정
     public static final String UPDATE_PROPERTY = """
-			UPDATE Account SET property = :property WHERE accountIdx = :accountIdx
+			UPDATE Account SET property = :property WHERE accountIdx = :accountIdx 
     """
 
     //Trade - 현금 자산 수정

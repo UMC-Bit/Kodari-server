@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class PortfolioDto {
     //Portfolio 기본 정보
     @Data
@@ -40,6 +42,9 @@ public class PortfolioDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class GetPortfolioRes{
+        //private List<UserCoinDto.UserCoin> userCoinList;
+        //대표코인 리스트 - 해당 포트폴리오의
+        //아래 지우기
         private int portIdx;
         private int accountIdx;
         private String accountName;

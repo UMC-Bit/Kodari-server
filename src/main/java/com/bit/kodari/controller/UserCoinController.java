@@ -171,6 +171,7 @@ public class UserCoinController {
     }
 
     //소유 코인 전체 삭제하기
+    // TODO 나중에 없애기
     @ResponseBody
     @PatchMapping("/delAll/{userIdx}")
     public BaseResponse<String> deleteByUserIdx(@PathVariable("userIdx") int userIdx) {

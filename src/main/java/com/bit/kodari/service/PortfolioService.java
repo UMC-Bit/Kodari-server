@@ -24,6 +24,7 @@ public class PortfolioService {
     private PortfolioRepository portfolioRepository;
 
     //포트폴리오 등록
+    //포트폴리오 3개 초과 생성 안됨
     public PortfolioDto.PostPortfolioRes registerPortfolio(PortfolioDto.PostPortfolioReq postPortfolioReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postPortfolioReq.getAccountIdx();
@@ -50,6 +51,8 @@ public class PortfolioService {
 
 
     //포트폴리오 조회
+    //userCoinIdx 대괄호로 쫘르륵...?
+    // 수익률, 소득, 대표코인 (코인별로)
     public  List<PortfolioDto.GetPortfolioRes> getPortfolio(int portIdx) throws BaseException {
         //status가 inactive인 account는 오류 메시지
         //String status = accountRepository.getStatusByAccountIdx(accountIdx);

@@ -24,6 +24,7 @@ class PortfolioSql {
     """
 
     //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록
+    //대표코인
     public static final String DELETE = """
 			UPDATE Portfolio AS p, UserCoin AS u, Account AS a 
 			SET p.status = 'inactive', u.status = 'inactive', a.status = 'inactive' 

@@ -31,11 +31,15 @@ public class AccountService {
 
         List<AccountDto.GetAccountNameRes> getAccountNameRes = accountRepository.getAccountNameByIdx(userIdx, marketIdx);
 
+        //계좌 이름 null X
+
         if(property < 0 || property > max){
-            throw new BaseException(PROPERTY_RANGE_ERROR); //4044
+            // 현금 자산 범위 초과
+            throw new BaseException(PROPERTY_RANGE_ERROR);
         }else {
             for(int i=0; i< getAccountNameRes.size(); i++){
                 if(getAccountNameRes.get(i).getAccountName().equals(accountName)){
+                    // 계좌 이름 중복
                     throw new BaseException(DUPLICATED_ACCOUNT_NAME); //4040
                 }
             }
@@ -80,6 +84,7 @@ public class AccountService {
     }
 
     //계좌 이름 수정
+    // 스페이스바 validation 추가
     public void updateAccountName(PatchAccountNameReq account) throws BaseException{
         //같은 이름은 안되게 validation 추가
         //같은 유저의 같은 거래소에는 같은 이름을 가진 계좌가 있으면 안됨.
@@ -110,7 +115,7 @@ public class AccountService {
     //현금 자산 수정
     public void updateProperty(PatchPropertyReq account) throws BaseException{
         //음수, 너무 큰 수 안되게
-        //유저 확인
+        //계좌 활성 상태 확인
         long property = account.getProperty();
         long max = 100000000000L;
         int userIdx = accountRepository.getUserIdxByAccountIdx(account.getAccountIdx());
@@ -134,7 +139,7 @@ public class AccountService {
         double price = accountRepository.getPrice(account.getTradeIdx());
         double amount = accountRepository.getAmount(account.getTradeIdx()); //새로 산 코인 갯수
         double fee = accountRepository.getFee(account.getTradeIdx());
-        double totalProperty = accountRepository.getTotalPropertyByAccount(account.getAccountIdx());
+        double totalProperty = accountRepository.getTotalPropertyByAccount(account.getAccountIdx()); //총자산
 
         double newProperty = 0;
 
@@ -190,6 +195,10 @@ public class AccountService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    /** 계좌 단일 조회
+     *
+     */
 
     // 해당 accountIdx를 갖는 계좌의 현금 자산 조회
     public  List<GetPropertyRes> getProperty(int accountIdx) throws BaseException {

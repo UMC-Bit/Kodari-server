@@ -31,11 +31,13 @@ public class PortfolioRepository {
                 .addValue("userIdx", portfolio.getUserIdx())
                 .addValue("accountIdx", portfolio.getAccountIdx());
         namedParameterJdbcTemplate.update(portfolioSql.INSERT, parameterSource, keyHolder);
-        return PortfolioDto.PostPortfolioRes.builder().accountIdx(portfolio.getAccountIdx()).build();
+        int pk = keyHolder.getKey().intValue();
+        return PortfolioDto.PostPortfolioRes.builder().portIdx(pk).userIdx(portfolio.getUserIdx()).accountIdx(portfolio.getAccountIdx()).build();
     }
 
 
     //포트폴리오 조회
+    //리스트로 받아오게 - 수정
     public List<PortfolioDto.GetPortfolioRes> getPortfolio(int portIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
         List<PortfolioDto.GetPortfolioRes> getPortfolioRes = namedParameterJdbcTemplate.query(PortfolioSql.GET_PORTFOLIO, parameterSource,
