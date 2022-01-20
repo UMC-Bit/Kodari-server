@@ -63,7 +63,6 @@ public class PostLikeRepository {
     }
 
 
-
     //postIdx로 게시글의 Status 가져오기
     public String getStatusByPostIdx(int postIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);

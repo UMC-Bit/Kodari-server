@@ -70,7 +70,7 @@ public class PostLikeController {
             PostLikeDto.PatchLikeReq patchLikeReq = new PostLikeDto.PatchLikeReq(postLikeIdx, userIdx, postIdx, post.getLikeType());
             PostLikeDto.DeleteLikeReq deleteLikeReq = new PostLikeDto.DeleteLikeReq(postLikeIdx);
             postLikeService.modifyLike(patchLikeReq, deleteLikeReq);
-            String result = "토론장 게시글의 찬성/반대가 수정되었습니다.";
+            String result = "토론장 게시글의 좋아요/싫어요가 수정되었습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

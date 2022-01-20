@@ -3,7 +3,7 @@ package com.bit.kodari.dto;
 import lombok.*;
 
 public class PostLikeDto {
-    //게시글에 대한 좋아요/싫어요 기본정보
+    //토론장 게시글에 대한 좋아요/싫어요 기본정보
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -15,7 +15,7 @@ public class PostLikeDto {
         private String status;
     }
 
-    //게시글 좋아요/싫어요 선택 REQUEST DTO
+    //토론장 게시글 좋아요/싫어요 선택 REQUEST DTO
     @Data
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
@@ -25,7 +25,7 @@ public class PostLikeDto {
         private int likeType;
     }
 
-    //게시글 좋아요/싫어요 선택 RESPONSE DTO
+    //토론장 게시글 좋아요/싫어요 선택 RESPONSE DTO
     @Data
     @Builder // 빌더 클래스 자동 생성
     public static class RegisterLikeRes{

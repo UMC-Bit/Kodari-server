@@ -53,37 +53,36 @@ public enum BaseResponseStatus {
 
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패하였습니다."),
+
+    //수정 실패
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
     MODIFY_FAIL_POST_COMMENT(false, 4071, "게시글 댓글 수정에 실패하였습니다."),
-    MODIFY_FAIL_POST_LIKE(false, 4072, "좋아요 수정에 실패하였습니다."),
+    MODIFY_FAIL_POST_LIKE(false, 4072, "좋아요/싫어요 수정에 실패하였습니다."),
     MODIFY_FAIL_POST_REPLY(false, 4073, "답글 수정에 실패하였습니다."),
 
-    //삭제
+    //삭제 실패
     DELETE_FAIL_POST(false, 4074, "게시글 삭제에 실패하였습니다."),
-    DELETE_FAIL_POST_COMMENT(false, 4075, "게시글 댓글 삭제에 실패하였습니다."),
+    DELETE_FAIL_POST_COMMENT(false, 4075, "댓글 삭제에 실패하였습니다."),
+    DELETE_FAIL_POST_LIKE(false, 4076, "좋아요/싫어요 삭제에 실패하였습니다."),
+    DELETE_FAIL_COMMENT_REPLY(false, 4077, "답글 삭제에 실패하였습니다."),
 
     //USER 확인
-    USER_NOT_EQUAL(false, 4076, "게시글 유저가 아닙니다."),
-    USER_NOT_EQUAL_COMMENT(false, 4077, "댓글 유저가 아닙니다."),
-    USER_NOT_EQUAL_LIKE(false, 4078, "좋아요 누른 유저가 아닙니다."),
-
-    //내용확인
-    EMPTY_CONTENT(false, 4079, "내용이 없습니다."),
+    USER_NOT_EQUAL(false, 4078, "게시글 유저가 아닙니다."),
+    USER_NOT_EQUAL_COMMENT(false, 4079, "댓글 유저가 아닙니다."),
+    USER_NOT_EQUAL_LIKE(false, 4080, "좋아요/싫어요 누른 유저가 아닙니다."),
+    USER_NOT_EQUAL_REPLY(false, 4081, "답근 유저가 아닙니다."),
 
     //글 존재여부
-    IMPOSSIBLE_POST(false, 4080, "게시글이 존재하지 않습니다."),
-    IMPOSSIBLE_POST_COMMENT(false, 4081, "댓글이 존재하지 않습니다."),
-    IMPOSSIBLE_POST_LIKE_DELETE(false, 4082, "게시글이 존재하기때문에 삭제가 불가능합니다."),
+    IMPOSSIBLE_POST(false, 4082, "게시글이 존재하지 않습니다."),
+    IMPOSSIBLE_POST_COMMENT(false, 4083, "댓글이 존재하지 않습니다."),
+
+    //내용확인
+    EMPTY_CONTENT(false, 4084, "내용이 없습니다."),
 
     //글자수 확인
-    OVER_CONTENT(false, 4083, "글자수가 초과되었습니다."),
+    OVER_CONTENT(false, 4085, "글자수가 초과되었습니다."),
 
-    //같은 LIKE 타입을 고른 경우
-    EQUAL_LIKE_TYPE(false, 4084, "이전과 같습니다."),
 
-    //삭제 불가
-    DELETE_FAIL_POST_LIKE(false, 4085, "삭제가 되지 않았습니다."),
-    DELETE_FAIL_COMMENT_REPLY(false, 4086, "답글 삭제가 되지 않았습니다."),
 
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),

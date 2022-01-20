@@ -29,11 +29,10 @@ public class BoardController {
     @ApiOperation(value = "카테고리 조회", notes = "토론장 카테고리 조회함")
     public BaseResponse<List<BoardDto.GetBoardRes>> getBoards(@RequestParam(required = false) Integer boardIdx) {
         try {
-            if (boardIdx == null) { // query string인 sellerIdx이 없을 경우, 그냥 전체 상품정보를 불러온다.
+            if (boardIdx == null) {
                 List<BoardDto.GetBoardRes> getBoardsRes = boardService.getBoards();
                 return new BaseResponse<>(getBoardsRes);
             }
-            // query string인 userIdx이 있을 경우, 조건을 만족하는 상품정보들을 불러온다.
             List<BoardDto.GetBoardRes> getBoardsRes = boardService.getBoardsByBoardIdx(boardIdx);
             return new BaseResponse<>(getBoardsRes);
         } catch (BaseException exception) {

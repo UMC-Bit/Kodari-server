@@ -44,7 +44,7 @@ public class PostRepository {
         });
     }
 
-    //postIdx 게시글 삭제 시 댓글 삭제
+    //postIdx 게시글 삭제 시 관련된 댓글 삭제
     public List<PostDto.GetCommentDeleteRes> getPostCommentIdxByPostIdx(int postIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
         try {
@@ -59,7 +59,7 @@ public class PostRepository {
         }
     }
 
-    //postIdx 게시글 삭제 시 라이크 삭제
+    //postIdx 게시글 삭제 시 관련된 라이크 삭제
     public List<PostDto.GetLikeDeleteRes> getPostLikeIdxByPostIdx(int postIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
         try {
@@ -74,7 +74,7 @@ public class PostRepository {
         }
     }
 
-    //postIdx 게시글 삭제 시 답글 삭제
+    //postIdx 게시글 삭제 시 관련된 답글 삭제
     public List<PostDto.GetReplyDeleteRes> getReplyIdxByPostIdx(int postIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
         try {
@@ -118,20 +118,20 @@ public class PostRepository {
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
-    //게시글 댓글 삭제
+    //삭제된 게시글과 관련된 댓글 삭제
     public int modifyCommentStatus(int postCommentIdx) {
         String qry = PostSql.DELETE_COMMENT;
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
-    //게시글 싫어요/좋아요 삭제
+    //삭제된 게시글과 관련된 싫어요/좋아요 삭제
     public int deleteLikeStatus(int postLikeIdx) {
         String qry = PostSql.DELETE_LIKE;
         SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", postLikeIdx);
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
-    //게시글 답글 삭제
+    //삭제된 게시글과 관련된 답글 삭제
     public int modifyReplyStatus(int postReplyIdx) {
         String qry = PostSql.DELETE_REPLY;
         SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
@@ -140,7 +140,7 @@ public class PostRepository {
 
 
 
-    //토론장 게시글 조회
+    //토론장 게시글 전체 조회
     public List<PostDto.GetPostRes> getPosts(){
         SqlParameterSource parameterSource = new MapSqlParameterSource();
         List<PostDto.GetPostRes> getPostRes = namedParameterJdbcTemplate.query(PostSql.LIST_POST,parameterSource,

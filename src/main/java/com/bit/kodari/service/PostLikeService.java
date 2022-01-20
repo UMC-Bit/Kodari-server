@@ -31,9 +31,8 @@ public class PostLikeService {
     // 토론장 게시글 좋아요/싫어요 선택(POST)
     public PostLikeDto.RegisterLikeRes chooseLike(PostLikeDto.RegisterLikeReq registerLikeReq) throws BaseException {
         int postIdx = registerLikeReq.getPostIdx();
-        int userIdx = registerLikeReq.getUserIdx();
         String status = postLikeRepository.getStatusByPostIdx(postIdx);
-        if(status.equals("inactive")) {
+        if(status.equals("inactive")) { //삭제된 게시글이면 선택불가
             throw new BaseException(IMPOSSIBLE_POST);
         }
         try {
@@ -51,14 +50,14 @@ public class PostLikeService {
         int user = postLikeRepository.getUserIdxByPostLikeIdx(postLikeIdx);
         String status = postLikeRepository.getStatusByPostLikeIdx(postLikeIdx);
         int equal_likeType = postLikeRepository.getLikeTypeByPostLikeIdx(postLikeIdx);
-        if(status.equals("inactive")) {
+        if(status.equals("inactive")) { //삭제된 게시글이면 수정 불가
             throw new BaseException(IMPOSSIBLE_POST);
         }
-        else if(userIdx != user) {
-            throw new BaseException(USER_NOT_EQUAL_LIKE); //4073
+        else if(userIdx != user) { //같은 유저가 아니면 수정 불가
+            throw new BaseException(USER_NOT_EQUAL_LIKE);
         }
         else {
-            if(likeType == equal_likeType){
+            if(likeType == equal_likeType){ //같은 타입을 고르면 삭제
                 int result = postLikeRepository.deleteLike(delete);
                 if(result == 0) {
                     throw new BaseException(DELETE_FAIL_POST_LIKE);
@@ -67,7 +66,7 @@ public class PostLikeService {
             else {
                 int result = postLikeRepository.modifyLike(post);
                 if (result == 0) { // 0이면 에러가 발생
-                    throw new BaseException(MODIFY_FAIL_POST_LIKE); //4070
+                    throw new BaseException(MODIFY_FAIL_POST_LIKE);
                 }
             }
         }
@@ -98,7 +97,7 @@ public class PostLikeService {
     // 특정 게시글별 좋아요 조회
     public List<PostLikeDto.GetLikeRes> getLikesByPostIdx(int postIdx) throws BaseException {
         String status = postLikeRepository.getStatusByPostIdx(postIdx);
-        if(status.equals("inactive")) {
+        if(status.equals("inactive")) { //삭제된 게시글의 좋아요 조회 불가
             throw new BaseException(IMPOSSIBLE_POST); // 게시글이 존재하지 않음.
         }
         try {
@@ -112,7 +111,7 @@ public class PostLikeService {
     // 특정 게시글별 싫어요 조회
     public List<PostLikeDto.GetDislikeRes> getDislikesByPostIdx(int postIdx) throws BaseException {
         String status = postLikeRepository.getStatusByPostIdx(postIdx);
-        if(status.equals("inactive")) {
+        if(status.equals("inactive")) { //삭제된 게시글의 싫어요 조회 불가
             throw new BaseException(IMPOSSIBLE_POST); // 게시글이 존재하지 않음.
         }
         try {

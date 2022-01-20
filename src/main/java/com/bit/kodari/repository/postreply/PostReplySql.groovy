@@ -2,12 +2,12 @@ package com.bit.kodari.repository.postreply
 
 class PostReplySql {
 
-//토론장 게시글 댓글의 답글 등록
+    //토론장 게시글 댓글의 답글 등록
     public static final String INSERT_REPLY = """
         INSERT INTO PostReply (userIdx, postCommentIdx, content)
         values (:userIdx, :postCommentIdx, :content)
         """
-//postCommentIdx로 userIdx 받아오기
+    //postCommentIdx로 userIdx 받아오기
     public static final String GET_USER_IDX = """
         SELECT userIdx from PostReply WHERE postReplyIdx = :postReplyIdx 
         """
@@ -17,13 +17,13 @@ class PostReplySql {
         SELECT postCommentIdx from PostReply WHERE postReplyIdx = :postReplyIdx 
         """
 
-//postCommentIdx로 status 받아오기
+    //postCommentIdx로 status 받아오기
     public static final String GET_COMMENT_STATUS = """
         SELECT c.status FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx 
         WHERE r.postCommentIdx = :postCommentIdx
         """
 
-//토론장 게시글 답글 수정
+    //토론장 게시글 답글 수정
     public static final String UPDATE_REPLY = """
          UPDATE PostReply SET content = :content
          WHERE postReplyIdx = :postReplyIdx and status = 'active'

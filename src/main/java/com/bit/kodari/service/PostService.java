@@ -29,15 +29,13 @@ public class PostService {
 
 
     // 토론장 게시글 등록(POST)
-    //토론장 게시글 등록
     public RegisterRes insertPost(RegisterReq registerReq) throws BaseException {
-
         String content = registerReq.getContent();
         if(content.isEmpty()) { //게시글 내용이 없는 경우 validation 처리
-            throw new BaseException(EMPTY_CONTENT); //4073
+            throw new BaseException(EMPTY_CONTENT);
         }
         else if(content.length() >= 500) { //게시글 500자 이내 제한
-            throw new BaseException(OVER_CONTENT); //4075
+            throw new BaseException(OVER_CONTENT);
         }
         try {
             return postRepository.insert(registerReq);
@@ -54,21 +52,21 @@ public class PostService {
         int user = postRepository.getUserIdxByPostIdx(postIdx);
         String status = postRepository.getStatusByPostIdx(postIdx);
         if(status.equals("inactive")) { //삭제된 글은 수정 불가
-            throw new BaseException(IMPOSSIBLE_POST); //4074
+            throw new BaseException(IMPOSSIBLE_POST);
         }
         else if(userIdx != user) { //글쓴 유저가 아닌 경우 수정 불가
-            throw new BaseException(USER_NOT_EQUAL); //4072
+            throw new BaseException(USER_NOT_EQUAL);
         }
         else if(content.isEmpty()) { //게시글 내용 입력 없을 경우 validation 처리
-            throw new BaseException(EMPTY_CONTENT); //4073
+            throw new BaseException(EMPTY_CONTENT);
         }
         else if(content.length() >= 500) { //게시글 500자 이내 제한
-            throw new BaseException(OVER_CONTENT); //4075
+            throw new BaseException(OVER_CONTENT);
         }
         else{
             int result = postRepository.modifyPost(post);
             if(result == 0){ // 0이면 에러가 발생
-                throw new BaseException(MODIFY_FAIL_POST); //4070
+                throw new BaseException(MODIFY_FAIL_POST);
             }
         }
 
@@ -79,7 +77,7 @@ public class PostService {
         }
     }
 
-    //토론장 게시글 다 삭제
+    //토론장 게시글 삭제
     public void modifyPostStatus(PatchDeleteReq post) throws BaseException{
         int postIdx = post.getPostIdx();
         int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
@@ -95,6 +93,7 @@ public class PostService {
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(DELETE_FAIL_POST); //407
             }
+            //게시글 삭제되면 관련된 댓글, 답글, 좋아요/싫어요 삭제
             for(int i=0; i< getCommentDeleteRes.size(); i++){
                 int resultComment = postRepository.modifyCommentStatus(getCommentDeleteRes.get(i).getPostCommentIdx());
                 if(resultComment == 0) {

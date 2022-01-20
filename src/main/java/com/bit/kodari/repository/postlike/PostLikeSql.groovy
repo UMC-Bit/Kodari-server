@@ -7,8 +7,6 @@ class PostLikeSql {
         values (:userIdx, :postIdx, :likeType)
         """
 
-
-
     //postLikeIdx로 userIdx 받아오기
     public static final String GET_LIKE_USER_IDX = """
         SELECT userIdx from PostLike WHERE postLikeIdx = :postLikeIdx 
@@ -18,7 +16,6 @@ class PostLikeSql {
     public static final String GET_LIKE_POST_IDX = """
         SELECT postIdx from PostLike WHERE postLikeIdx = :postLikeIdx 
         """
-
 
     //postIdx로 게시글의 status 받아오기
     public static final String GET_POST_STATUS = """
@@ -35,7 +32,6 @@ class PostLikeSql {
     public static final String GET_LIKE_TYPE = """
         SELECT likeType FROM PostLike WHERE postLikeIdx = :postLikeIdx
         """
-
 
     //토론장 게시글 좋아요/싫어요 수정
     public static final String UPDATE_POST_LIKE = """

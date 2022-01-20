@@ -13,7 +13,7 @@ class PostCommentSql {
         SELECT userIdx from PostComment WHERE postCommentIdx = :postCommentIdx 
         """
 
-    //postIdx로 userIdx 받아오기
+    //postIdx로 postIdx 받아오기
     public static final String GET_POST_IDX = """
         SELECT postIdx from PostComment WHERE postCommentIdx = :postCommentIdx 
         """
@@ -40,14 +40,14 @@ class PostCommentSql {
          UPDATE PostComment SET status = 'inactive' WHERE postCommentIdx = :postCommentIdx
     """
 
-    //토론장 게시글 댓글 조회
+    //토론장 게시글별 댓글 조회
     public static final String LIST_POST_COMMENT = """
          SELECT p.boardIdx, u.nickName,  c.likeCnt, c.content
          FROM PostComment as c join Post as p on c.postIdx = p.postIdx join User as u on c.userIdx = u.userIdx
          WHERE c.postIdx = :postIdx and c.status = 'active'
          """
 
-    //토론장 유저 게시글 조회
+    //토론장 유저별 게시글 조회
     public static final String LIST_USER_COMMENT = """
          SELECT u.nickName, c.likeCnt, c.content
          FROM PostComment as c join Post as p on c.postIdx = p.postIdx join User as u on c.userIdx = u.userIdx 

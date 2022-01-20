@@ -31,11 +31,13 @@ public class PostReplyService {
         int postCommentIdx = registerReplyReq.getPostCommentIdx();
         String content = registerReplyReq.getContent();
         String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
-
-        if(content.isEmpty()) {
+        if(comment_status.equals("inactive")) { //삭제된 댓글에 답글 등록 불가
+            throw new BaseException(IMPOSSIBLE_POST_COMMENT);
+        }
+        else if(content.isEmpty()) { //빈 내용은 등록 불가
             throw new BaseException(EMPTY_CONTENT);
         }
-        else if(content.length() >= 100) {
+        else if(content.length() >= 100) { //내용 100자 이내 제한
             throw new BaseException(OVER_CONTENT);
         }
         try {
@@ -50,21 +52,16 @@ public class PostReplyService {
     public void modifyReply(PostReplyDto.PatchReplyReq post) throws BaseException{
         int postReplyIdx = post.getPostReplyIdx();
         int userIdx = post.getUserIdx();
-        int postCommentIdx = post.getPostCommentIdx();
         String content = post.getContent();
         int user = postReplyRepository.getUserIdxByPostReplyIdx(postReplyIdx);
-        String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
-        if(comment_status.equals("inactive")) {
-            throw new BaseException(IMPOSSIBLE_POST_COMMENT);
+        if(userIdx != user) { //답글 쓴 유저가 아니면 수정불가
+            throw new BaseException(USER_NOT_EQUAL_REPLY);
         }
-        else if(userIdx != user) {
-            throw new BaseException(USER_NOT_EQUAL_COMMENT); //4073
+        else if(content.isEmpty()) { //빈 내용이면 수정 불가
+            throw new BaseException(EMPTY_CONTENT);
         }
-        else if(content.isEmpty()) {
-            throw new BaseException(EMPTY_CONTENT); //4074
-        }
-        else if(content.length() >= 100) {
-            throw new BaseException(OVER_CONTENT); //4076
+        else if(content.length() >= 100) { //내용 100자 이내 제한
+            throw new BaseException(OVER_CONTENT);
         }
         else{
             int result = postReplyRepository.modifyReply(post);
@@ -80,13 +77,13 @@ public class PostReplyService {
         }
     }
 
-    //토론장 게시글 댓글 삭제
+    //토론장 게시글 답글 삭제
     public void modifyReplyStatus(PostReplyDto.PatchReplyDeleteReq post) throws BaseException{
         int postReplyIdx = post.getPostReplyIdx();
         int userIdx = post.getUserIdx();
         int user = postReplyRepository.getUserIdxByPostReplyIdx(postReplyIdx);
-        if(userIdx != user) {
-            throw new BaseException(USER_NOT_EQUAL_COMMENT); //4073
+        if(userIdx != user) { //답글 쓴 유저가 아니면 삭제불가
+           throw new BaseException(USER_NOT_EQUAL_REPLY);
         }
         else {
             int result = postReplyRepository.modifyReplyStatus(post);

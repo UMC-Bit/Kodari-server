@@ -42,7 +42,7 @@ public class PostCommentRepository {
         });
     }
 
-    //postCommentIdx로 댓글 쓴 postIdx 가져오기
+    //postCommentIdx로 댓글 쓴 게시글의 postIdx 가져오기
     public int getPostIdxByPostCommentIdx(int postCommentIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
         return namedParameterJdbcTemplate.query(postCommentSql.GET_POST_IDX, parameterSource, rs -> {
@@ -92,7 +92,7 @@ public class PostCommentRepository {
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
-    //게시글 삭제
+    //댓글 삭제
     public int modifyCommentStatus(PostCommentDto.PatchDeleteReq patchDeleteReq) {
         String qry = PostCommentSql.DELETE_COMMENT;
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", patchDeleteReq.getPostCommentIdx());
