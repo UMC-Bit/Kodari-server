@@ -24,13 +24,18 @@ public class PortfolioService {
     private PortfolioRepository portfolioRepository;
 
     //포트폴리오 등록
-    //포트폴리오 3개 초과 생성 안됨
     public PortfolioDto.PostPortfolioRes registerPortfolio(PortfolioDto.PostPortfolioReq postPortfolioReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postPortfolioReq.getAccountIdx();
         String status = portfolioRepository.getAccountStatus(accountIdx);
-        List<PortfolioDto.GetAllPortfolioRes> getAllPortfolioRes = portfolioRepository.getAllPortfolio();
 
+        List<PortfolioDto.GetAllPortfolioRes> getAllPortfolioRes = portfolioRepository.getAllPortfolio();
+        // userIdx로 모든 portIdx 가져오기
+        List<PortfolioDto.GetAllPortIdxRes> getAllPortIdxRes = portfolioRepository.getAllPortIdx(postPortfolioReq.getUserIdx());
+        // 포트폴리오 3개 초과 생성 안됨
+        if(getAllPortIdxRes.size() > 3){
+            throw new BaseException(OVER_PORT_THREE); //3041
+        }
         if(status.equals("inactive")){
             throw new BaseException(FAILED_TO_PROPERTY_RES); //3040
         }else {
@@ -51,8 +56,8 @@ public class PortfolioService {
 
 
     //포트폴리오 조회
-    //userCoinIdx 대괄호로 쫘르륵...?
-    // 수익률, 소득, 대표코인 (코인별로)
+    // TODO userCoinIdx 대괄호로 쫘르륵...? -> LIST
+    // TODO 수익률, 소득, 대표코인 (코인별로)
     public  List<PortfolioDto.GetPortfolioRes> getPortfolio(int portIdx) throws BaseException {
         //status가 inactive인 account는 오류 메시지
         //String status = accountRepository.getStatusByAccountIdx(accountIdx);
@@ -67,13 +72,16 @@ public class PortfolioService {
         }
     }
 
+    //포트폴리오 전체 조회
+    // TODO
 
     //포트폴리오 삭제
     public void deleteByPortIdx(PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq) throws BaseException{
         int portIdx = patchPortfolioDelReq.getPortIdx();
         int accountIdx = portfolioRepository.getAccountIdx(portIdx);
+        int userIdx = portfolioRepository.getUserIdxByPortIdx(portIdx);
         try {
-            int result = portfolioRepository.deleteByPortIdx(portIdx, accountIdx);
+            int result = portfolioRepository.deleteByPortIdx(portIdx, accountIdx, userIdx);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_PORTFOLIO); //4049
             }

@@ -31,8 +31,10 @@ public class AccountService {
 
         List<AccountDto.GetAccountNameRes> getAccountNameRes = accountRepository.getAccountNameByIdx(userIdx, marketIdx);
 
-        //계좌 이름 null X
-
+        // 계좌 이름 null X
+        if (accountName == null || accountName.length()==0) {
+            throw new BaseException(POST_ACCOUNT_NAME_NULL); //2040
+        }
         if(property < 0 || property > max){
             // 현금 자산 범위 초과
             throw new BaseException(PROPERTY_RANGE_ERROR);
@@ -84,7 +86,7 @@ public class AccountService {
     }
 
     //계좌 이름 수정
-    // 스페이스바 validation 추가
+    //스페이스바 validation 추가
     public void updateAccountName(PatchAccountNameReq account) throws BaseException{
         //같은 이름은 안되게 validation 추가
         //같은 유저의 같은 거래소에는 같은 이름을 가진 계좌가 있으면 안됨.
@@ -93,6 +95,11 @@ public class AccountService {
         int marketIdx = accountRepository.getMarketIdxByAccountIdx(accountIdx1);
 
         List<AccountDto.GetAccountNameRes> getAccountNameRes = accountRepository.getAccountNameByIdx(userIdx, marketIdx);
+
+        // null값 안됨. 스페이스바 validation 추가
+        if (account.getAccountName() == null || account.getAccountName().length()==0) {
+            throw new BaseException(POST_ACCOUNT_NAME_NULL); //2040
+        }
 
         for(int i=0; i< getAccountNameRes.size(); i++){
             if(getAccountNameRes.get(i).getAccountName().equals(account.getAccountName())){
@@ -175,7 +182,7 @@ public class AccountService {
 
     //계좌 삭제
     public void deleteByName(PatchAccountDelReq patchAccountDelReq) throws BaseException{
-        //유저 확인 추가
+
         try {
             int result = accountRepository.deleteByName(patchAccountDelReq);
             if(result == 0){
@@ -196,9 +203,8 @@ public class AccountService {
         }
     }
 
-    /** 계좌 단일 조회
-     *
-     */
+    // TODO 계좌 단일 조회
+
 
     // 해당 accountIdx를 갖는 계좌의 현금 자산 조회
     public  List<GetPropertyRes> getProperty(int accountIdx) throws BaseException {

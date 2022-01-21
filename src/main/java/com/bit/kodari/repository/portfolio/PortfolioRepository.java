@@ -37,7 +37,7 @@ public class PortfolioRepository {
 
 
     //포트폴리오 조회
-    //리스트로 받아오게 - 수정
+    // TODO 리스트로 받아오게 - 수정
     public List<PortfolioDto.GetPortfolioRes> getPortfolio(int portIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
         List<PortfolioDto.GetPortfolioRes> getPortfolioRes = namedParameterJdbcTemplate.query(PortfolioSql.GET_PORTFOLIO, parameterSource,
@@ -58,10 +58,11 @@ public class PortfolioRepository {
         return getPortfolioRes;
     }
 
-    //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록
-    public int deleteByPortIdx(int portIdx, int accountIdx) {
+    //포트폴리오 삭제 - 소유코인, 계좌, 대표코인 다 삭제되도록
+    public int deleteByPortIdx(int portIdx, int accountIdx, int userIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx)
-                .addValue("accountIdx", accountIdx);
+                .addValue("accountIdx", accountIdx)
+                .addValue("userIdx", userIdx);
         return namedParameterJdbcTemplate.update(PortfolioSql.DELETE, parameterSource);
     }
 
@@ -113,6 +114,21 @@ public class PortfolioRepository {
                             rs.getInt("accountIdx"))
             );
             return getAllPortfolioRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    // userIdx로 모든 portIdx 가져오기 - List
+    public List<PortfolioDto.GetAllPortIdxRes> getAllPortIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        try {
+            List<PortfolioDto.GetAllPortIdxRes> getAllPortIdxRes =  namedParameterJdbcTemplate.query(PortfolioSql.GET_ALL_PORT_IDX, parameterSource,
+                    (rs, rowNum) -> new PortfolioDto.GetAllPortIdxRes(
+                            rs.getInt("portIdx"))
+            );
+            return getAllPortIdxRes;
 
         }catch(EmptyResultDataAccessException e){
             return null;

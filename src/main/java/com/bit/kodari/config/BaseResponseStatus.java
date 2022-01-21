@@ -33,6 +33,7 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_NICKNAME(false, 2018, "닉네임을 입력해주세요."),
     POST_USERS_EMPTY_PASSWORD(false, 2019, "비밀번호를 입력해주세요."),
     POST_USERS_EXISTS_NICKNAME(false,2020,"중복된 닉네임입니다."),
+    POST_ACCOUNT_NAME_NULL(false, 2040, "계좌이름을 입력해주세요."),
 
 
 
@@ -53,6 +54,8 @@ public enum BaseResponseStatus {
     GET_USERS_NOT_EXISTS_EMAIL(false,3017,"없는 이메일 입니다."),
 
     FAILED_TO_PROPERTY_RES(false,3040,"없는 계좌입니다."),
+    OVER_PORT_THREE(false, 3041, "등록할 수 있는 포트폴리오 갯수를 초과하였습니다."),
+
 
 
 
@@ -78,6 +81,9 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_PORTFOLIO(false, 4049, "포트폴리오 삭제 실패"),
     DUPLICATED_PORTFOLIO(false, 4050, "포트폴리오 중복으로 생성 실패"),
     MODIFY_FAIL_TOTAL(false, 4051, "총자산 수정 실패"),
+    PRICE_AVG_RANGE_ERROR(false, 4052, "매수평단가 범위 오류로 수정 실패"),
+    AMOUNT_RANGE_ERROR(false, 4053, "코인 amount 범위 오류로 수정 실패"),
+    COIN_AMOUNT_OVER(false, 4054, "매도하는 코인이 기존보다 많습니다."),
 
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
     DELETE_FAIL_POST(false, 4071, "게시글 삭제에 실패하였습니다."),

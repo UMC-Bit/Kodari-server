@@ -20,12 +20,22 @@ public class UserCoinService {
     private UserCoinRepository userCoinRepository;
 
     //소유 코인 등록
-
-    // TODO 매수평단가, amount 0, 음수는 안됨, max 값 수정
     public UserCoinDto.PostUserCoinRes registerUserCoin(UserCoinDto.PostUserCoinReq postUserCoinReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postUserCoinReq.getAccountIdx();
+        //계좌 status
         String status = userCoinRepository.getAccountStatus(accountIdx);
+        double priceAvg = postUserCoinReq.getPriceAvg();
+        double amount = postUserCoinReq.getAmount();
+        double max = 100000000000L;
+
+        //매수평단가, amount 0, 음수는 안됨, max 초과 안됨.
+        if(priceAvg <= 0 || priceAvg > max){
+            throw new BaseException(PRICE_AVG_RANGE_ERROR); //4052
+        }else if(amount <= 0 || amount > max){
+            throw new BaseException(AMOUNT_RANGE_ERROR); //4053
+        }
+
         if(status.equals("inactive")){
             throw new BaseException(FAILED_TO_PROPERTY_RES); //3040
         }
@@ -90,6 +100,7 @@ public class UserCoinService {
     }
 
     //소유 코인 전체 삭제
+    // 필요없음
     public void deleteByUserIdx(UserCoinDto.PatchDelByUserIdxReq patchDelByUserIdxReq) throws BaseException{
 
         try {
@@ -104,7 +115,6 @@ public class UserCoinService {
 
     //매수, 매도 계산(매수 평단가), 수수료 0.05%
     //계산하는거 여기에
-
     /**
      * 수정할것
      * 매수평단가 수정하면서 property(현금자산)도 수정되게 - 매수(-), 매도(+)
@@ -140,9 +150,9 @@ public class UserCoinService {
             total = (priceAvg * existCoinAmount + price * newCoinAmount) / sumCoinAmount;
         }else if(category.equals("sell")) {
             sumCoinAmount = existCoinAmount - newCoinAmount;
-            // TODO 기존 수량보다 new가 더 크면 안됨. 오류 이름 수정
+            // 기존 수량보다 new가 더 크면 안됨.
             if(sumCoinAmount < 0){
-                throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
+                throw new BaseException(COIN_AMOUNT_OVER); //4054
             }
             total = (priceAvg * existCoinAmount - price * newCoinAmount) / sumCoinAmount;
             if(total < 0){

@@ -88,5 +88,13 @@ public class PortfolioDto {
         private int accountIdx;
     }
 
+    // userIdx로 portfolioIdx List로 받아오는 RESPONSE DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetAllPortIdxRes{
+        private int portIdx;
+    }
+
 
 }
