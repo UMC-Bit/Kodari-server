@@ -84,6 +84,7 @@ public class PostService {
         int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
         int user = postRepository.getUserIdxByPostIdx(postIdx);
         List<PostDto.GetCommentDeleteRes> getCommentDeleteRes = postRepository.getPostCommentIdxByPostIdx(postIdx);
+        List<PostDto.GetCommentLikeDeleteRes> getCommentLikeDeleteRes = postRepository.getCommentLikeIdxByPostIdx(postIdx);
         List<PostDto.GetLikeDeleteRes> getLikeDeleteRes = postRepository.getPostLikeIdxByPostIdx(postIdx);
         List<PostDto.GetReplyDeleteRes> getReplyDeleteRes = postRepository.getReplyIdxByPostIdx(postIdx);
         if(userIdx != user) { //글쓴 유저가 아닌 경우 삭제 불가
@@ -99,6 +100,12 @@ public class PostService {
                 int resultComment = postRepository.modifyCommentStatus(getCommentDeleteRes.get(i).getPostCommentIdx());
                 if(resultComment == 0) {
                     throw new BaseException(DELETE_FAIL_POST_COMMENT);
+                }
+            }
+            for(int i=0; i< getCommentLikeDeleteRes.size(); i++){
+                int resultCommentLike = postRepository.deleteCommentLikeStatus(getCommentLikeDeleteRes.get(i).getCommentLikeIdx());
+                if(resultCommentLike == 0) {
+                    throw new BaseException(DELETE_FAIL_COMMENT_LIKE);
                 }
             }
             for(int i=0; i< getLikeDeleteRes.size(); i++){

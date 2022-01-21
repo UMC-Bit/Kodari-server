@@ -32,8 +32,8 @@ public class CommentLikeController {
       */
     @PostMapping(value="/choose")
     @ApiOperation(value = "좋아요 선택", notes = "토론장 댓글 좋아요를 선택함.")
-    public BaseResponse<CommentLikeDto.RegisterLikeRes> createCommentLike(@RequestBody CommentLikeDto.RegisterLikeReq registerLikeReq){
-        int userIdx = registerLikeReq.getUserIdx();
+    public BaseResponse<CommentLikeDto.RegisterCommentLikeRes> createCommentLike(@RequestBody CommentLikeDto.RegisterCommentLikeReq registerCommentLikeReq){
+        int userIdx = registerCommentLikeReq.getUserIdx();
         try {
 //            //jwt에서 idx 추출.
 //            int userIdxByJwt = jwtService.getUserIdx();
@@ -42,8 +42,8 @@ public class CommentLikeController {
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
             //같다면 유저네임 변경
-            CommentLikeDto.RegisterLikeRes registerLikeRes = commentLikeService.chooseCommentLike(registerLikeReq);
-            return new BaseResponse<>(registerLikeRes);
+            CommentLikeDto.RegisterCommentLikeRes registerCommentLikeRes = commentLikeService.chooseCommentLike(registerCommentLikeReq);
+            return new BaseResponse<>(registerCommentLikeRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

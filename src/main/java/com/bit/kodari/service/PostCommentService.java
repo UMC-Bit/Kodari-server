@@ -93,6 +93,7 @@ public class PostCommentService {
         int userIdx = post.getUserIdx();
         int user = postCommentRepository.getUserIdxByPostCommentIdx(postCommentIdx);
         String status = postCommentRepository.getStatusByPostCommentIdx(postCommentIdx);
+        List<PostCommentDto.GetCommentLikeDeleteRes> getCommentLikeDeleteRes = postCommentRepository.getCommentLikeIdxByPostCommentIdx(postCommentIdx);
         if(status.equals("inactive")) { //삭제된 댓글 삭제 불가
             throw new BaseException(IMPOSSIBLE_POST_COMMENT);
         }
@@ -103,6 +104,12 @@ public class PostCommentService {
             int result = postCommentRepository.modifyCommentStatus(post);
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(DELETE_FAIL_POST_COMMENT);
+            }
+            for(int i=0; i< getCommentLikeDeleteRes.size(); i++){ //댓글 삭제 시 댓글 좋아요 삭제
+                int resultCommentLike = postCommentRepository.deleteCommentLikeStatus(getCommentLikeDeleteRes.get(i).getCommentLikeIdx());
+                if(resultCommentLike == 0) {
+                    throw new BaseException(DELETE_FAIL_COMMENT_LIKE);
+                }
             }
         }
 

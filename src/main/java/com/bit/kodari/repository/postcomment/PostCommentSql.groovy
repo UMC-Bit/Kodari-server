@@ -29,6 +29,13 @@ class PostCommentSql {
         WHERE c.postIdx = :postIdx
         """
 
+    //postCommentIdx로 commentLikeIdx 받아오기
+    public static final String GET_COMMENT_LIKE_IDX = """
+        SELECT cl.commentLikeIdx
+        FROM CommentLike as cl join PostComment as c on cl.postCommentIdx = c.postCommentIdx
+        WHERE c.postCommentIdx = :postCommentIdx
+        """
+
     //토론장 게시글 수정
     public static final String UPDATE_COMMENT = """
          UPDATE PostComment SET content = :content
@@ -38,6 +45,12 @@ class PostCommentSql {
     //토론장 게시글 삭제
     public static final String DELETE_COMMENT = """
          UPDATE PostComment SET status = 'inactive' WHERE postCommentIdx = :postCommentIdx
+    """
+
+    //삭제된 댓글과 관련된 댓글 좋아요 삭제
+    public static final String DELETE_COMMENT_LIKE = """
+         DELETE FROM CommentLike
+         WHERE commentLikeIdx = :commentLikeIdx
     """
 
     //토론장 게시글별 댓글 조회

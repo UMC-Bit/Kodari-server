@@ -59,6 +59,21 @@ public class PostRepository {
         }
     }
 
+    //postIdx 게시글 삭제 시 관련된 댓글 좋아요 삭제
+    public List<PostDto.GetCommentLikeDeleteRes> getCommentLikeIdxByPostIdx(int postIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        try {
+            List<PostDto.GetCommentLikeDeleteRes> getCommentLikeDeleteRes =  namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_LIKE_IDX, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetCommentLikeDeleteRes(
+                            rs.getInt("commentLikeIdx"))
+            );
+            return getCommentLikeDeleteRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
     //postIdx 게시글 삭제 시 관련된 라이크 삭제
     public List<PostDto.GetLikeDeleteRes> getPostLikeIdxByPostIdx(int postIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
@@ -124,6 +139,14 @@ public class PostRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
+
+    //삭제된 게시글과 관련된 댓글 좋아요 삭제
+    public int deleteCommentLikeStatus(int commentLikeIdx) {
+        String qry = PostSql.DELETE_COMMENT_LIKE;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", commentLikeIdx);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
+
     //삭제된 게시글과 관련된 싫어요/좋아요 삭제
     public int deleteLikeStatus(int postLikeIdx) {
         String qry = PostSql.DELETE_LIKE;

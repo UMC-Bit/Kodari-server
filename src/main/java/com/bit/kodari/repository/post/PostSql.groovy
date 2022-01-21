@@ -29,6 +29,14 @@ class PostSql {
         WHERE p.postIdx = :postIdx
         """
 
+    //postIdx로 commentLikeIdx 받아오기
+    public static final String GET_COMMENT_LIKE_IDX = """
+        SELECT cl.commentLikeIdx
+        FROM CommentLike as cl join PostComment as c on cl.postCommentIdx = c.postCommentIdx
+        join Post as p on c.postIdx = p.postIdx
+        WHERE p.postIdx = :postIdx
+        """
+
     //postIdx로 postLikeIdx 받아오기
     public static final String GET_LIKE_IDX = """
         SELECT postLikeIdx
@@ -57,6 +65,12 @@ class PostSql {
     public static final String DELETE_COMMENT = """
          UPDATE PostComment
          SET status = 'inactive' WHERE postCommentIdx = :postCommentIdx
+    """
+
+    //삭제된 게시글과 관련된 댓글 좋아요 삭제
+    public static final String DELETE_COMMENT_LIKE = """
+         DELETE FROM CommentLike
+         WHERE commentLikeIdx = :commentLikeIdx
     """
 
     //삭제된 게시글과 관련된 좋아요/싫어요 삭제

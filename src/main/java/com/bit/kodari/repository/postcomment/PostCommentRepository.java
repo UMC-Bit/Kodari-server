@@ -1,6 +1,7 @@
 package com.bit.kodari.repository.postcomment;
 
 import com.bit.kodari.dto.PostCommentDto;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -82,6 +83,23 @@ public class PostCommentRepository {
 
     }
 
+    //postCommentIdx 댓글 삭제 시 관련된 댓글 좋아요 삭제
+    public List<PostCommentDto.GetCommentLikeDeleteRes> getCommentLikeIdxByPostCommentIdx(int postCommentIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
+        try {
+            List<PostCommentDto.GetCommentLikeDeleteRes> getCommentLikeDeleteRes =  namedParameterJdbcTemplate.query(PostCommentSql.GET_COMMENT_LIKE_IDX, parameterSource,
+                    (rs, rowNum) -> new PostCommentDto.GetCommentLikeDeleteRes(
+                            rs.getInt("commentLikeIdx"))
+            );
+            return getCommentLikeDeleteRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+
+
     //댓글 수정
     public int modifyComment(PostCommentDto.PatchCommentReq patchCommentReq) {
         String qry = PostCommentSql.UPDATE_COMMENT;
@@ -98,6 +116,14 @@ public class PostCommentRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", patchDeleteReq.getPostCommentIdx());
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
+
+    //삭제된 댓글과 관련된 댓글 좋아요 삭제
+    public int deleteCommentLikeStatus(int commentLikeIdx) {
+        String qry = PostCommentSql.DELETE_COMMENT_LIKE;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", commentLikeIdx);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
+
 
     //토론장 게시글별 댓글 조회
     public List<PostCommentDto.GetCommentRes> getCommentsByPostIdx(int postIdx){

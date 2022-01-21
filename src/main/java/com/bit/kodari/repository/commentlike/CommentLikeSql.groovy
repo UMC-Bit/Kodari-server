@@ -4,7 +4,7 @@ class CommentLikeSql {
     //토론장 댓글 좋아요 선택
     public static final String CHOOSE_COMMENT_LIKE = """
         INSERT INTO CommentLike (userIdx, postCommentIdx)
-        values (:userIdx, :postCommentIdx)  //누르면 바로 좋아요 like=1 등록
+        values (:userIdx, :postCommentIdx)
         """
 
     //commentLikeIdx로 userIdx 받아오기
@@ -28,14 +28,16 @@ class CommentLikeSql {
         SELECT status FROM PostComment WHERE postCommentIdx = :postCommentIdx
         """
 
-    //postLikeIdx로 like 받아오기
+    //commentLikeIdx로 like 받아오기
     public static final String GET_LIKE = """
-        SELECT like FROM CommentLike WHERE commentLikeIdx = :commentLikeIdx
+        SELECT CommentLike.like
+        FROM CommentLike
+        WHERE commentLikeIdx = :commentLikeIdx
         """
 
     //토론장 게시글 좋아요/싫어요 삭제
     public static final String DELETE_COMMENT_LIKE = """
-         DELETE FROM CommentLike 
-         WHERE commentLikeIdx = :commentLikeIdx and like = :like
-    """
+        DELETE FROM CommentLike
+        WHERE commentLikeIdx = :commentLikeIdx and CommentLike.like = :like
+        """
 }

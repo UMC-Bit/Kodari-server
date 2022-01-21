@@ -17,13 +17,13 @@ public class CommentLikeRepository {
     }
 
     //토론장 댓글 좋아요 등록
-    public CommentLikeDto.RegisterLikeRes chooseCommentLike(CommentLikeDto.RegisterLikeReq like) {
+    public CommentLikeDto.RegisterCommentLikeRes chooseCommentLike(CommentLikeDto.RegisterCommentLikeReq like) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("userIdx", like.getUserIdx())
                 .addValue("postCommentIdx", like.getPostCommentIdx());
-        int affectedRows = namedParameterJdbcTemplate.update(commentLikeSql.CHOOSE_COMMENT_LIKE, parameterSource, keyHolder);
-        return CommentLikeDto.RegisterLikeRes.builder().userIdx(like.getUserIdx()).build();
+        int affectedRows = namedParameterJdbcTemplate.update(CommentLikeSql.CHOOSE_COMMENT_LIKE, parameterSource, keyHolder);
+        return CommentLikeDto.RegisterCommentLikeRes.builder().userIdx(like.getUserIdx()).build();
     }
 
     //commentLikeIdx로 좋아요한 userIdx 가져오기

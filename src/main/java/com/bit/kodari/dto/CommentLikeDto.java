@@ -19,7 +19,7 @@ public class CommentLikeDto {
     @Data
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
-    public static class RegisterLikeReq{
+    public static class RegisterCommentLikeReq{
         private int userIdx;
         private int postCommentIdx;
     }
@@ -27,7 +27,7 @@ public class CommentLikeDto {
     //토론장 댓글 좋아요 선택 RESPONSE DTO
     @Data
     @Builder // 빌더 클래스 자동 생성
-    public static class RegisterLikeRes{
+    public static class RegisterCommentLikeRes{
         private int userIdx;
         //    private String jwt;
     }

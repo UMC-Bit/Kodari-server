@@ -25,14 +25,15 @@ public class CommentLikeService {
         this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
     }
     // 토론장 댓글 좋아요 선택(POST)
-    public CommentLikeDto.RegisterLikeRes chooseCommentLike(CommentLikeDto.RegisterLikeReq registerLikeReq) throws BaseException {
-        int postCommentIdx = registerLikeReq.getPostCommentIdx();
+    public CommentLikeDto.RegisterCommentLikeRes chooseCommentLike(CommentLikeDto.RegisterCommentLikeReq registerCommentLikeReq) throws BaseException {
+        int postCommentIdx = registerCommentLikeReq.getPostCommentIdx();
         String status = commentLikeRepository.getStatusByPostCommentIdx(postCommentIdx);
         if(status.equals("inactive")) { //삭제된 댓글이면 선택불가
             throw new BaseException(IMPOSSIBLE_POST_COMMENT);
         }
+
         try {
-            return commentLikeRepository.chooseCommentLike(registerLikeReq);
+            return commentLikeRepository.chooseCommentLike(registerCommentLikeReq);
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
         }
