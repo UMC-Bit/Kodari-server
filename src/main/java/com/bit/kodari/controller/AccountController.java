@@ -82,6 +82,27 @@ public class AccountController {
 
     }
 
+    // 유저 계좌 단일 조회
+    // Path-variable
+    @ResponseBody
+    @GetMapping("/{accountIdx}")
+    public BaseResponse<List<AccountDto.GetAccountByAccountIdxRes>> getAccountByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
+        int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
+        try {
+            //jwt에서 idx 추출.
+            //int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            //if(userIdx != userIdxByJwt){
+            //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
+            List<AccountDto.GetAccountByAccountIdxRes> getAccountByAccountIdxRes = accountService.getAccountByAccountIdx(accountIdx);
+            return new BaseResponse<>(getAccountByAccountIdxRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
     //현금 자산 조회
     //Query String
     @ResponseBody

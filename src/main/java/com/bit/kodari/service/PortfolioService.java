@@ -58,14 +58,14 @@ public class PortfolioService {
     //포트폴리오 조회
     // TODO userCoinIdx 대괄호로 쫘르륵...? -> LIST
     // TODO 수익률, 소득, 대표코인 (코인별로)
-    public  List<PortfolioDto.GetPortfolioRes> getPortfolio(int portIdx) throws BaseException {
+    public PortfolioDto.GetPortfolioRes getPortfolio(int portIdx) throws BaseException {
         //status가 inactive인 account는 오류 메시지
         //String status = accountRepository.getStatusByAccountIdx(accountIdx);
         //if(status.equals("inactive")){
             //throw new BaseException(FAILED_TO_PROPERTY_RES); //3040
         //}
         try {
-            List<PortfolioDto.GetPortfolioRes> getPortfolioRes = portfolioRepository.getPortfolio(portIdx);
+            PortfolioDto.GetPortfolioRes getPortfolioRes = portfolioRepository.getPortfolio(portIdx);
             return getPortfolioRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

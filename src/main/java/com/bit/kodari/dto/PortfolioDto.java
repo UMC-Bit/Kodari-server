@@ -37,27 +37,23 @@ public class PortfolioDto {
         private int accountIdx;
     }
 
-    // 포트폴리오 조회 RESPONSE DTO
+    // 포트폴리오의 소유코인 조회 RESPONSE DTO
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class GetPortfolioRes{
-        //private List<UserCoinDto.UserCoin> userCoinList;
-        //대표코인 리스트 - 해당 포트폴리오의
-        //아래 지우기
         private int portIdx;
         private int accountIdx;
         private String accountName;
         private double property;
+        private double totalProperty;
         private int userIdx;
         private String marketName;
-        private int userCoinIdx;
-        private String coinName;
-        private String coinImg;
-        private double priceAvg;
-        private double amount;
+        private List<UserCoinDto.UserCoin> userCoinList;
+        //대표코인 리스트 - 해당 포트폴리오의
         //    private String jwt;
     }
+
 
     //포트폴리오 삭제 Request Dto
     @Data

@@ -12,6 +12,11 @@ class AccountSql {
 			SELECT accountIdx, accountName, userIdx, marketIdx, concat(format(property, 0), '원') as property, totalProperty, status FROM Account WHERE userIdx = :userIdx AND status = 'active'
 			"""
 
+    //유저 계좌 단일 조회
+    public static final String FIND_ACCOUNT_BY_ACCOUNT_IDX = """
+			SELECT accountName, marketIdx, concat(format(property, 0), '원') as property, totalProperty, status FROM Account WHERE accountIdx = :accountIdx AND status = 'active'
+			"""
+
     //총자산 수정
     public static final String UPDATE_TOTAL_PROPERTY = """
 			UPDATE Account SET totalProperty = :totalProperty WHERE accountIdx = :accountIdx

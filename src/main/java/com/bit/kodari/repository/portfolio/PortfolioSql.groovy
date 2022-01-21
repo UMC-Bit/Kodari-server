@@ -9,19 +9,25 @@ class PortfolioSql {
 
     //포트폴리오 조회 - portIdx, accountIdx, accountName, userIdx, marketIdx, userCoinIdx, coinName, coinImg, proprerty, priceAvg, amount
     public static final String GET_PORTFOLIO = """
-			select p.portIdx, a.accountIdx, a.accountName, a.property, p.userIdx, m.marketName, u.userCoinIdx, c.coinName, c.coinImg, u.priceAvg, u.amount
+			select p.portIdx, a.accountIdx, a.accountName, a.property, a.totalProperty, p.userIdx, m.marketName
             from Portfolio p
-                join (select accountIdx, accountName, property, marketIdx, status from Account) as a on a.accountIdx = p.accountIdx
-                join (select userCoinIdx, accountIdx, coinIdx, priceAvg, amount, status from UserCoin) as u on u.accountIdx = p.accountIdx
+                join (select accountIdx, accountName, property, totalProperty, marketIdx, status from Account) as a on a.accountIdx = p.accountIdx
                 join (select marketIdx, marketName, status from Market) as m on m.marketIdx = a.marketIdx
-                join (select coinIdx, coinName, coinImg, status from Coin) as c on c.coinIdx = u.coinIdx
             WHERE p.status = 'active'
             AND a.status = 'active'
-            AND u.status = 'active'
             AND m.status = 'active'
-            AND c.status = 'active'
             AND p.portIdx = :portIdx
     """
+
+    //소유코인 가져오기
+    public static final String GET_USER_COIN = """
+        select userCoinIdx, userIdx, coinIdx, accountIdx, priceAvg, amount, status from UserCoin
+        where accountIdx = :accountIdx and status = 'active'
+    """
+
+    //대표코인 가져오기
+    //수익률 가져오기
+    //소득 가져오기
 
     //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록
     // TODO 대표코인 삭제 추가하기

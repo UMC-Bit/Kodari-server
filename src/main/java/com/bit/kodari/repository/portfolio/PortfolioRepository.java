@@ -4,8 +4,11 @@ import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.repository.account.AccountSql;
+import com.bit.kodari.repository.usercoin.UserCoinRepository;
 import com.bit.kodari.repository.usercoin.UserCoinSql;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -13,10 +16,15 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public class PortfolioRepository {
+
+    @Autowired
+    UserCoinRepository userCoinRepository;
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     PortfolioSql portfolioSql;
@@ -38,25 +46,28 @@ public class PortfolioRepository {
 
     //포트폴리오 조회
     // TODO 리스트로 받아오게 - 수정
-    public List<PortfolioDto.GetPortfolioRes> getPortfolio(int portIdx){
+    //유저코인, 대표코인, 수익률, 소득
+    public PortfolioDto.GetPortfolioRes getPortfolio(int portIdx){
+        int accountIdx = getAccountIdx(portIdx);
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
-        List<PortfolioDto.GetPortfolioRes> getPortfolioRes = namedParameterJdbcTemplate.query(PortfolioSql.GET_PORTFOLIO, parameterSource,
-                (rs, rowNum) -> new PortfolioDto.GetPortfolioRes(
-                        rs.getInt("portIdx"),
-                        rs.getInt("accountIdx"),
-                        rs.getString("accountName"),
-                        rs.getDouble("property"),
-                        rs.getInt("userIdx"),
-                        rs.getString("marketName"),
-                        rs.getInt("userCoinIdx"),
-                        rs.getString("coinName"),
-                        rs.getString("coinImg"),
-                        rs.getDouble("priceAvg"),
-                        rs.getDouble("amount")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
-        );
+        try {
+            PortfolioDto.GetPortfolioRes getPortfolioRes = namedParameterJdbcTemplate.queryForObject(PortfolioSql.GET_PORTFOLIO, parameterSource, (rs, rowNum) -> {
 
-        return getPortfolioRes;
+                List<UserCoinDto.UserCoin> userCoinList = getUserCoin(accountIdx);
+                    PortfolioDto.GetPortfolioRes portfolio = new PortfolioDto.GetPortfolioRes(rs.getInt("portIdx"),rs.getInt("accountIdx"),rs.getString("accountName"),
+                            rs.getDouble("property"),rs.getDouble("totalProperty"), rs.getInt("userIdx") ,rs.getString("marketName"), userCoinList);
+                    return portfolio;
+            }
+            );
+            return getPortfolioRes;
+        }catch(EmptyResultDataAccessException e) {
+            return null;
+        }
+
     }
+
+
+    // TODO 포트폴리오 Idx 리스트 받아오기 - userIdx 로
 
     //포트폴리오 삭제 - 소유코인, 계좌, 대표코인 다 삭제되도록
     public int deleteByPortIdx(int portIdx, int accountIdx, int userIdx) {
@@ -66,6 +77,10 @@ public class PortfolioRepository {
         return namedParameterJdbcTemplate.update(PortfolioSql.DELETE, parameterSource);
     }
 
+
+    /**
+     * 가져오기
+     */
     //accountIdx로 계좌 status 가져오기
     public String getAccountStatus(int accountIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
@@ -129,6 +144,27 @@ public class PortfolioRepository {
                             rs.getInt("portIdx"))
             );
             return getAllPortIdxRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    // accountIdx로 userCoinIdx 가져오기 - 리스트
+    public List<UserCoinDto.UserCoin> getUserCoin(int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        try {
+            List<UserCoinDto.UserCoin> userCoinList =  namedParameterJdbcTemplate.query(PortfolioSql.GET_USER_COIN, parameterSource,
+                    (rs, rowNum) -> new UserCoinDto.UserCoin(
+                            rs.getInt("userCoinIdx"),
+                            rs.getInt("userIdx"),
+                            rs.getInt("coinIdx"),
+                            rs.getInt("accountIdx"),
+                            rs.getDouble("priceAvg"),
+                            rs.getDouble("amount"),
+                            rs.getString("status"))
+            );
+            return userCoinList;
 
         }catch(EmptyResultDataAccessException e){
             return null;

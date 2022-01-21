@@ -68,6 +68,21 @@ public class AccountRepository {
         return getAccountRes;
     }
 
+    //유저 계좌 단일 조회
+    public List<AccountDto.GetAccountByAccountIdxRes> getAccountByAccountIdx(int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        List<AccountDto.GetAccountByAccountIdxRes> getAccountByAccountIdxRes = namedParameterJdbcTemplate.query(AccountSql.FIND_ACCOUNT_BY_ACCOUNT_IDX, parameterSource,
+                (rs, rowNum) -> new AccountDto.GetAccountByAccountIdxRes(
+                        rs.getString("accountName"),
+                        rs.getInt("marketIdx"),
+                        rs.getString("property"),
+                        rs.getDouble("totalProperty"),
+                        rs.getString("status")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        );
+
+        return getAccountByAccountIdxRes;
+    }
+
     //현금 자산 조회
     public List<AccountDto.GetPropertyRes> getProperty(int accountIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);

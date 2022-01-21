@@ -204,6 +204,16 @@ public class AccountService {
     }
 
     // TODO 계좌 단일 조회
+    // accountIdx로 계좌 단일 조회
+    public List<GetAccountByAccountIdxRes> getAccountByAccountIdx(int accountIdx) throws BaseException {
+        try {
+            List<GetAccountByAccountIdxRes> getAccountByAccountIdxRes = accountRepository.getAccountByAccountIdx(accountIdx);
+            return getAccountByAccountIdxRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 
 
     // 해당 accountIdx를 갖는 계좌의 현금 자산 조회

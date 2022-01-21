@@ -67,7 +67,7 @@ public class PortfolioController {
     //Query String
     @ResponseBody
     @GetMapping("/all/{portIdx}")
-    public BaseResponse<List<PortfolioDto.GetPortfolioRes>> getPortfolio(@PathVariable("portIdx") int portIdx) {
+    public BaseResponse<PortfolioDto.GetPortfolioRes> getPortfolio(@PathVariable("portIdx") int portIdx) {
 
         try {
             // 해당 accountIdx를 만족하는 계좌의 현금 자산 정보를 불러온다.
@@ -77,7 +77,7 @@ public class PortfolioController {
             //if(userIdx != userIdxByJwt){
                 //return new BaseResponse<>(INVALID_USER_JWT);
             //}
-            List<PortfolioDto.GetPortfolioRes> getPortfolioRes = portfolioService.getPortfolio(portIdx);
+            PortfolioDto.GetPortfolioRes getPortfolioRes = portfolioService.getPortfolio(portIdx);
             return new BaseResponse<>(getPortfolioRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

@@ -71,6 +71,19 @@ import lombok.*;
         //    private String jwt;
     }
 
+     // 유저 계좌 단일 조회 RESPONSE DTO
+     @Data
+     @AllArgsConstructor
+     @NoArgsConstructor
+     public static class GetAccountByAccountIdxRes{
+         private String accountName;
+         private int marketIdx;
+         private String property;
+         private double totalProperty;
+         private String status;
+         //    private String jwt;
+     }
+
 
     // 현금 자산 조회 RESPONSE DTO
     @Data
