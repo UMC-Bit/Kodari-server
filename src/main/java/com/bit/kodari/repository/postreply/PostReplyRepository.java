@@ -125,5 +125,15 @@ public class PostReplyRepository {
         return getReplyUserRes;
     }
 
+    //토론장 게시글별 댓글 수 조회
+    public List<PostReplyDto.GetReplyCntRes> getReplyCntByPostCommentIdx(int postCommentIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
+        List<PostReplyDto.GetReplyCntRes> getReplyCntRes = namedParameterJdbcTemplate.query(PostReplySql.LIST_REPLY_CNT,parameterSource,
+                (rs, rowNum) -> new PostReplyDto.GetReplyCntRes(
+                        rs.getInt("reply_cnt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        );
+        return getReplyCntRes;
+    }
+
 
 }

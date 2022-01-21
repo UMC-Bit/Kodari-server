@@ -1,6 +1,7 @@
 package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
+import com.bit.kodari.dto.PostCommentDto;
 import com.bit.kodari.dto.PostReplyDto;
 import com.bit.kodari.repository.postreply.PostReplyRepository;
 import com.bit.kodari.utils.JwtService;
@@ -127,6 +128,20 @@ public class PostReplyService {
         try {
             List<PostReplyDto.GetReplyRes> getReplysRes = postReplyRepository.getReplyByUserIdx(userIdx);
             return getReplysRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // 특정 댓글별 답글 수 조회
+    public List<PostReplyDto.GetReplyCntRes> getReplyCntByPostCommentIdx(int postCommentIdx) throws BaseException {
+//        String status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
+//        if(status.equals("inactive")) { //삭제된 댓글은 답글 수 조회 불가
+//            throw new BaseException(IMPOSSIBLE_POST_COMMENT); // 댓글이 존재하지 않음.
+//        }
+        try {
+            List<PostReplyDto.GetReplyCntRes> getReplyCntRes = postReplyRepository.getReplyCntByPostCommentIdx(postCommentIdx);
+            return getReplyCntRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

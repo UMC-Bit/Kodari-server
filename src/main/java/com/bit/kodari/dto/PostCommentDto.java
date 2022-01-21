@@ -73,4 +73,13 @@ public class PostCommentDto {
 
     }
 
+    //토론장 게시글별 댓글 수 조회
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetCommentCntRes{
+        private int postCommentIdx;
+    }
+
+
 }

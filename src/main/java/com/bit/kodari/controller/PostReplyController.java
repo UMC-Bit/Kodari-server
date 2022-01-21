@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/replys")
+@RequestMapping("/reply")
 public class PostReplyController {
 
     @Autowired
@@ -125,6 +125,20 @@ public class PostReplyController {
             //유저별 답글 조회
             List<PostReplyDto.GetReplyRes> getReplysRes = postReplyService.getReplyByUserIdx(userIdx);
             return new BaseResponse<>(getReplysRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /*
+        댓글별 답글 수 조회
+     */
+    @GetMapping("/count") // (GET) 127.0.0.1:9000/reply
+    @ApiOperation(value = "답글 수 조회", notes = "댓별 답글 수 조회함")
+    public BaseResponse<List<PostReplyDto.GetReplyCntRes>> getReplyCnt(@RequestParam int postCommentIdx) {
+        try {
+            List<PostReplyDto.GetReplyCntRes> getReplyCntRes = postReplyService.getReplyCntByPostCommentIdx(postCommentIdx);
+            return new BaseResponse<>(getReplyCntRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }

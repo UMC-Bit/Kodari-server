@@ -67,7 +67,13 @@ class PostCommentSql {
          WHERE c.userIdx = :userIdx and p.status = 'active' and c.status = 'active'
          """
 
-
+    //토론장 게시글별 댓글 수 조회
+    public static final String LIST_COMMENT_CNT = """
+         SELECT COUNT(*) as 'comment_cnt'
+         FROM PostComment as c
+            join Post as p on c.postIdx = p.postIdx
+         WHERE c.postIdx = :postIdx and p.status = 'active' and c.status = 'active'
+         """
 
 
 }

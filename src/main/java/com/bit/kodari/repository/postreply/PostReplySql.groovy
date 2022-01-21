@@ -54,4 +54,12 @@ class PostReplySql {
          FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx join User as u on r.userIdx = u.userIdx 
          WHERE r.userIdx = :userIdx and c.status = 'active' and r.status = 'active'
          """
+
+    //토론장 댓글별 답글 수 조회
+    public static final String LIST_REPLY_CNT = """
+         SELECT COUNT(*) as 'reply_cnt'
+         FROM PostReply as r
+            join PostComment as c on r.postCommentIdx = c.postCommentIdx
+         WHERE r.postCommentIdx = :postCommentIdx and c.status = 'active' and r.status = 'active'
+         """
 }

@@ -128,6 +128,20 @@ public class PostCommentController {
         }
     }
 
+    /*
+        게시글별 댓글 수 조회
+     */
+    @GetMapping("/count") // (GET) 127.0.0.1:9000/comments
+    @ApiOperation(value = "댓글 수 조회", notes = "게시글별 댓글 수 조회함")
+    public BaseResponse<List<PostCommentDto.GetCommentCntRes>> getCommentCnt(@RequestParam int postIdx) {
+        try {
+            List<PostCommentDto.GetCommentCntRes> getCommentCntRes = postCommentService.getCommentCntByPostIdx(postIdx);
+            return new BaseResponse<>(getCommentCntRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 
 
 }

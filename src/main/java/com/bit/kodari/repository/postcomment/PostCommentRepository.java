@@ -151,4 +151,14 @@ public class PostCommentRepository {
         return getCommentsRes;
     }
 
+    //토론장 게시글별 댓글 수 조회
+    public List<PostCommentDto.GetCommentCntRes> getCommentCntByPostIdx(int postIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        List<PostCommentDto.GetCommentCntRes> getCommentCntRes = namedParameterJdbcTemplate.query(postCommentSql.LIST_COMMENT_CNT,parameterSource,
+                (rs, rowNum) -> new PostCommentDto.GetCommentCntRes(
+                        rs.getInt("comment_cnt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        );
+        return getCommentCntRes;
+    }
+
 }

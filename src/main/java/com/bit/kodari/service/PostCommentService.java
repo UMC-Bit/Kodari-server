@@ -145,4 +145,18 @@ public class PostCommentService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    // 특정 게시글별 댓글 수 조회
+    public List<PostCommentDto.GetCommentCntRes> getCommentCntByPostIdx(int postIdx) throws BaseException {
+        String status = postCommentRepository.getStatusByPostIdx(postIdx);
+        if(status.equals("inactive")) { //삭제된 게시글은 댓글 수 조회 불가
+            throw new BaseException(IMPOSSIBLE_POST); // 게시글이 존재하지 않음.
+        }
+        try {
+            List<PostCommentDto.GetCommentCntRes> getCommentCntRes = postCommentRepository.getCommentCntByPostIdx(postIdx);
+            return getCommentCntRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

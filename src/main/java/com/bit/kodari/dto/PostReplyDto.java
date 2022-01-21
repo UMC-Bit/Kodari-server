@@ -63,4 +63,14 @@ public class PostReplyDto {
         private String nickName;
         private String content;
     }
+
+    //토론장 댓글별 답글 수 조회
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetReplyCntRes{
+        private int postReplyIdx;
+    }
+
+
 }
