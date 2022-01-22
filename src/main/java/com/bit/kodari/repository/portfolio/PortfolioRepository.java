@@ -45,7 +45,7 @@ public class PortfolioRepository {
 
 
     //포트폴리오 조회
-    // TODO 리스트로 받아오게 - 수정
+    //리스트로 받아오게 - 수정
     //유저코인, 대표코인, 수익률, 소득
     public PortfolioDto.GetPortfolioRes getPortfolio(int portIdx){
         int accountIdx = getAccountIdx(portIdx);
@@ -66,8 +66,22 @@ public class PortfolioRepository {
 
     }
 
-
     // TODO 포트폴리오 Idx 리스트 받아오기 - userIdx 로
+    /**
+     * userIdx로 전체 포트폴리오 인덱스 가져오기
+     * 가져온 포트폴리오 인덱스로 각자 조회하던거 가져와서 넣기 - 리스트로
+     */
+    public List<PortfolioDto.GetAllPortIdxRes> getAllPortByUserIdx(int userIdx){
+        try {
+            SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+            List<PortfolioDto.GetAllPortIdxRes> getAllPortByUserRes = namedParameterJdbcTemplate.query(PortfolioSql.GET_ALL_PORT_IDX, parameterSource,(rs, rowNum) ->
+                    new PortfolioDto.GetAllPortIdxRes(rs.getInt("portIdx")));
+            return getAllPortByUserRes;
+        }catch(EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
 
     //포트폴리오 삭제 - 소유코인, 계좌, 대표코인 다 삭제되도록
     public int deleteByPortIdx(int portIdx, int accountIdx, int userIdx) {

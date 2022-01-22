@@ -25,10 +25,6 @@ class PortfolioSql {
         where accountIdx = :accountIdx and status = 'active'
     """
 
-    //대표코인 가져오기
-    //수익률 가져오기
-    //소득 가져오기
-
     //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록
     // TODO 대표코인 삭제 추가하기
     public static final String DELETE = """

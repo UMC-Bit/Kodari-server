@@ -91,6 +91,4 @@ public class PortfolioDto {
     public static class GetAllPortIdxRes{
         private int portIdx;
     }
-
-
 }

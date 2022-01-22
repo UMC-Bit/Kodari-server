@@ -1,15 +1,10 @@
 package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
-import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.PortfolioDto;
-import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.repository.portfolio.PortfolioRepository;
-import com.bit.kodari.repository.usercoin.UserCoinSql;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,8 +51,8 @@ public class PortfolioService {
 
 
     //포트폴리오 조회
-    // TODO userCoinIdx 대괄호로 쫘르륵...? -> LIST
-    // TODO 수익률, 소득, 대표코인 (코인별로)
+    // userCoinIdx 대괄호로 쫘르륵...? -> LIST
+    // 수익률, 소득, 대표코인 (코인별로)
     public PortfolioDto.GetPortfolioRes getPortfolio(int portIdx) throws BaseException {
         //status가 inactive인 account는 오류 메시지
         //String status = accountRepository.getStatusByAccountIdx(accountIdx);
@@ -72,8 +67,15 @@ public class PortfolioService {
         }
     }
 
-    //포트폴리오 전체 조회
-    // TODO
+    // TODO 포트폴리오 전체 조회 userIdx
+    public List<PortfolioDto.GetAllPortIdxRes> getPortListByUserIdx(int userIdx) throws BaseException {
+        try{
+            List<PortfolioDto.GetAllPortIdxRes> getAllPortByUserRes = portfolioRepository.getAllPortByUserIdx(userIdx);
+            return getAllPortByUserRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 
     //포트폴리오 삭제
     public void deleteByPortIdx(PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq) throws BaseException{

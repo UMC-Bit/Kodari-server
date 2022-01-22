@@ -84,6 +84,27 @@ public class PortfolioController {
         }
     }
 
+    // TODO 포트폴리오 전체 조회하기
+    //Query String
+    @ResponseBody
+    @GetMapping("/getAll/{userIdx}")
+    public BaseResponse<List<PortfolioDto.GetAllPortIdxRes>> getAllPortByUserIdx(@PathVariable("userIdx") int userIdx) {
+
+        try {
+            // 해당 accountIdx를 만족하는 계좌의 현금 자산 정보를 불러온다.
+            //jwt에서 idx 추출.
+            //int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            //if(userIdx != userIdxByJwt){
+            //return new BaseResponse<>(INVALID_USER_JWT);
+            //}
+            List<PortfolioDto.GetAllPortIdxRes> getAllPortByUserRes = portfolioService.getPortListByUserIdx(userIdx);
+            return new BaseResponse<>(getAllPortByUserRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 
     /**
      * [PATCH]
