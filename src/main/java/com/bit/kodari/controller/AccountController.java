@@ -64,7 +64,7 @@ public class AccountController {
     // 유저 계좌 조회
     // Path-variable
     @ResponseBody
-    @GetMapping("/{userIdx}")
+    @GetMapping("/get/{userIdx}")
     public BaseResponse<List<AccountDto.GetAccountRes>> getAccountByUserIdx(@PathVariable("userIdx") int userIdx) {
 
         try {

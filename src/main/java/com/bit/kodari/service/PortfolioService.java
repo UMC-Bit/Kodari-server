@@ -19,6 +19,7 @@ public class PortfolioService {
     private PortfolioRepository portfolioRepository;
 
     //포트폴리오 등록
+    // TODO 비티코인, 이더리움, 솔라나 로 자동 넣어주기
     public PortfolioDto.PostPortfolioRes registerPortfolio(PortfolioDto.PostPortfolioReq postPortfolioReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postPortfolioReq.getAccountIdx();
@@ -67,7 +68,7 @@ public class PortfolioService {
         }
     }
 
-    // TODO 포트폴리오 전체 조회 userIdx
+    // 포트폴리오 전체 조회 userIdx
     public List<PortfolioDto.GetAllPortIdxRes> getPortListByUserIdx(int userIdx) throws BaseException {
         try{
             List<PortfolioDto.GetAllPortIdxRes> getAllPortByUserRes = portfolioRepository.getAllPortByUserIdx(userIdx);

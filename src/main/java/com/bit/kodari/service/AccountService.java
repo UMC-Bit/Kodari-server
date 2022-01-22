@@ -5,6 +5,7 @@ import com.bit.kodari.config.BaseResponse;
 import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.repository.account.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.groovy.parser.antlr4.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +24,17 @@ public class AccountService {
     public PostAccountRes registerAccount(PostAccountReq postAccountReq) throws BaseException {
         //같은 이름은 안되게 validation 추가
         //같은 유저의 같은 거래소에는 같은 이름을 가진 계좌가 있으면 안됨.
+        // TODO 계좌 3개 이상 오류
         String accountName = postAccountReq.getAccountName();
         int userIdx = postAccountReq.getUserIdx();
         int marketIdx = postAccountReq.getMarketIdx();
         long property = postAccountReq.getProperty();
         long max = 100000000000L;
 
+        accountName = accountName.replaceAll(" ", "");
         List<AccountDto.GetAccountNameRes> getAccountNameRes = accountRepository.getAccountNameByIdx(userIdx, marketIdx);
-
         // 계좌 이름 null X
-        if (accountName == null || accountName.length()==0) {
+        if (StringUtils.isEmpty(accountName) == true || accountName.length()==0) {
             throw new BaseException(POST_ACCOUNT_NAME_NULL); //2040
         }
         if(property < 0 || property > max){
@@ -96,8 +98,9 @@ public class AccountService {
 
         List<AccountDto.GetAccountNameRes> getAccountNameRes = accountRepository.getAccountNameByIdx(userIdx, marketIdx);
 
+        String accountName = account.getAccountName().replaceAll(" ", "");
         // null값 안됨. 스페이스바 validation 추가
-        if (account.getAccountName() == null || account.getAccountName().length()==0) {
+        if (StringUtils.isEmpty(accountName) == true || accountName.length()==0) {
             throw new BaseException(POST_ACCOUNT_NAME_NULL); //2040
         }
 

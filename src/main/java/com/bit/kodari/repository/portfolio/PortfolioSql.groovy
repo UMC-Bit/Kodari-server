@@ -26,14 +26,14 @@ class PortfolioSql {
     """
 
     //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록
-    // TODO 대표코인 삭제 추가하기
+    // TODO 대표코인 삭제 따로 만들기
     public static final String DELETE = """
 			UPDATE Portfolio AS p, UserCoin AS u, Account AS a, Represent AS r
 			SET p.status = 'inactive', u.status = 'inactive', a.status = 'inactive', r.status = 'inactive' 
 			WHERE p.portIdx = :portIdx
 			AND u.accountIdx = :accountIdx
 			AND a.accountIdx = :accountIdx
-			AND r.userIdx = :userIdx
+			AND r.portIdx = :portIdx
     """
 
     //accountIdx로 계좌 status 가져오기

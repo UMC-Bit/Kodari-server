@@ -35,6 +35,7 @@ public class RepresentService {
     }
 
     // 대표 코인 조회
+    // TODO 코인이름, 코인 심볼, 코인 이미지 추가하기
     public List<RepresentDto.GetRepresentRes> getRepresent(int portIdx) throws BaseException {
         try {
             List<RepresentDto.GetRepresentRes> getRepresentRes = representRepository.getRepresent(portIdx);
@@ -43,6 +44,9 @@ public class RepresentService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    //보류 - 대표 코인 단일 조회
+
 
     // 대표 코인 삭제
     public void delete(RepresentDto.DeleteRepresentReq deleteRepresentReq) throws BaseException{
