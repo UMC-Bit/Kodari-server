@@ -34,6 +34,7 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PASSWORD(false, 2019, "비밀번호를 입력해주세요."),
     POST_USERS_EXISTS_NICKNAME(false,2020,"중복된 닉네임입니다."),
     POST_ACCOUNT_NAME_NULL(false, 2040, "계좌이름을 입력해주세요."),
+    INACTIVE_PORTFOLIO(false, 2041, "삭제된 포트폴리오입니다."),
 
 
 
@@ -84,6 +85,7 @@ public enum BaseResponseStatus {
     PRICE_AVG_RANGE_ERROR(false, 4052, "매수평단가 범위 오류로 수정 실패"),
     AMOUNT_RANGE_ERROR(false, 4053, "코인 amount 범위 오류로 수정 실패"),
     COIN_AMOUNT_OVER(false, 4054, "매도하는 코인이 기존보다 많습니다."),
+    DELETE_FAIL_REPRESENT(false, 4055, "대표 코인 삭제에 실패하였습니다."),
 
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
     DELETE_FAIL_POST(false, 4071, "게시글 삭제에 실패하였습니다."),
