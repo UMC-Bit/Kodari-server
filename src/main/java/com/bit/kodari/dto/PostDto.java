@@ -21,7 +21,7 @@ public class PostDto {
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
     public static class RegisterReq{
-        private int boardIdx;
+        private int coinIdx;
         private int userIdx;
         private String content;
     }
@@ -86,9 +86,6 @@ public class PostDto {
     }
 
 
-
-
-
     //토론장 게시글 조회
     @Data
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
@@ -98,7 +95,28 @@ public class PostDto {
         private String nickName; //유저 닉네임
         private String profileImgUrl; //유저 프로필
         private String content; //게시글 내용
+        private int like = 0;
+        private int dislike = 0;
     }
+
+    //토론장 게시글별 조회
+    @Data
+    @AllArgsConstructor // 해당 클래스, profileImage)를 받는 생성자를 생성
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetUserPostRes{
+        private String symbol; //코인 심볼
+        private String nickName; //유저 닉네임
+        private String profileImgUrl; //유저 프로필
+        private String content; //게시글 내용
+        private int like = 0;
+        private int dislike = 0;
+        private boolean checkWriter; // 게시글 유저 확인
+    }
+
+
+
+
+
 
 
 

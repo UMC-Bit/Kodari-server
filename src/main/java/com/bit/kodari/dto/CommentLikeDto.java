@@ -49,15 +49,8 @@ public class CommentLikeDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class DeleteLikeReq{
         private int commentLikeIdx;
-        private int like;
+        private int like = 1;
     }
 
-    //토론장 댓글 좋아요 수정 시 중복 삭제
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class DeleteReq{
-        private int commentLikeIdx;
-    }
 
 }

@@ -31,7 +31,8 @@ public class PostService {
     // 토론장 게시글 등록(POST)
     public RegisterRes insertPost(RegisterReq registerReq) throws BaseException {
         String content = registerReq.getContent();
-        if(content.isEmpty()) { //게시글 내용이 없는 경우 validation 처리
+        String tmp_content = content.replaceAll(" ", "");
+        if(content.isEmpty() || tmp_content.isEmpty()) { //게시글 내용이 없는 경우 validation 처리
             throw new BaseException(EMPTY_CONTENT);
         }
         else if(content.length() >= 500) { //게시글 500자 이내 제한
@@ -51,13 +52,14 @@ public class PostService {
         String content = post.getContent();
         int user = postRepository.getUserIdxByPostIdx(postIdx);
         String status = postRepository.getStatusByPostIdx(postIdx);
+        String tmp_content = content.replaceAll(" ", "");
         if(status.equals("inactive")) { //삭제된 글은 수정 불가
             throw new BaseException(IMPOSSIBLE_POST);
         }
         else if(userIdx != user) { //글쓴 유저가 아닌 경우 수정 불가
             throw new BaseException(USER_NOT_EQUAL);
         }
-        else if(content.isEmpty()) { //게시글 내용 입력 없을 경우 validation 처리
+        else if(content.isEmpty() || tmp_content.isEmpty()) { //게시글 내용 입력 없을 경우 validation 처리
             throw new BaseException(EMPTY_CONTENT);
         }
         //게시글 내용 0자 이하 제한
@@ -130,7 +132,6 @@ public class PostService {
     }
 
 
-
     // 토론장 게시글 목록 조회
     public List<GetPostRes> getPosts() throws BaseException {
         try {
@@ -152,13 +153,13 @@ public class PostService {
     }
 
     // 특정 게시글의 게시글 조회
-    public List<GetPostRes> getPostsByPostIdx(int postIdx) throws BaseException {
+    public GetUserPostRes getPostsByPostIdx(int postIdx) throws BaseException {
         String status = postRepository.getStatusByPostIdx(postIdx);
         if(status.equals("inactive")) { //삭제된 게시글이면 조회 불가
             throw new BaseException(IMPOSSIBLE_POST);
         }
         try {
-            List<GetPostRes> getPostsRes = postRepository.getPostsByPostIdx(postIdx);
+            PostDto.GetUserPostRes getPostsRes = postRepository.getPostsByPostIdx(postIdx);
             return getPostsRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

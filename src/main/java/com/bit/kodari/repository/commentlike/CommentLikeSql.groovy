@@ -38,6 +38,6 @@ class CommentLikeSql {
     //토론장 게시글 좋아요/싫어요 삭제
     public static final String DELETE_COMMENT_LIKE = """
         DELETE FROM CommentLike
-        WHERE commentLikeIdx = :commentLikeIdx and CommentLike.like = :like
+        WHERE commentLikeIdx = :commentLikeIdx and CommentLike.like = 1
         """
 }

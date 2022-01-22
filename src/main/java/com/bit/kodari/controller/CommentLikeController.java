@@ -80,7 +80,7 @@ public class CommentLikeController {
          */
     @DeleteMapping("/delete")
     @ApiOperation(value = "좋아요 삭제", notes = "토론장 댓글의 좋아요 삭제함.")
-    public BaseResponse<String> DeleteCommentLike(@RequestParam int commentLikeIdx, @RequestParam int like){
+    public BaseResponse<String> DeleteCommentLike(@RequestParam int commentLikeIdx, @RequestParam int like) {
         try {
 //            //jwt에서 idx 추출.
 //            int userIdxByJwt = jwtService.getUserIdx();

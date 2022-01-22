@@ -24,7 +24,7 @@ public class PostRepository {
     public PostDto.RegisterRes insert(PostDto.RegisterReq post) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("boardIdx", post.getBoardIdx())
+                .addValue("coinIdx", post.getCoinIdx())
                 .addValue("userIdx", post.getUserIdx())
                 .addValue("content", post.getContent());
         int affectedRows = namedParameterJdbcTemplate.update(PostSql.INSERT_POST, parameterSource, keyHolder);
@@ -118,6 +118,7 @@ public class PostRepository {
         });
     }
 
+
     //게시글 수정
     public int modifyPost(PostDto.PatchPostReq patchPostReq) {
         String qry = PostSql.UPDATE_POST;
@@ -171,8 +172,11 @@ public class PostRepository {
                         rs.getString("symbol"),
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
-                        rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
-        );
+                        rs.getString("content"),
+                        rs.getInt("like"),
+                        rs.getInt("dislike")
+                // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        ));
 
         return getPostRes;
     }
@@ -185,27 +189,27 @@ public class PostRepository {
                         rs.getString("symbol"),
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
-                        rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
-        );
-
+                        rs.getString("content"),
+                        rs.getInt("like"),
+                        rs.getInt("dislike")
+                        // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        ));
         return getPostRes;
     }
 
     //토론장 특정 게시글의 게시글 조회
-    public List<PostDto.GetPostRes> getPostsByPostIdx(int postIdx) {
+    public PostDto.GetUserPostRes getPostsByPostIdx(int postIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
-        List<PostDto.GetPostRes> getPostRes = namedParameterJdbcTemplate.query(PostSql.LIST_POSTS, parameterSource,
-                (rs, rowNum) -> new PostDto.GetPostRes(
+        PostDto.GetUserPostRes getUserPostRes = namedParameterJdbcTemplate.queryForObject(PostSql.LIST_POSTS, parameterSource,
+                (rs, rowNum) -> new PostDto.GetUserPostRes(
                         rs.getString("symbol"),
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
-                        rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getString("content"),
+                        rs.getInt("like"),
+                        rs.getInt("dislike"), false) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
-        return getPostRes;
+        return getUserPostRes;
     }
-
-
-
-
 }

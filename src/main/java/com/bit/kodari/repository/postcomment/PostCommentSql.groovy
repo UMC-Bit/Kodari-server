@@ -29,6 +29,13 @@ class PostCommentSql {
         WHERE c.postIdx = :postIdx
         """
 
+    //postIdx로 userIdx 받아오기
+    public static final String GET_COMMENT_USER_IDX = """
+        SELECT userIdx
+        FROM PostComment
+        WHERE postIdx = :postIdx
+        """
+
     //postCommentIdx로 commentLikeIdx 받아오기
     public static final String GET_COMMENT_LIKE_IDX = """
         SELECT cl.commentLikeIdx
@@ -55,16 +62,20 @@ class PostCommentSql {
 
     //토론장 게시글별 댓글 조회
     public static final String LIST_POST_COMMENT = """
-         SELECT u.nickName,  u.profileImgUrl , c.content
+         SELECT u.nickName,  u.profileImgUrl , c.content,  count(case when cl.like = 1 then 1 end) as 'like'
          FROM PostComment as c join Post as p on c.postIdx = p.postIdx join User as u on c.userIdx = u.userIdx
+         LEFT join CommentLike as cl on cl.postCommentIdx = c.postCommentIdx
          WHERE c.postIdx = :postIdx and c.status = 'active' and p.status = 'active'
+         GROUP BY u.nickName,  u.profileImgUrl , c.content
          """
 
     //토론장 유저별 게시글 조회
     public static final String LIST_USER_COMMENT = """
-         SELECT u.nickName,  u.profileImgUrl , c.content
-         FROM PostComment as c join Post as p on c.postIdx = p.postIdx join User as u on c.userIdx = u.userIdx 
+         SELECT u.nickName,  u.profileImgUrl , c.content,  count(case when cl.like = 1 then 1 end) as 'like'
+         FROM PostComment as c join Post as p on c.postIdx = p.postIdx join User as u on c.userIdx = u.userIdx
+         LEFT join CommentLike as cl on cl.postCommentIdx = c.postCommentIdx
          WHERE c.userIdx = :userIdx and p.status = 'active' and c.status = 'active'
+         GROUP BY u.nickName,  u.profileImgUrl , c.content
          """
 
     //토론장 게시글별 댓글 수 조회

@@ -83,6 +83,23 @@ public class PostCommentRepository {
 
     }
 
+    //postIdx로 댓글 쓴 userIdx 가져오기
+    public List<PostCommentDto.GetCommentUserRes> getUserIdxByPostIdx(int postIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        try {
+            List<PostCommentDto.GetCommentUserRes> getCommentUserRes =  namedParameterJdbcTemplate.query(PostCommentSql.GET_COMMENT_USER_IDX, parameterSource,
+                    (rs, rowNum) -> new PostCommentDto.GetCommentUserRes(
+                            rs.getInt("userIdx"))
+            );
+            return getCommentUserRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+
+
     //postCommentIdx 댓글 삭제 시 관련된 댓글 좋아요 삭제
     public List<PostCommentDto.GetCommentLikeDeleteRes> getCommentLikeIdxByPostCommentIdx(int postCommentIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
@@ -117,6 +134,8 @@ public class PostCommentRepository {
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
+
+
     //삭제된 댓글과 관련된 댓글 좋아요 삭제
     public int deleteCommentLikeStatus(int commentLikeIdx) {
         String qry = PostCommentSql.DELETE_COMMENT_LIKE;
@@ -132,7 +151,8 @@ public class PostCommentRepository {
                 (rs, rowNum) -> new PostCommentDto.GetCommentRes(
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
-                        rs.getString("content")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getString("content"),
+                        rs.getInt("like"), false) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
         return getCommentRes;
@@ -145,7 +165,8 @@ public class PostCommentRepository {
                 (rs, rowNum) -> new PostCommentDto.GetCommentRes(
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
-                        rs.getString("content"))
+                        rs.getString("content"),
+                        rs.getInt("like"), false)
         );
 
         return getCommentsRes;

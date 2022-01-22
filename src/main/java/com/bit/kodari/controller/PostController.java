@@ -72,7 +72,6 @@ public class PostController {
 //            if(userIdx != userIdxByJwt){
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
-//            //같다면 유저네임 변경
             PostDto.PatchPostReq patchPostReq = new PostDto.PatchPostReq(postIdx, userIdx, post.getContent());
             postService.modifyPost(patchPostReq);
             String result = "토론장 게시글이 수정되었습니다.";
@@ -114,7 +113,7 @@ public class PostController {
     @ApiOperation(value = "토론장 게시글 목록 조회", notes = "토론장 게시글 전체 조회함")
     public BaseResponse<List<PostDto.GetPostRes>> getPosts(@RequestParam(required = false) Integer userIdx) {
         try {
-            if (userIdx == null) { // query string인 sellerIdx이 없을 경우, 그냥 전체 상품정보를 불러온다.
+            if (userIdx == null) {
                 List<PostDto.GetPostRes> getPostsRes = postService.getPosts();
                 return new BaseResponse<>(getPostsRes);
             }
@@ -131,15 +130,25 @@ public class PostController {
      */
     @GetMapping("/post") // (GET) 127.0.0.1:9000/posts
     @ApiOperation(value = "게시글별 조회", notes = "토론장 게시글별 조회함")
-    public BaseResponse<List<PostDto.GetPostRes>> getComments(@RequestParam int postIdx) {
+    public BaseResponse<PostDto.GetUserPostRes> getComments(@RequestParam int postIdx) {
+        int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
         try {
-            List<PostDto.GetPostRes> getPostsRes = postService.getPostsByPostIdx(postIdx);
-            return new BaseResponse<>(getPostsRes);
+
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            // jwt validation check
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
+
+            PostDto.GetUserPostRes getUserPostRes = postService.getPostsByPostIdx(postIdx);
+//            if(userIdx == userIdxByJwt){
+//                getUserPostRes.setCheckWriter(true);
+//            }
+            return new BaseResponse<>(getUserPostRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-
-
-
 }

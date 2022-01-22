@@ -107,8 +107,31 @@ public class PostCommentController {
     @GetMapping("/post") // (GET) 127.0.0.1:9000/comments
     @ApiOperation(value = "토론장 게시글별 댓글 목록 조회", notes = "토론장 게시글 전체 조회함")
     public BaseResponse<List<PostCommentDto.GetCommentRes>> getComments(@RequestParam int postIdx) {
+        List<PostCommentDto.GetCommentUserRes> getCommentUserRes = postCommentRepository.getUserIdxByPostIdx(postIdx);
         try {
+            for(int i=0; i< getCommentUserRes.size(); i++) {
+                //jwt에서 idx 추출.
+                int userIdxByJwt = jwtService.getUserIdx();
+                //jwt validation check
+                //userIdx와 접근한 유저가 같은지 확인
+                int userIdx = getCommentUserRes.get(i).getUserIdx();
+                if(userIdx != userIdxByJwt){
+                    return new BaseResponse<>(INVALID_USER_JWT);
+                }
+            }
+
             List<PostCommentDto.GetCommentRes> getCommentsRes = postCommentService.getCommentsByPostIdx(postIdx);
+            for(int i=0; i< getCommentUserRes.size(); i++) {
+                //jwt에서 idx 추출.
+                int userIdxByJwt = jwtService.getUserIdx();
+                //jwt validation check
+                //userIdx와 접근한 유저가 같은지 확인
+                int userIdx = getCommentUserRes.get(i).getUserIdx();
+                if(userIdx == userIdxByJwt) {
+
+                    getCommentsRes.setCheckWriter(true);
+                }
+            }
             return new BaseResponse<>(getCommentsRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -120,8 +143,18 @@ public class PostCommentController {
     @ApiOperation(value = "유저별 댓글 목록 조회", notes = "토론장 게시글 유저별 댓글을 조회함")
     public BaseResponse<List<PostCommentDto.GetCommentRes>> getPosts(@RequestParam int userIdx) {
         try {
+            //            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            // jwt validation check
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
             //유저별 댓글 조회
             List<PostCommentDto.GetCommentRes> getCommentsRes = postCommentService.getCommentsByUserIdx(userIdx);
+//            if(userIdx == userIdxByJwt) {
+//                getCommentsRes.setCheckWriter(true);
+//            }
             return new BaseResponse<>(getCommentsRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

@@ -4,8 +4,8 @@ class PostSql {
 
     //토론장 게시글 등록
     public static final String INSERT_POST = """
-        INSERT INTO Post (boardIdx, userIdx, content)
-        values (:boardIdx, :userIdx, :content)
+        INSERT INTO Post (coinIdx, userIdx, content)
+        values (:coinIdx, :userIdx, :content)
         """
 
     //postIdx로 userIdx 받아오기
@@ -88,26 +88,30 @@ class PostSql {
 
     //토론장 게시글 조회
     public static final String LIST_POST = """
-         SELECT c.symbol, u.nickName, u.profileImgUrl, p.content
-         FROM Post as p join Coin as c on p.coinIdx = c.coinIdx join User as u on p.userIdx = u.userIdx 
-         WHERE p.status = 'active'
+        SELECT c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike'
+        FROM Post as p join Coin as c on p.coinIdx = c.coinIdx join User as u on p.userIdx = u.userIdx
+        Left join PostLike as l on l.postIdx = p.postIdx
+        WHERE p.status = 'active'
+        group by c.symbol, u.nickName, u.profileImgUrl, p.content
          """
 
     //토론장 유저 게시글 조회
     public static final String LIST_USER_POST = """
-         SELECT c.symbol, u.nickName, u.profileImgUrl, p.content
+         SELECT c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike'
          FROM Post as p join Coin as c on p.coinIdx = c.coinIdx join User as u on p.userIdx = u.userIdx 
+         Left join PostLike as l on l.postIdx = p.postIdx
          WHERE p.userIdx = :userIdx and p.status = 'active'
+         group by c.symbol, u.nickName, u.profileImgUrl, p.content
          """
 
     //토론장 게시글별 게시글 조회
     public static final String LIST_POSTS = """
-         SELECT c.symbol, u.nickName, u.profileImgUrl, p.content
+         SELECT c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike'
          FROM Post as p join Coin as c on p.coinIdx = c.coinIdx join User as u on p.userIdx = u.userIdx 
+         Left join PostLike as l on l.postIdx = p.postIdx
          WHERE p.postIdx = :postIdx and p.status = 'active'
+         group by c.symbol, u.nickName, u.profileImgUrl, p.content
          """
-
-
 
 
 

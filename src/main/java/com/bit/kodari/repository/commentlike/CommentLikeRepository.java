@@ -39,6 +39,8 @@ public class CommentLikeRepository {
         });
     }
 
+
+
     //commentLikeIdx로 좋아요 postCommentIdx 가져오기
     public int getPostCommentIdxByCommentLikeIdx(int commentLikeIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", commentLikeIdx);

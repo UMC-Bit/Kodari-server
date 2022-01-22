@@ -4,6 +4,7 @@ import com.bit.kodari.config.BaseException;
 import com.bit.kodari.dto.PostCommentDto;
 import com.bit.kodari.repository.postcomment.PostCommentRepository;
 import com.bit.kodari.utils.JwtService;
+import com.google.common.io.LittleEndianDataOutputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,10 +33,11 @@ public class PostCommentService {
         int postIdx = registerCommentReq.getPostIdx();
         String post_status = postCommentRepository.getStatusByPostIdx(postIdx);
         String content = registerCommentReq.getContent();
+        String tmp_content = content.replaceAll(" ", "");
         if(post_status.equals("inactive")) { //삭제된 게시글이면 댓글 등록 불가
             throw new BaseException(IMPOSSIBLE_POST);
         }
-        else if(content.isEmpty()) { //빈 내용이면 등록 불가
+        else if(content.isEmpty() || tmp_content.isEmpty()) { //빈 내용이면 등록 불가
             throw new BaseException(EMPTY_CONTENT);
         }
         else if(content.length() >= 100) { //내용 100자 이내 제한
@@ -55,6 +57,7 @@ public class PostCommentService {
         int userIdx = post.getUserIdx();
         int postIdx = post.getPostIdx();
         String content = post.getContent();
+        String tmp_content = content.replaceAll(" ", "");
         int user = postCommentRepository.getUserIdxByPostCommentIdx(postCommentIdx);
         String status = postCommentRepository.getStatusByPostCommentIdx(postCommentIdx);
         String post_status = postCommentRepository.getStatusByPostIdx(postIdx);
@@ -67,7 +70,7 @@ public class PostCommentService {
         else if(userIdx != user) { //댓글쓴 유저가 아니면 수정 불가
             throw new BaseException(USER_NOT_EQUAL_COMMENT);
         }
-        else if(content.isEmpty()) { //빈 내용 수정 불가
+        else if(content.isEmpty() || tmp_content.isEmpty()) { //빈 내용 수정 불가
             throw new BaseException(EMPTY_CONTENT);
         }
         else if(content.length() >= 100) { //내용 100자 이내 제한
@@ -94,6 +97,7 @@ public class PostCommentService {
         int user = postCommentRepository.getUserIdxByPostCommentIdx(postCommentIdx);
         String status = postCommentRepository.getStatusByPostCommentIdx(postCommentIdx);
         List<PostCommentDto.GetCommentLikeDeleteRes> getCommentLikeDeleteRes = postCommentRepository.getCommentLikeIdxByPostCommentIdx(postCommentIdx);
+
         if(status.equals("inactive")) { //삭제된 댓글 삭제 불가
             throw new BaseException(IMPOSSIBLE_POST_COMMENT);
         }

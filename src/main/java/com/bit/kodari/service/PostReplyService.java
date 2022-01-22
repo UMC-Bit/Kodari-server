@@ -31,6 +31,7 @@ public class PostReplyService {
     public PostReplyDto.RegisterReplyRes insertCommentReply(PostReplyDto.RegisterReplyReq registerReplyReq) throws BaseException {
         int postCommentIdx = registerReplyReq.getPostCommentIdx();
         String content = registerReplyReq.getContent();
+        String tmp_content = content.replaceAll(" ", "");
         String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
         String post_status = postReplyRepository.getPostStatusByPostCommentIdx(postCommentIdx);
         if(post_status.equals("inactive")) {//삭제된 게시글에 답글 등록 불가
@@ -39,7 +40,7 @@ public class PostReplyService {
         else if(comment_status.equals("inactive")) { //삭제된 댓글에 답글 등록 불가
             throw new BaseException(IMPOSSIBLE_POST_COMMENT);
         }
-        else if(content.isEmpty()) { //빈 내용은 등록 불가
+        else if(content.isEmpty() || tmp_content.isEmpty()) { //빈 내용은 등록 불가
             throw new BaseException(EMPTY_CONTENT);
         }
         else if(content.length() >= 100) { //내용 100자 이내 제한
@@ -59,6 +60,7 @@ public class PostReplyService {
         int userIdx = post.getUserIdx();
         int postCommentIdx = post.getPostCommentIdx();
         String content = post.getContent();
+        String tmp_content = content.replaceAll(" ", "");
         String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
         String post_status = postReplyRepository.getPostStatusByPostCommentIdx(postCommentIdx);
         int user = postReplyRepository.getUserIdxByPostReplyIdx(postReplyIdx);
@@ -71,7 +73,7 @@ public class PostReplyService {
         else if(comment_status.equals("inactive")) { //삭제된 댓글에 답글 수정 불가
             throw new BaseException(IMPOSSIBLE_POST_COMMENT);
         }
-        else if(content.isEmpty()) { //빈 내용이면 수정 불가
+        else if(content.isEmpty() || tmp_content.isEmpty()) { //빈 내용이면 수정 불가
             throw new BaseException(EMPTY_CONTENT);
         }
         else if(content.length() >= 100) { //내용 100자 이내 제한
