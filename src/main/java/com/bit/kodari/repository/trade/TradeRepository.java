@@ -19,16 +19,12 @@ import java.util.List;
 @Repository
 public class TradeRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private JdbcTemplate jdbcTemplate;
     TradeSql tradeSql; // sql문 모아놓은 클래스
     // 생성자 의존주입
     public TradeRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
-    @Autowired //readme 참고
-    public void setDataSource(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
+
 
     // 거래내역 생성:  레코드 추가
     public TradeDto.PostTradeRes createTrade(TradeDto.PostTradeReq postTradeReq){

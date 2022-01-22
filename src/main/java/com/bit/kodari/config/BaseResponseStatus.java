@@ -41,6 +41,7 @@ public enum BaseResponseStatus {
     PORTIDX_RANGE_ERROR(false,2025,"포트폴리오 인덱스를 확인해주세요."),
     COINIDX_RANGE_ERROR(false,2026,"코인 인덱스를 확인해주세요."),
     EMPTY_DATE(false,2027,"거래시각을 입력해주세요."),
+    ACCONTIDX_RANGE_ERROR(false,2028,"계좌 인덱스를 확인해주세요."),
 
 
 
@@ -58,7 +59,11 @@ public enum BaseResponseStatus {
     GET_USERS_NOT_EXISTS(false,3015,"등록된 유저가 없습니다."),
     GET_USERS_NOT_EXISTS_NICKNAME(false,3016,"없는 닉네임 입니다."),
     GET_USERS_NOT_EXISTS_EMAIL(false,3017,"없는 이메일 입니다."),
+
     GET_TRADES_NOT_EXISTS(false,3018,"없는 포트폴리오 및 코인 입니다."),
+
+    GET_SYMBOLS_NOT_EXISTS(false,3019,"없는 계좌 및 코인코드입니다."),
+    GET_PROFITS_NOT_EXISTS(false,3020,"수익내역이 없습니다."),
 
 
 

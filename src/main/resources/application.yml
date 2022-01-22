@@ -1,5 +1,5 @@
 server:
-  port: 8080 # 9000번 포트로 실행
+  port: 9000 # 9000번 포트로 실행
 
 spring:
   application:

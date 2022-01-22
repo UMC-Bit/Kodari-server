@@ -158,7 +158,7 @@ public class UserRepository {
         return namedParameterJdbcTemplate.update(UserSql.UPDATE_PROFILEIMGURL, parameterSource);
     }
 
-    // 회원 프로필사진 변경
+    // 회원 패스워드 변경
     public int updatePassword(UserDto.UpdatePasswordReq updatePasswordReq){
         //SqlParameterSource parameterSource = new MapSqlParameterSource("nickName", updateNickNameReq.getNickName());
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", updatePasswordReq.getUserIdx())
