@@ -19,9 +19,9 @@ public class RepresentService {
     @Autowired
     private RepresentRepository representRepository;
 
-    // TODO 대표 코인 등록
+    // 대표 코인 등록
     public RepresentDto.PostRepresentRes registerRepresent(RepresentDto.PostRepresentReq postRepresentReq) throws BaseException {
-        // TODO 포트폴리오 활성 상태 확인
+        // 포트폴리오 활성 상태 확인
         String status = representRepository.getStatusByPortIdx(postRepresentReq.getPortIdx());
         if(status.equals("inactive")){
             throw new BaseException(INACTIVE_PORTFOLIO); //2041
@@ -34,7 +34,7 @@ public class RepresentService {
         }
     }
 
-    // TODO 대표 코인 조회
+    // 대표 코인 조회
     public List<RepresentDto.GetRepresentRes> getRepresent(int portIdx) throws BaseException {
         try {
             List<RepresentDto.GetRepresentRes> getRepresentRes = representRepository.getRepresent(portIdx);
@@ -44,7 +44,7 @@ public class RepresentService {
         }
     }
 
-    // TODO 대표 코인 삭제
+    // 대표 코인 삭제
     public void delete(RepresentDto.DeleteRepresentReq deleteRepresentReq) throws BaseException{
 
         try {

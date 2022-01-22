@@ -36,7 +36,7 @@ public class RepresentController {
     /**
      * [POST]
      */
-    // TODO 대표 코인 등록
+    // 대표 코인 등록
     //Query String
     @ResponseBody
     @PostMapping("/post")
@@ -59,7 +59,7 @@ public class RepresentController {
     /**
      * [GET]
      */
-    // TODO 대표 코인 조회
+    // 대표 코인 조회
     // Path-variable
     @ResponseBody
     @GetMapping("/{portIdx}")
@@ -83,7 +83,7 @@ public class RepresentController {
     /**
      * [DELETE]
      */
-    // TODO 대표 코인 삭제
+    // 대표 코인 삭제
     @ResponseBody
     @DeleteMapping("/del/{representIdx}")
     public BaseResponse<String> deleteByName(@PathVariable("representIdx") int representIdx) {

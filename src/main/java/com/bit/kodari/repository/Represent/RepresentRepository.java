@@ -21,7 +21,7 @@ public class RepresentRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    // TODO Represent 대표 코인 등록
+    // Represent 대표 코인 등록
     public RepresentDto.PostRepresentRes insert(RepresentDto.PostRepresentReq represent) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource()
@@ -32,7 +32,7 @@ public class RepresentRepository {
         return RepresentDto.PostRepresentRes.builder().representIdx(pk).portIdx(represent.getPortIdx()).coinIdx(represent.getCoinIdx()).build();
     }
 
-    // TODO 대표 코인 조회 - userIdx
+    // 대표 코인 조회 - userIdx
     public List<RepresentDto.GetRepresentRes> getRepresent(int portIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
         List<RepresentDto.GetRepresentRes> getRepresentRes = namedParameterJdbcTemplate.query(RepresentSql.FIND_USER_REPRESENT, parameterSource,
@@ -46,7 +46,7 @@ public class RepresentRepository {
         return getRepresentRes;
     }
 
-    // TODO 대표 코인 삭제
+    // 대표 코인 삭제
     public int delete(RepresentDto.DeleteRepresentReq deleteRepresentReq) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("representIdx", deleteRepresentReq.getRepresentIdx());
         return namedParameterJdbcTemplate.update(RepresentSql.DELETE, parameterSource);
@@ -55,7 +55,7 @@ public class RepresentRepository {
     /**
      * 가져오기
      */
-    // TODO portIdx로 userIdx 가져오기
+    // portIdx로 userIdx 가져오기
     public int getUserIdxByPortIdx(int portIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
         return namedParameterJdbcTemplate.query(RepresentSql.GET_USER_IDX_BY_PORT, parameterSource, rs -> {
@@ -68,7 +68,7 @@ public class RepresentRepository {
         });
     }
 
-    // TODO representIdx로 portIdx 가져오기
+    // representIdx로 portIdx 가져오기
     public int getPortIdxByRepresentIdx(int representIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("representIdx", representIdx);
         return namedParameterJdbcTemplate.query(RepresentSql.GET_PORT_IDX_BY_REPRESENT, parameterSource, rs -> {
@@ -81,7 +81,7 @@ public class RepresentRepository {
         });
     }
 
-    // TODO portIdx로 status 가져오기
+    // portIdx로 status 가져오기
     public String getStatusByPortIdx(int portIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
         return namedParameterJdbcTemplate.query(RepresentSql.GET_STATUS_BY_PORT, parameterSource, rs -> {
