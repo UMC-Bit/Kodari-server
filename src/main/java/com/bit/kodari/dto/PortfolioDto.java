@@ -37,6 +37,14 @@ public class PortfolioDto {
         private int accountIdx;
     }
 
+    // 포트폴리오의 대표코인 조회 RESPONSE DTO
+    @Data
+    @Builder
+    public static class GetRepresentRes{
+        private int coinIdx;
+        //    private String jwt;
+    }
+
     // 포트폴리오의 소유코인 조회 RESPONSE DTO
     @Data
     @AllArgsConstructor

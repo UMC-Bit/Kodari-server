@@ -7,6 +7,12 @@ class PortfolioSql {
 			values (:userIdx, :accountIdx)
 	"""
 
+    //대표 코인 등록 - 비트코인, 이더리움, 솔라나
+    public static final String INSERT_REPRESENT = """
+            INSERT INTO Represent (portIdx, coinIdx)
+            values (:portIdx, :coinIdx)
+    """
+
     //포트폴리오 조회 - portIdx, accountIdx, accountName, userIdx, marketIdx, userCoinIdx, coinName, coinImg, proprerty, priceAvg, amount
     public static final String GET_PORTFOLIO = """
 			select p.portIdx, a.accountIdx, a.accountName, a.property, a.totalProperty, p.userIdx, m.marketName

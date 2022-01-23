@@ -43,6 +43,16 @@ public class PortfolioRepository {
         return PortfolioDto.PostPortfolioRes.builder().portIdx(pk).userIdx(portfolio.getUserIdx()).accountIdx(portfolio.getAccountIdx()).build();
     }
 
+    //대표코인 자동으로 넣기
+    public PortfolioDto.GetRepresentRes insertRepresent(int portIdx, int coinIdx) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("portIdx", portIdx)
+                .addValue("coinIdx", coinIdx);
+        namedParameterJdbcTemplate.update(portfolioSql.INSERT_REPRESENT, parameterSource, keyHolder);
+        return PortfolioDto.GetRepresentRes.builder().coinIdx(coinIdx).build();
+    }
+
 
     //포트폴리오 조회
     //리스트로 받아오게 - 수정

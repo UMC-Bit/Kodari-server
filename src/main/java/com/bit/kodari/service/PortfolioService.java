@@ -19,7 +19,7 @@ public class PortfolioService {
     private PortfolioRepository portfolioRepository;
 
     //포트폴리오 등록
-    // TODO 비티코인, 이더리움, 솔라나 로 자동 넣어주기
+    //비티코인, 이더리움, 솔라나 로 자동 넣어주기
     public PortfolioDto.PostPortfolioRes registerPortfolio(PortfolioDto.PostPortfolioReq postPortfolioReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postPortfolioReq.getAccountIdx();
@@ -43,6 +43,13 @@ public class PortfolioService {
         }
         try {
             PortfolioDto.PostPortfolioRes postPortfolioRes = portfolioRepository.insert(postPortfolioReq);
+            int portIdx = postPortfolioRes.getPortIdx();
+            //비트코인
+            PortfolioDto.GetRepresentRes getRepresentRes1 = portfolioRepository.insertRepresent(portIdx, 16);
+            //이더리움
+            PortfolioDto.GetRepresentRes getRepresentRes2 = portfolioRepository.insertRepresent(portIdx, 32);
+            //솔라나
+            PortfolioDto.GetRepresentRes getRepresentRes3 = portfolioRepository.insertRepresent(portIdx, 82);
             return postPortfolioRes;
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
