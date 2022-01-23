@@ -81,6 +81,18 @@ public class PostCommentDto {
         private String profileImgUrl;
         private String content;
         private int like;
+
+    }
+
+    //토론장 게시글 댓글조회
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetPostCommentRes{
+        private String nickName;
+        private String profileImgUrl;
+        private String content;
+        private int like;
         private boolean checkWriter; //게시글 유저 확인
 
     }

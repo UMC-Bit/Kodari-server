@@ -152,15 +152,15 @@ public class PostService {
         }
     }
 
-    // 특정 게시글의 게시글 조회
+    // 특정 게시글 조회
     public GetUserPostRes getPostsByPostIdx(int postIdx) throws BaseException {
         String status = postRepository.getStatusByPostIdx(postIdx);
         if(status.equals("inactive")) { //삭제된 게시글이면 조회 불가
             throw new BaseException(IMPOSSIBLE_POST);
         }
         try {
-            PostDto.GetUserPostRes getPostsRes = postRepository.getPostsByPostIdx(postIdx);
-            return getPostsRes;
+            PostDto.GetUserPostRes getUserPostRes = postRepository.getPostsByPostIdx(postIdx);
+            return getUserPostRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

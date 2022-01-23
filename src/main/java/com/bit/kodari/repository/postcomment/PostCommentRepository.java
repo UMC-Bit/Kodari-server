@@ -145,17 +145,17 @@ public class PostCommentRepository {
 
 
     //토론장 게시글별 댓글 조회
-    public List<PostCommentDto.GetCommentRes> getCommentsByPostIdx(int postIdx){
+    public List<PostCommentDto.GetPostCommentRes> getCommentsByPostIdx(int postIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
-        List<PostCommentDto.GetCommentRes> getCommentRes = namedParameterJdbcTemplate.query(PostCommentSql.LIST_POST_COMMENT,parameterSource,
-                (rs, rowNum) -> new PostCommentDto.GetCommentRes(
+        List<PostCommentDto.GetPostCommentRes> getPostCommentRes = namedParameterJdbcTemplate.query(PostCommentSql.LIST_POST_COMMENT,parameterSource,
+                (rs, rowNum) -> new PostCommentDto.GetPostCommentRes(
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
                         rs.getString("content"),
                         rs.getInt("like"), false) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
-        return getCommentRes;
+        return getPostCommentRes;
     }
 
     //토론장 특정 유저의 게시글 조회
@@ -166,7 +166,7 @@ public class PostCommentRepository {
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
                         rs.getString("content"),
-                        rs.getInt("like"), false)
+                        rs.getInt("like"))
         );
 
         return getCommentsRes;

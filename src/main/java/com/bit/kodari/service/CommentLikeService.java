@@ -27,11 +27,16 @@ public class CommentLikeService {
     // 토론장 댓글 좋아요 선택(POST)
     public CommentLikeDto.RegisterCommentLikeRes chooseCommentLike(CommentLikeDto.RegisterCommentLikeReq registerCommentLikeReq) throws BaseException {
         int postCommentIdx = registerCommentLikeReq.getPostCommentIdx();
+        int userIdx = registerCommentLikeReq.getUserIdx();
+        int exist_user = commentLikeRepository.getUser(userIdx);
+        //유저가 있으면 1반환
         String status = commentLikeRepository.getStatusByPostCommentIdx(postCommentIdx);
         if(status.equals("inactive")) { //삭제된 댓글이면 선택불가
             throw new BaseException(IMPOSSIBLE_POST_COMMENT);
         }
+        else if(userIdx == exist_user) {
 
+        }
         try {
             return commentLikeRepository.chooseCommentLike(registerCommentLikeReq);
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.

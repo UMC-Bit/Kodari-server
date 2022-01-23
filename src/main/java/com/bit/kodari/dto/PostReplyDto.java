@@ -55,14 +55,16 @@ public class PostReplyDto {
         private int postCommentIdx;
     }
 
-    //토론장 게시글 답글조회
+    //토론장 게시글 유저별 답글조회
     @Data
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetReplyRes{
+        private String profileImgUrl;
         private String nickName;
         private String content;
     }
+
 
     //토론장 댓글별 답글 수 조회
     @Data

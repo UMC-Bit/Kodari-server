@@ -106,6 +106,7 @@ public class PostReplyRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
         List<PostReplyDto.GetReplyRes> getReplyCommentRes = namedParameterJdbcTemplate.query(PostReplySql.LIST_COMMENT_REPLY, parameterSource,
                 (rs, rowNum) -> new PostReplyDto.GetReplyRes(
+                        rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
                         rs.getString("content"))
         );
@@ -118,6 +119,7 @@ public class PostReplyRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
         List<PostReplyDto.GetReplyRes> getReplyUserRes = namedParameterJdbcTemplate.query(PostReplySql.LIST_USER_REPLY, parameterSource,
                 (rs, rowNum) -> new PostReplyDto.GetReplyRes(
+                        rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
                         rs.getString("content"))
         );

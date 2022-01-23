@@ -2,8 +2,11 @@ package com.bit.kodari.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 
 public class PostDto {
+
     //토론장 게시글 기본정보
     @Data
     @AllArgsConstructor
@@ -111,16 +114,31 @@ public class PostDto {
         private int like = 0;
         private int dislike = 0;
         private boolean checkWriter; // 게시글 유저 확인
+        private List<GetCommentRes> commentList;
+
     }
 
+    //토론장 게시글 댓글조회
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetCommentRes{
+        private String profileImgUrl;
+        private String nickName;
+        private String content;
+        private int like;
+        private List<GetReplyRes> replyList;
+    }
 
-
-
-
-
-
-
-
+    //토론장 게시글 유저별 답글조회
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetReplyRes{
+        private String profileImgUrl;
+        private String nickName;
+        private String content;
+    }
 
 
 }

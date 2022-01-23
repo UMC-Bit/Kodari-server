@@ -59,6 +59,8 @@ public class PostRepository {
         }
     }
 
+
+
     //postIdx 게시글 삭제 시 관련된 댓글 좋아요 삭제
     public List<PostDto.GetCommentLikeDeleteRes> getCommentLikeIdxByPostIdx(int postIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
@@ -164,6 +166,7 @@ public class PostRepository {
 
 
 
+
     //토론장 게시글 전체 조회
     public List<PostDto.GetPostRes> getPosts(){
         SqlParameterSource parameterSource = new MapSqlParameterSource();
@@ -197,19 +200,75 @@ public class PostRepository {
         return getPostRes;
     }
 
+
+
     //토론장 특정 게시글의 게시글 조회
     public PostDto.GetUserPostRes getPostsByPostIdx(int postIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        try{
         PostDto.GetUserPostRes getUserPostRes = namedParameterJdbcTemplate.queryForObject(PostSql.LIST_POSTS, parameterSource,
-                (rs, rowNum) -> new PostDto.GetUserPostRes(
-                        rs.getString("symbol"),
+                (rs, rowNum) -> {
+                        List<PostDto.GetCommentRes> commentList = getCommentByPostIdx(postIdx);
+
+                        PostDto.GetUserPostRes post = new PostDto.GetUserPostRes
+                        (rs.getString("symbol"),
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
                         rs.getString("content"),
                         rs.getInt("like"),
-                        rs.getInt("dislike"), false) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
-        );
+                        rs.getInt("dislike"), false, commentList); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        return post;
+    }
+    );
+    return getUserPostRes;
+}catch(EmptyResultDataAccessException e) {
+        return null;
+        }
 
-        return getUserPostRes;
+        }
+
+    //토론장 특정 게시글의 관련된 댓글 조회
+    public List<PostDto.GetCommentRes> getCommentByPostIdx(int postIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        try{
+        List<PostDto.GetCommentRes> getCommentRes = namedParameterJdbcTemplate.query(PostSql.LIST_COMMENT, parameterSource,
+                (rs, rowNum) -> new PostDto.GetCommentRes(
+                        rs.getString("profileImgUrl"),
+                        rs.getString("nickName"),
+                        rs.getString("content"),
+                        rs.getInt("like"),
+                        getReplyByCommentIdx(rs.getInt("postCommentIdx"))
+                ));
+        // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받
+            return getCommentRes;
+    }catch(EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    //토론장 특정 게시글의 관련된 댓글 조회
+    public List<PostDto.GetReplyRes> getReplyByPostIdx(int postIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        List<PostDto.GetReplyRes> getReplyRes = namedParameterJdbcTemplate.query(PostSql.LIST_REPLY, parameterSource,
+                (rs, rowNum) -> new PostDto.GetReplyRes(
+                        rs.getString("profileImgUrl"),
+                        rs.getString("nickName"),
+                        rs.getString("content")
+                        // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                ));
+        return getReplyRes;
+    }
+
+    //토론장 CommentIdx로 답글 조회
+    public List<PostDto.GetReplyRes> getReplyByCommentIdx(int postCommentIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
+        List<PostDto.GetReplyRes> getReplyRes = namedParameterJdbcTemplate.query(PostSql.LIST_REPLY_BY_COMMENT_ID, parameterSource,
+                (rs, rowNum) -> new PostDto.GetReplyRes(
+                        rs.getString("profileImgUrl"),
+                        rs.getString("nickName"),
+                        rs.getString("content")
+                        // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                ));
+        return getReplyRes;
     }
 }

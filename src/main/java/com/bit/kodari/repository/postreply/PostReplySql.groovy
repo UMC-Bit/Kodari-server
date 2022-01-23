@@ -43,14 +43,14 @@ class PostReplySql {
 
     //토론장 게시글 댓글별 답글조회
     public static final String LIST_COMMENT_REPLY = """
-         SELECT u.nickName, r.content
+         SELECT u.profileImgUrl, u.nickName, r.content
          FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx join User as u on r.userIdx = u.userIdx 
          WHERE r.postCommentIdx = :postCommentIdx and c.status = 'active' and r.status = 'active'
          """
 
     //토론장 유저별 답글 조회
     public static final String LIST_USER_REPLY = """
-         SELECT u.nickName, r.content
+         SELECT u.profileImgUrl, u.nickName, r.content
          FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx join User as u on r.userIdx = u.userIdx 
          WHERE r.userIdx = :userIdx and c.status = 'active' and r.status = 'active'
          """

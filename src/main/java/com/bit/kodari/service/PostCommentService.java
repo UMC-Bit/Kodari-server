@@ -125,14 +125,14 @@ public class PostCommentService {
     }
 
     // 특정 게시글별 댓글 조회
-    public List<PostCommentDto.GetCommentRes> getCommentsByPostIdx(int postIdx) throws BaseException {
+    public List<PostCommentDto.GetPostCommentRes> getCommentsByPostIdx(int postIdx) throws BaseException {
         String status = postCommentRepository.getStatusByPostIdx(postIdx);
         if(status.equals("inactive")) { //삭제된 게시글은 댓글 조회 불가
             throw new BaseException(IMPOSSIBLE_POST); //게시글이 존재하지 않음
         }
         try {
-            List<PostCommentDto.GetCommentRes> getCommentRes = postCommentRepository.getCommentsByPostIdx(postIdx);
-            return getCommentRes;
+            List<PostCommentDto.GetPostCommentRes> getPostCommentRes = postCommentRepository.getCommentsByPostIdx(postIdx);
+            return getPostCommentRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
