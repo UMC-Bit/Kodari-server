@@ -149,13 +149,16 @@ public class AccountService {
     }
 
     // Trade - 현금 자산 수정
-    public void updateTradeProperty(PatchTradePropertyReq account) throws BaseException{
-        double property = accountRepository.getPropertyByAccount(account.getAccountIdx());
-        String category = accountRepository.getCategory(account.getTradeIdx()); //매수인지 매도인지
-        double price = accountRepository.getPrice(account.getTradeIdx());
-        double amount = accountRepository.getAmount(account.getTradeIdx()); //새로 산 코인 갯수
-        double fee = accountRepository.getFee(account.getTradeIdx());
-        double totalProperty = accountRepository.getTotalPropertyByAccount(account.getAccountIdx()); //총자산
+    // tradeIdx만 받는걸로 수정함.
+    public void updateTradeProperty(int tradeIdx) throws BaseException{
+        int portIdx = accountRepository.getPortIdx(tradeIdx);
+        int accountIdx = accountRepository.getAccountIdx(portIdx);
+        double property = accountRepository.getPropertyByAccount(accountIdx);
+        String category = accountRepository.getCategory(tradeIdx); //매수인지 매도인지
+        double price = accountRepository.getPrice(tradeIdx);
+        double amount = accountRepository.getAmount(tradeIdx); //새로 산 코인 갯수
+        double fee = accountRepository.getFee(tradeIdx);
+        double totalProperty = accountRepository.getTotalPropertyByAccount(accountIdx); //총자산
 
         double newProperty = 0;
 
@@ -180,7 +183,7 @@ public class AccountService {
         }
 
         try {
-            int result = accountRepository.modifyTradeProperty(newProperty, totalProperty, account.getAccountIdx());
+            int result = accountRepository.modifyTradeProperty(newProperty, totalProperty, accountIdx);
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(MODIFY_FAIL_PROPERTY); //4041
             }

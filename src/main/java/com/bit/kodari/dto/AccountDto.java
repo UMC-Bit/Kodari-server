@@ -144,7 +144,7 @@ import lombok.*;
      @NoArgsConstructor
      public static class PatchTradePropertyReq{
          private int tradeIdx;
-         private int accountIdx;
+         //private int accountIdx;
          //    private String jwt;
      }
 

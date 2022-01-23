@@ -213,8 +213,8 @@ public class AccountController {
             //if(userIdx != userIdxByJwt){
                 //return new BaseResponse<>(INVALID_USER_JWT);
             //}
-            AccountDto.PatchTradePropertyReq patchTradePropertyReq = new AccountDto.PatchTradePropertyReq(tradeIdx, accountIdx);
-            accountService.updateTradeProperty(patchTradePropertyReq);
+            //AccountDto.PatchTradePropertyReq patchTradePropertyReq = new AccountDto.PatchTradePropertyReq(tradeIdx, accountIdx);
+            accountService.updateTradeProperty(tradeIdx);
 
             String result = "현금 자산이 변경되었습니다.";
             return new BaseResponse<>(result);
