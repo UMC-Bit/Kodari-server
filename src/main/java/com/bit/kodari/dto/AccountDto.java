@@ -193,4 +193,12 @@ import lombok.*;
          private double priceAvg;
          private double amount;
      }
+
+     //userIdx와 marketIdx로 유저의 accountIdx RESPONSE DTO
+     @Data
+     @AllArgsConstructor
+     @NoArgsConstructor
+     public static class GetAccountIdxRes{
+         private int accountIdx;
+     }
 }

@@ -56,6 +56,7 @@ public enum BaseResponseStatus {
 
     FAILED_TO_PROPERTY_RES(false,3040,"없는 계좌입니다."),
     OVER_PORT_THREE(false, 3041, "등록할 수 있는 포트폴리오 갯수를 초과하였습니다."),
+    OVER_ACCOUNT_THREE(false, 3042, "등록할 수 있는 계좌 갯수를 초과하였습니다."),
 
 
 

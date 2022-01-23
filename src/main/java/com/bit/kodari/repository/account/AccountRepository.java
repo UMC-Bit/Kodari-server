@@ -346,5 +346,21 @@ public class AccountRepository {
         });
     }
 
+    // userIdx, marketIdx 로 accountIdx 전달
+    public List<AccountDto.GetAccountIdxRes> getAccountIdxByIdx(int userIdx, int marketIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
+                .addValue("marketIdx", marketIdx);
+        try {
+            List<AccountDto.GetAccountIdxRes> getAccountIdxRes =  namedParameterJdbcTemplate.query(AccountSql.GET_ACCOUNT_IDX_THREE, parameterSource,
+                    (rs, rowNum) -> new AccountDto.GetAccountIdxRes(
+                            rs.getInt("accountIdx"))
+            );
+            return getAccountIdxRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
 
 }

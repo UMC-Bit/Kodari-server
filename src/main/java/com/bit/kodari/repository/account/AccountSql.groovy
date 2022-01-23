@@ -137,4 +137,9 @@ class AccountSql {
         SELECT priceAvg, amount from UserCoin where userIdx = :userIdx AND accountIdx = :accountIdx
     """;
 
+    //userIdx랑 marketIdx로 accountIdx 가져오기
+    public static final String GET_ACCOUNT_IDX_THREE ="""
+        SELECT accountIdx from Account where userIdx = :userIdx and marketIdx = :marketIdx AND status = 'active'
+    """;
+
 }

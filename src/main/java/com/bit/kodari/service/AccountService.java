@@ -24,13 +24,19 @@ public class AccountService {
     public PostAccountRes registerAccount(PostAccountReq postAccountReq) throws BaseException {
         //같은 이름은 안되게 validation 추가
         //같은 유저의 같은 거래소에는 같은 이름을 가진 계좌가 있으면 안됨.
-        // TODO 계좌 3개 이상 오류
+        //계좌 3개 이상 오류
         String accountName = postAccountReq.getAccountName();
         int userIdx = postAccountReq.getUserIdx();
         int marketIdx = postAccountReq.getMarketIdx();
         long property = postAccountReq.getProperty();
         long max = 100000000000L;
+        List<AccountDto.GetAccountIdxRes> getAccountIdxRes = accountRepository.getAccountIdxByIdx(userIdx, marketIdx);
 
+        if(getAccountIdxRes.size() >= 3){
+            throw  new BaseException(OVER_ACCOUNT_THREE); //3042
+        }
+
+        // 스페이스바, 널값 X validation
         accountName = accountName.replaceAll(" ", "");
         List<AccountDto.GetAccountNameRes> getAccountNameRes = accountRepository.getAccountNameByIdx(userIdx, marketIdx);
         // 계좌 이름 null X
@@ -206,7 +212,6 @@ public class AccountService {
         }
     }
 
-    // TODO 계좌 단일 조회
     // accountIdx로 계좌 단일 조회
     public List<GetAccountByAccountIdxRes> getAccountByAccountIdx(int accountIdx) throws BaseException {
         try {
