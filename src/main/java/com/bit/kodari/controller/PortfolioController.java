@@ -84,7 +84,7 @@ public class PortfolioController {
         }
     }
 
-    // TODO 포트폴리오 전체 조회하기
+    //포트폴리오 전체 조회하기
     //Query String
     @ResponseBody
     @GetMapping("/getAll/{userIdx}")

@@ -45,6 +45,9 @@ public class RepresentDto {
         private int representIdx;
         private int portIdx;
         private int coinIdx;
+        private String coinName;
+        private String symbol;
+        private String coinImg;
         private String status;
         //    private String jwt;
     }

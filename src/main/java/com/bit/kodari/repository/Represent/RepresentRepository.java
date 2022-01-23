@@ -40,6 +40,9 @@ public class RepresentRepository {
                         rs.getInt("representIdx"),
                         rs.getInt("portIdx"),
                         rs.getInt("coinIdx"),
+                        rs.getString("coinName"),
+                        rs.getString("symbol"),
+                        rs.getString("coinImg"),
                         rs.getString("status")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 

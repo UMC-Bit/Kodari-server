@@ -7,8 +7,10 @@ class RepresentSql {
 	"""
 
     //대표 코인 조회
+    //코인이름, 코인심볼, 코인이미지 추가하기
     public static final String FIND_USER_REPRESENT = """
-			SELECT representIdx, portIdx, coinIdx, status FROM Represent WHERE portIdx = :portIdx AND status = 'active'
+			SELECT r.representIdx, r.portIdx, r.coinIdx, c.coinName, c.symbol, c.coinImg, r.status FROM Represent r 
+			JOIN Coin c on c.coinIdx = r.coinIdx WHERE portIdx = :portIdx AND r.status = 'active'
 	"""
 
     //대표 코인 삭제
