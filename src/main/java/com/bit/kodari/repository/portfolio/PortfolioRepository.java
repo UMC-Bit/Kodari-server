@@ -2,7 +2,9 @@ package com.bit.kodari.repository.portfolio;
 
 import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.PortfolioDto;
+import com.bit.kodari.dto.RepresentDto;
 import com.bit.kodari.dto.UserCoinDto;
+import com.bit.kodari.repository.Represent.RepresentSql;
 import com.bit.kodari.repository.account.AccountSql;
 import com.bit.kodari.repository.usercoin.UserCoinRepository;
 import com.bit.kodari.repository.usercoin.UserCoinSql;
@@ -76,7 +78,7 @@ public class PortfolioRepository {
 
     }
 
-    // TODO 포트폴리오 Idx 리스트 받아오기 - userIdx 로
+    // 포트폴리오 Idx 리스트 받아오기 - userIdx 로
     /**
      * userIdx로 전체 포트폴리오 인덱스 가져오기
      * 가져온 포트폴리오 인덱스로 각자 조회하던거 가져와서 넣기 - 리스트로
@@ -99,6 +101,12 @@ public class PortfolioRepository {
                 .addValue("accountIdx", accountIdx)
                 .addValue("userIdx", userIdx);
         return namedParameterJdbcTemplate.update(PortfolioSql.DELETE, parameterSource);
+    }
+
+    // 대표코인 삭제
+    public int deleteRepresent(int portIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        return namedParameterJdbcTemplate.update(PortfolioSql.DELETE_REPRESENT, parameterSource);
     }
 
 

@@ -72,6 +72,15 @@ public class PortfolioDto {
         //    private String jwt;
     }
 
+    // TODO 대표 코인 삭제 REQUEST DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DeleteRepresentReq{
+        private int portIdx;
+        //    private String jwt;
+    }
+
     //포트폴리오 삭제 Response Dto
     @Data
     @Builder // 빌더 클래스 자동 생성

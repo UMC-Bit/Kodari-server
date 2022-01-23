@@ -92,6 +92,7 @@ public class PortfolioService {
         int userIdx = portfolioRepository.getUserIdxByPortIdx(portIdx);
         try {
             int result = portfolioRepository.deleteByPortIdx(portIdx, accountIdx, userIdx);
+            int resultRepresent = portfolioRepository.deleteRepresent(portIdx);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_PORTFOLIO); //4049
             }

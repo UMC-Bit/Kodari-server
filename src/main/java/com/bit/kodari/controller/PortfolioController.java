@@ -110,6 +110,7 @@ public class PortfolioController {
      * [PATCH]
      */
     //포트폴리오 삭제하기 - PATCH
+    // TODO 대표코인 따로 빼기
     @ResponseBody
     @PatchMapping("/delPortfolio/{portIdx}")
     public BaseResponse<String> deleteByPortIdx(@PathVariable("portIdx") int portIdx) {
