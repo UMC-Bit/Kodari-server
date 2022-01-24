@@ -21,6 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.List;
 
 @Service
@@ -63,11 +65,18 @@ public class ProfitService {
                 // 코인심볼로 업비트 api에서 현재 시세 조회
                 Response response = UpbitApi.getCurrentPrice(coinSymbol);
                 String resultString = response.body().string(); // json을 문자열로 추출
+                // 업비트 api 응답이 에러코드일 Validation
+                if(resultString.charAt(0)=='{'){
+                    JSONObject rjson = new JSONObject(resultString); // json객체로 변환
+                    //double trade_price = rjson.get("error"); // 코인 현재 시세 평단가
+                    throw new BaseException(BaseResponseStatus.GET_UPBITAPI_ERROR);
+                }
+                // 업비트 API 응답 정살 이면
                 int len = resultString.length();
                 resultString = resultString.substring(1, len - 1); // json앞 뒤 [] 문자 빼기
-
                 JSONObject rjson = new JSONObject(resultString); // json객체로 변환
                 double trade_price = rjson.getDouble("trade_price"); // 코인 현재 시세 평단가
+
 
                 // 각 코인의 현재 평가 자산 = 현재시세 * 코인 갯수
                 double amount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
@@ -88,7 +97,7 @@ public class ProfitService {
 
 
             // 수익 생성 요청
-            ProfitDto.PostProfitReq newPostProfitReq = new ProfitDto.PostProfitReq( accountIdx,totalEarning,totalProfitRate);
+            ProfitDto.PostProfitReq newPostProfitReq = new ProfitDto.PostProfitReq( accountIdx,totalProfitRate,totalEarning);
             ProfitDto.PostProfitRes postProfitRes = profitRepository.createProfit(newPostProfitReq);
             return postProfitRes;
 
@@ -99,6 +108,8 @@ public class ProfitService {
 //            String jwt = jwtService.createJwt(userIdx); // jwt 발급
 //            return new UserDto.PostUserRes(userIdx,nickName,jwt); // jwt 담아서 서비스로 반환
 //  *********************************************************************
+        } catch (BaseException exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.GET_UPBITAPI_ERROR);
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }
@@ -158,9 +169,32 @@ public class ProfitService {
     public List<ProfitDto.GetProfitRes> getProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq) throws BaseException {
         List<ProfitDto.GetProfitRes> getProfitRes = profitRepository.getProfitByAccountIdx(getProfitReq);
         // 수익내역 없는 경우 validation
+        // 예외발생 말고 earining=0 으로 주기
         if(getProfitRes.size() == 0) {
-            throw new BaseException(BaseResponseStatus.GET_PROFITS_NOT_EXISTS);
+            ProfitDto.GetProfitRes getProfitResEmpty = new ProfitDto.GetProfitRes(0,getProfitReq.getAccountIdx(),0,"0","inactive","0");
+            getProfitRes.add(getProfitResEmpty);
+            return getProfitRes;
+//            throw new BaseException(BaseResponseStatus.GET_PROFITS_NOT_EXISTS);
         }
+
+        // 총 손입금 지수형 E 없애기
+        NumberFormat format = NumberFormat.getInstance();
+        format.setGroupingUsed(false);
+        for(int i=0;i<getProfitRes.size();i++){
+
+            String earning = getProfitRes.get(i).getEarning();
+            BigDecimal b = new BigDecimal(earning);
+            //earning = b2.doubleValue();
+            //earning = Double.parseDouble(format.format(earning));
+            getProfitRes.get(i).setEarning( b.toString());
+        }
+
+
+
+
+
+
+
         try {
           return getProfitRes;
 
@@ -173,6 +207,12 @@ public class ProfitService {
 
 
     public void deleteProfit(ProfitDto.PatchStatusReq patchStatusReq) throws BaseException{
+        // 이미 삭제된 수익내역 삭제방지 validation
+        String status = profitRepository.getStatusByProfitIdx(patchStatusReq.getProfitIdx());
+        if(status.equals("inactive")){
+            throw new BaseException(BaseResponseStatus.ALREADY_DELETED_PROFIT); //
+        }
+        // 삭제 할 수 있으면
         int result = profitRepository.deleteProfit(patchStatusReq);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);

@@ -169,9 +169,29 @@ public class UserService {
     }
 
 
-    // 회원 활성상태 정보 수정(Patch)
+    // User 정보조회: 해당 userIdx 갖는 User 조회
+    public List<UserDto.GetUserRes> getUserByUserIdx(String userIdx) throws BaseException {
+        List<UserDto.GetUserRes> getUserRes = userRepository.getUserByUserIdx(userIdx);
+        // 예외처리: 없는 userIdx일 경우
+        if(getUserRes.size() == 0) {
+            throw new BaseException(BaseResponseStatus.GET_USERS_NOT_EXISTS_USERIDX);
+        }
+        try {
+            return getUserRes;
+        } catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+
+    // 회원삭제: 회원 활성상태 정보 수정(Patch)
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void deleteUser(UserDto.DeleteUserReq deleteUserReq) throws BaseException{
+        // 이미 삭제된 회원 validation
+        String status = userRepository.getStatusByUserIdx(deleteUserReq.getUserIdx());
+        if(status.equals("inactive")){
+            throw new BaseException(BaseResponseStatus.ALREADY_DELETED_USER); //
+        }
 
         int result = userRepository.deleteUser(deleteUserReq);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
@@ -203,6 +223,18 @@ public class UserService {
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void updatePassword(UserDto.UpdatePasswordReq updatePasswordReq) throws BaseException{
 
+        // 패스워드 복호화 해서 저장
+        String pwd;
+        try {
+            // 암호화: postUserReq에서 제공받은 비밀번호를 보안을 위해 암호화시켜 DB에 저장합니다.
+            // ex) password123 -> dfhsjfkjdsnj4@!$!@chdsnjfwkenjfnsjfnjsd.fdsfaifsadjfjaf
+            pwd = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(updatePasswordReq.getPassword()); // 암호화코드
+            updatePasswordReq.setPassword(pwd);
+        } catch (Exception ignored) { // 암호화가 실패하였을 경우 에러 발생
+            throw new BaseException(BaseResponseStatus.PASSWORD_ENCRYPTION_ERROR);
+        }
+
+        // 복호화 잘 됬다면 패스워드 변경 요청
         int result = userRepository.updatePassword(updatePasswordReq);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);

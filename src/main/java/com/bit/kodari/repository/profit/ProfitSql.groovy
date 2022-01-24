@@ -10,6 +10,7 @@ class ProfitSql {
 
     public static final String FIND_BY_PROFITIDX = """
         SELECT * from Profit where profitIdx = :profitIdx
+        WHERE status = "active"
 
 """
 
@@ -20,9 +21,10 @@ class ProfitSql {
 
     // Profit 수익내역 조회: 특정 계좌의 수익내역 조회
     public static final String FIND_BY_ACCOUNTIDX = """
-         SELECT * 
+         SELECT profitIdx, accountIdx, TRUNCATE(profitRate,2) profitRate, TRUNCATE(earning,0) earning, status, createAt
          FROM Profit
-         WHERE accountIdx = :accountIdx
+         WHERE accountIdx = :accountIdx AND status = "active"
+         ORDER BY createAt asc
          """
 
 
@@ -50,6 +52,16 @@ class ProfitSql {
         WHERE profitIdx = :profitIdx
 
 """
+
+
+    //  profit인덱스로 해당 유저인덱스 조회
+    public static final String FIND_STATUS_BY_PROFITIDX = """
+        SELECT status
+        FROM Profit
+        WHERE profitIdx = :profitIdx
+
+"""
+
 
     // Profit 수익내역 삭제: 특정 계좌의 수익내역 삭제
     public static final String DELETE ="""

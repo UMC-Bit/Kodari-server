@@ -32,6 +32,9 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_NICKNAME(false, 2018, "닉네임을 입력해주세요."),
     POST_USERS_EMPTY_PASSWORD(false, 2019, "비밀번호를 입력해주세요."),
     POST_USERS_EXISTS_NICKNAME(false,2020,"중복된 닉네임입니다."),
+    POST_USERS_LENGTH_NICKNAME(false,2029,"닉네임 길이는 최소 1자 최대 15자입니다."),
+    POST_USERS_INVALID_PASSWORD(false,2030,"비밀번호는 영문과 특수문자 숫자를 포함하며 8자 이상이고 특수문자는 !@#$%^*+=-만 사용 가능합니다."),
+    POST_USERS_INVALID_NICKNAME(false,2031,"닉네임은 영어,한글,숫자만 입력해주세요."),
 
     // [Patch] /trades
     PRICE_RANGE_ERROR(false,2021,"가격의 크기를 확인해주세요."),
@@ -59,11 +62,16 @@ public enum BaseResponseStatus {
     GET_USERS_NOT_EXISTS(false,3015,"등록된 유저가 없습니다."),
     GET_USERS_NOT_EXISTS_NICKNAME(false,3016,"없는 닉네임 입니다."),
     GET_USERS_NOT_EXISTS_EMAIL(false,3017,"없는 이메일 입니다."),
+    GET_USERS_NOT_EXISTS_USERIDX(false,3021,"없는 유저인덱스 입니다."),
 
     GET_TRADES_NOT_EXISTS(false,3018,"없는 포트폴리오 및 코인 입니다."),
 
     GET_SYMBOLS_NOT_EXISTS(false,3019,"없는 계좌 및 코인코드입니다."),
     GET_PROFITS_NOT_EXISTS(false,3020,"수익내역이 없습니다."),
+
+    ALREADY_DELETED_PROFIT(false,3021,"이미 삭제된 수익내역입니다."),
+    ALREADY_DELETED_USER(false,3022,"이미 삭제된 회원입니다."),
+
 
 
 
@@ -72,6 +80,7 @@ public enum BaseResponseStatus {
      */
     DATABASE_ERROR(false, 4000, "데이터베이스 연결에 실패하였습니다."),
     SERVER_ERROR(false, 4001, "서버와의 연결에 실패하였습니다."),
+    GET_UPBITAPI_ERROR(false, 4013, "업비트 API 응답 에러입니다."),
 
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
@@ -81,6 +90,7 @@ public enum BaseResponseStatus {
 
 
     // 5000 : 필요시 만들어서 쓰세요
+
     // 6000 : 필요시 만들어서 쓰세요
 
 

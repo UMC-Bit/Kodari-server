@@ -44,8 +44,6 @@ public class TradeDto {
     @NoArgsConstructor  // 해당 클래스의 파라미스의 모든 멤버 변수 없는 생성자를 생성
     public static class PostTradeRes{
         private int tradeIdx;
-//        private int portIdx;
-//        private int coinIdx;
     }
 
 
@@ -56,7 +54,6 @@ public class TradeDto {
     public static class GetTradeReq{
         private int portIdx; // Portfolio.portIdx
         private int coinIdx; // Coin.coinIdx
-        //private String date; //거래일자(YYYY-MM-DD)
     }
 
 

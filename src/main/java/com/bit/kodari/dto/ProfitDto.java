@@ -61,8 +61,9 @@ public class ProfitDto {
         private int accountIdx;// Account.accountIdx
         //private double totalProperty; // 현재 총 자산
         private double profitRate; // 총 수익률
-        private double earning; //  총 손익금
+        private String earning; //  총 손익금
         private String status;
+        private String createAt; // 수익 생성 시각
     }
 
 

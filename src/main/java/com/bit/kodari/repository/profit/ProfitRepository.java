@@ -63,8 +63,9 @@ public class ProfitRepository {
                             rs.getInt("profitIdx"),
                             rs.getInt("accountIdx"),
                             rs.getDouble("profitRate"),
-                            rs.getDouble("earning"),
-                            rs.getString("status")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                            rs.getString("earning"),
+                            rs.getString("status"),
+                            rs.getString("createAt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
             );
             return getProfitRes;
         }
@@ -119,6 +120,18 @@ public class ProfitRepository {
 
         //return namedParameterJdbcTemplate.update(TradeSql.UPDATE_PRICE, parameterSource);
     }
+
+
+
+    //  profit인덱스로 status 값 조회
+    public String getStatusByProfitIdx(int profitIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("profitIdx", profitIdx);
+
+        return namedParameterJdbcTemplate.queryForObject(ProfitSql.FIND_STATUS_BY_PROFITIDX,parameterSource,String.class);
+
+        //return namedParameterJdbcTemplate.update(TradeSql.UPDATE_PRICE, parameterSource);
+    }
+
 
 
 
