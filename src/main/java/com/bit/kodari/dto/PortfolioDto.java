@@ -72,7 +72,7 @@ public class PortfolioDto {
         //    private String jwt;
     }
 
-    // TODO 대표 코인 삭제 REQUEST DTO
+    // 대표 코인 삭제 REQUEST DTO
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -107,5 +107,13 @@ public class PortfolioDto {
     @NoArgsConstructor
     public static class GetAllPortIdxRes{
         private int portIdx;
+    }
+
+    // portIdx로 userCoinIdx List로 받아오는 RESPONSE DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetUserCoinIdxRes{
+        private int userCoinIdx;
     }
 }

@@ -95,12 +95,19 @@ public class PortfolioRepository {
     }
 
 
-    //포트폴리오 삭제 - 소유코인, 계좌, 대표코인 다 삭제되도록
+    //포트폴리오 삭제 - 소유코인, 계좌, 대표코인 다 삭제되도록(모두 있을 때)
     public int deleteByPortIdx(int portIdx, int accountIdx, int userIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx)
                 .addValue("accountIdx", accountIdx)
                 .addValue("userIdx", userIdx);
         return namedParameterJdbcTemplate.update(PortfolioSql.DELETE, parameterSource);
+    }
+
+    //포트폴리오 삭제 - 계좌, 대표코인 다 삭제되도록(소유 코인 없을 때)
+    public int deleteTwo(int portIdx, int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx)
+                .addValue("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.update(PortfolioSql.DELETE_TWO, parameterSource);
     }
 
     // 대표코인 삭제
@@ -197,6 +204,21 @@ public class PortfolioRepository {
                             rs.getString("status"))
             );
             return userCoinList;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    // accountIdx로 모든 userCoinIdx 가져오기 - List
+    public List<PortfolioDto.GetUserCoinIdxRes> getUserCoinIdx(int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        try {
+            List<PortfolioDto.GetUserCoinIdxRes> getUserCoinIdxRes =  namedParameterJdbcTemplate.query(PortfolioSql.GET_USER_COIN_IDX, parameterSource,
+                    (rs, rowNum) -> new PortfolioDto.GetUserCoinIdxRes(
+                            rs.getInt("userCoinIdx"))
+            );
+            return getUserCoinIdxRes;
 
         }catch(EmptyResultDataAccessException e){
             return null;

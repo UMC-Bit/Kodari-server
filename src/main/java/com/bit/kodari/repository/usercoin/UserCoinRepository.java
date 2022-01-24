@@ -34,7 +34,8 @@ public class UserCoinRepository {
                 .addValue("priceAvg", userCoin.getPriceAvg())
                 .addValue("amount", userCoin.getAmount());
         namedParameterJdbcTemplate.update(userCoinSql.INSERT, parameterSource, keyHolder);
-        return UserCoinDto.PostUserCoinRes.builder().coinIdx(userCoin.getCoinIdx()).build();
+        int pk = keyHolder.getKey().intValue();
+        return UserCoinDto.PostUserCoinRes.builder().userCoinIdx(pk).coinIdx(userCoin.getCoinIdx()).build();
     }
 
     //특정 소유 코인 조회

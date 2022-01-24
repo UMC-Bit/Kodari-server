@@ -90,8 +90,17 @@ public class PortfolioService {
         int portIdx = patchPortfolioDelReq.getPortIdx();
         int accountIdx = portfolioRepository.getAccountIdx(portIdx);
         int userIdx = portfolioRepository.getUserIdxByPortIdx(portIdx);
+        List<PortfolioDto.GetUserCoinIdxRes> getUserCoinIdxRes = portfolioRepository.getUserCoinIdx(accountIdx);
         try {
-            int result = portfolioRepository.deleteByPortIdx(portIdx, accountIdx, userIdx);
+            int result;
+            // 포트폴리오, 소유코인, 계좌 다 있을 때
+            if(getUserCoinIdxRes.size() > 0) {
+                result = portfolioRepository.deleteByPortIdx(portIdx, accountIdx, userIdx);
+            }
+            //포트폴리오, 계좌만 있을 때
+            else{
+                result = portfolioRepository.deleteTwo(portIdx, accountIdx);
+            }
             int resultRepresent = portfolioRepository.deleteRepresent(portIdx);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_PORTFOLIO); //4049

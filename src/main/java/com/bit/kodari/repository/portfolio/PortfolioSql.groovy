@@ -31,14 +31,21 @@ class PortfolioSql {
         where accountIdx = :accountIdx and status = 'active'
     """
 
-    //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록
+    //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록 (모두 있을 때)
     public static final String DELETE = """
-			UPDATE Portfolio AS p, UserCoin AS u, Account AS a, Represent AS r
-			SET p.status = 'inactive', u.status = 'inactive', a.status = 'inactive', r.status = 'inactive' 
+			UPDATE Portfolio AS p, UserCoin AS u, Account AS a
+			SET p.status = 'inactive', u.status = 'inactive', a.status = 'inactive' 
 			WHERE p.portIdx = :portIdx
 			AND u.accountIdx = :accountIdx
 			AND a.accountIdx = :accountIdx
-			AND r.portIdx = :portIdx
+    """
+
+    //포트폴리오 삭제 - 계좌 다 삭제되도록 (userCoin 없을 때)
+    public static final String DELETE_TWO = """
+			UPDATE Portfolio AS p, Account AS a
+			SET p.status = 'inactive', a.status = 'inactive' 
+			WHERE p.portIdx = :portIdx
+			AND a.accountIdx = :accountIdx
     """
 
     //대표 코인 삭제
@@ -70,4 +77,9 @@ class PortfolioSql {
     public static final String GET_ALL_PORT_IDX ="""
         SELECT portIdx from Portfolio where userIdx = :userIdx and status = 'active'
     """;
+
+    //accountIdx로 모든 userCoinIdx 가져오기
+    public  static final String GET_USER_COIN_IDX = """
+        SELECT userCoinIdx from UserCoin where accountIdx = :accountIdx and status = 'active'
+    """
 }
