@@ -129,7 +129,7 @@ public class UserCoinDto {
         private String status;
     }
 
-    //매수, 매도 계산 Request Dto
+    //Trade - 매수, 매도 계산 Request Dto
     //수수료 0.05%
     @Data
     @AllArgsConstructor
@@ -145,7 +145,7 @@ public class UserCoinDto {
         //    private String jwt;
     }
 
-    //매수, 매도 계산 Request Dto
+    //Trade - 매수, 매도 계산 Request Dto
     //수수료 0.05%
     @Data
     @AllArgsConstructor
@@ -160,15 +160,5 @@ public class UserCoinDto {
         private double priceAvg;
         //    private String jwt;
     }
-
-    /**
-    // userIdx, marketIdx로 해당 거래소의 계좌 이름 RESPONSE DTO
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class GetAccountNameRes{
-        private String accountName;
-    }
-*/
 
 }

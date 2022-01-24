@@ -36,7 +36,7 @@ class UserCoinSql {
 			UPDATE UserCoin SET status = 'inactive' WHERE userIdx = :userIdx
     """
 
-    //매수, 매도 계산(매수평단가), 수수료 0.05%
+    // Trade - 매수, 매도 계산(매수평단가), 수수료 0.05%
     public static final String PRICE_AVERAGE = """
 			UPDATE UserCoin SET priceAvg = :priceAvg, amount = :amount WHERE userCoinIdx = :userCoinIdx
     """

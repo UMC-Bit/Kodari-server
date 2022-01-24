@@ -113,13 +113,7 @@ public class UserCoinService {
         }
     }
 
-    //매수, 매도 계산(매수 평단가), 수수료 0.05%
-    //계산하는거 여기에
-    /**
-     * 수정할것
-     * 매수평단가 수정하면서 property(현금자산)도 수정되게 - 매수(-), 매도(+)
-     * 총자산 업데이트
-     */
+    // Trade - 매수, 매도 계산(매수 평단가), 수수료 0.05%
     public void updatePriceAvg(UserCoinDto.PatchBuySellReq patchBuySellReq) throws BaseException{
         int userCoinIdx = patchBuySellReq.getUserCoinIdx();
         int coinIdx = userCoinRepository.getCoinIdxByUserCoinIdx(userCoinIdx);
