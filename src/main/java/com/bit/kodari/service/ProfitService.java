@@ -205,7 +205,8 @@ public class ProfitService {
 
 
 
-
+    // 수익내역 삭제 : status 변경
+    @Transactional
     public void deleteProfit(ProfitDto.PatchStatusReq patchStatusReq) throws BaseException{
         // 이미 삭제된 수익내역 삭제방지 validation
         String status = profitRepository.getStatusByProfitIdx(patchStatusReq.getProfitIdx());
@@ -214,6 +215,22 @@ public class ProfitService {
         }
         // 삭제 할 수 있으면
         int result = profitRepository.deleteProfit(patchStatusReq);
+        if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+        }
+    }
+
+
+    // 수익내역 삭제 : 전체삭제
+    @Transactional
+    public void deleteAllProfitByUserIdx(int userIdx) throws BaseException{
+        // 이미 삭제된 거래내역 validation
+        /*String status = tradeRepository.getStatusByTradeIdx(patchStatusReq.getTradeIdx());
+        if(status.equals("inactive")){
+            throw new BaseException(BaseResponseStatus.ALREADY_DELETED_TRADE); //
+        }*/
+        // 수익내역 삭제 요청
+        int result = profitRepository.deleteAllProfitByUserIdx(userIdx);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }

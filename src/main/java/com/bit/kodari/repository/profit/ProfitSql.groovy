@@ -69,6 +69,13 @@ class ProfitSql {
 """
 
 
+    // 수익내역 삭제 : 전체삭제
+    public static final String DELETE_ALL = """
+			DELETE FROM Profit as P JOIN Account as A on P.accountIdx= A.accountIdx
+			WHERE userIdx = :userIdx;
+"""
+
+
 
 
 }

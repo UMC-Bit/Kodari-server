@@ -4,6 +4,7 @@ import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.config.secret.Secret;
 import com.bit.kodari.dto.UserDto;
+import com.bit.kodari.repository.trade.TradeRepository;
 import com.bit.kodari.repository.user.UserRepository;
 import com.bit.kodari.repository.user.UserSql;
 import com.bit.kodari.utils.AES128;
@@ -25,11 +26,16 @@ public class UserService {
     // *********************** 동작에 있어 필요한 요소들을 불러옵니다. *************************
     private final UserRepository userRepository;
     private final JwtService jwtService; // JWT부분
+    private final TradeService tradeService;
+    private final ProfitService profitService;
+
 
     @Autowired //readme 참고
-    public UserService(UserRepository userRepository, JwtService jwtService) {
+    public UserService(UserRepository userRepository, JwtService jwtService, TradeService tradeService, ProfitService profitService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService; // JWT부분
+        this.tradeService = tradeService;
+        this.profitService = profitService;
 
     }
     // ******************************************************************************
@@ -193,10 +199,19 @@ public class UserService {
             throw new BaseException(BaseResponseStatus.ALREADY_DELETED_USER); //
         }
 
+
+
         int result = userRepository.deleteUser(deleteUserReq);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
+
+        // 유저 삭제가 완성되면
+        // 해당 유저의 거래내역 전체 삭제
+//        tradeService.deleteAllTradeByUserIdx(deleteUserReq.getUserIdx());
+//        // 해당 유저의 수익내역 전체 삭제
+//        profitService.deleteAllProfitByUserIdx(deleteUserReq.getUserIdx());
+
     }
 
     // 회원 닉네임 정보 수정(Patch)

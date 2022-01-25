@@ -38,6 +38,14 @@ class TradeSql {
          """
 
 
+    // Trade인덱스로 status 조회
+    public static final String FIND_STATUS_BY_TRADEIDX = """
+			SELECT status
+			FROM Trade 
+			WHERE tradeIdx = :tradeIdx
+"""
+
+
 
 
     // 거래내역 수정 : 코인 가격 수정(Patch)
@@ -74,6 +82,13 @@ class TradeSql {
     // 거래내역 삭제 : status 수정
     public static final String DELETE = """
 			UPDATE Trade SET status = "inactive" WHERE tradeIdx = :tradeIdx
+"""
+
+
+    // 거래내역 삭제 : 전체삭제
+    public static final String DELETE_ALL = """
+			DELETE FROM Trade as T join Port as P on T.portIdx = P.portIdx
+			WHERE userIdx = :userIdx;
 """
 
 

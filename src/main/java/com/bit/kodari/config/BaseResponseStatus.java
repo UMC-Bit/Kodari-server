@@ -72,6 +72,8 @@ public enum BaseResponseStatus {
     ALREADY_DELETED_PROFIT(false,3021,"이미 삭제된 수익내역입니다."),
     ALREADY_DELETED_USER(false,3022,"이미 삭제된 회원입니다."),
 
+    ALREADY_DELETED_TRADE(false,3023,"이미 삭제된 거래내역입니다."),
+
 
 
 

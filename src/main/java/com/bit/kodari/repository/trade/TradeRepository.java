@@ -134,6 +134,15 @@ public class TradeRepository {
 
 
 
+    // Trade인덱스로 status 조회,
+    public String getStatusByTradeIdx(int tradeIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx",tradeIdx);
+        return namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_STATUS_BY_TRADEIDX,parameterSource,String.class);
+    }
+
+
+
+
     // 거래내역 수정 : 코인 가격 수정(Patch)
     public int updatePrice(TradeDto.PatchPriceReq patchPriceReq){
         SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", patchPriceReq.getTradeIdx())
@@ -197,6 +206,15 @@ public class TradeRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", patchStatusReq.getTradeIdx());
 
         return namedParameterJdbcTemplate.update(TradeSql.DELETE, parameterSource);
+    }
+
+
+
+    // 거래내역 삭제 : 전체 거래내역 삭제
+    public int deleteAllTradeByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(TradeSql.DELETE_ALL, parameterSource);
     }
 
 }

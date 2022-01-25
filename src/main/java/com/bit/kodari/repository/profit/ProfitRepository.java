@@ -144,6 +144,15 @@ public class ProfitRepository {
 
 
 
+    // 수익내역 삭제 : 전체삭제
+    public int deleteAllProfitByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(ProfitSql.DELETE_ALL, parameterSource);
+    }
+
+
+
 
 
 
