@@ -88,9 +88,9 @@ public class UserCoinService {
 
     //소유 코인 삭제
     public void deleteByUserCoinIdx(UserCoinDto.PatchUserCoinDelReq patchUserCoinDelReq) throws BaseException{
-
+        int userCoinIdx = patchUserCoinDelReq.getUserCoinIdx();
         try {
-            int result = userCoinRepository.deleteByUserCoinIdx(patchUserCoinDelReq);
+            int result = userCoinRepository.deleteByUserCoinIdx(userCoinIdx);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_USERCOIN_STATUS); //4045
             }
@@ -148,10 +148,19 @@ public class UserCoinService {
             if(sumCoinAmount < 0){
                 throw new BaseException(COIN_AMOUNT_OVER); //4054
             }
-            total = (priceAvg * existCoinAmount - price * newCoinAmount) / sumCoinAmount;
-            if(total < 0){
-                throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
+            //전량매도
+            if(sumCoinAmount == 0){
+                total = (priceAvg + price) / 2;
+                int delete = userCoinRepository.deleteByUserCoinIdx(userCoinIdx);
+                //throw new BaseException(COIN_AMOUNT_ZERO); //4056
             }
+            else{
+                total = (priceAvg * existCoinAmount - price * newCoinAmount) / sumCoinAmount;
+                if(total < 0){
+                    throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
+                }
+            }
+
         }
         else{
             throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048

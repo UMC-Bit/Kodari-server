@@ -78,8 +78,8 @@ public class UserCoinRepository {
     }
 
     //소유 코인 삭제
-    public int deleteByUserCoinIdx(UserCoinDto.PatchUserCoinDelReq patchUserCoinDelReq) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("userCoinIdx", patchUserCoinDelReq.getUserCoinIdx());
+    public int deleteByUserCoinIdx(int userCoinIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userCoinIdx", userCoinIdx);
         return namedParameterJdbcTemplate.update(UserCoinSql.DELETE, parameterSource);
     }
 
