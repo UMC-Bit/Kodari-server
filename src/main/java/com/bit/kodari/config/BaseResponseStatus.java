@@ -45,6 +45,8 @@ public enum BaseResponseStatus {
     COINIDX_RANGE_ERROR(false,2026,"코인 인덱스를 확인해주세요."),
     EMPTY_DATE(false,2027,"거래시각을 입력해주세요."),
     ACCONTIDX_RANGE_ERROR(false,2028,"계좌 인덱스를 확인해주세요."),
+    POST_ACCOUNT_NAME_NULL(false, 2040, "계좌이름을 입력해주세요."),
+    INACTIVE_PORTFOLIO(false, 2041, "삭제된 포트폴리오입니다."),
 
 
 
@@ -57,6 +59,7 @@ public enum BaseResponseStatus {
     // [POST] /users
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
+
 
     // [GET] /users
     GET_USERS_NOT_EXISTS(false,3015,"등록된 유저가 없습니다."),
@@ -75,6 +78,11 @@ public enum BaseResponseStatus {
     ALREADY_DELETED_TRADE(false,3023,"이미 삭제된 거래내역입니다."),
 
 
+    FAILED_TO_PROPERTY_RES(false,3040,"없는 계좌입니다."),
+    OVER_PORT_THREE(false, 3041, "등록할 수 있는 포트폴리오 갯수를 초과하였습니다."),
+    OVER_ACCOUNT_THREE(false, 3042, "등록할 수 있는 계좌 갯수를 초과하였습니다."),
+
+
 
 
     /**
@@ -84,11 +92,38 @@ public enum BaseResponseStatus {
     SERVER_ERROR(false, 4001, "서버와의 연결에 실패하였습니다."),
     GET_UPBITAPI_ERROR(false, 4013, "업비트 API 응답 에러입니다."),
 
+    PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
+    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
+
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
+    //40-69
+    MODIFY_FAIL_ACCOUNTNAME(false, 4040, "계좌 이름 수정 실패"),
+    MODIFY_FAIL_PROPERTY(false, 4041, "현금 자산 수정 실패"),
+    MODIFY_FAIL_ACCOUNT_STATUS(false, 4042, "계좌 활성 상태 수정 실패"),
+    DUPLICATED_ACCOUNT_NAME(false, 4043, "계좌 이름 중복으로 수정 실패"),
+    PROPERTY_RANGE_ERROR(false, 4044, "현금 자산 범위 오류로 수정 실패"),
+    MODIFY_FAIL_USERCOIN_STATUS(false, 4045, "소유 코인 삭제 실패"),
+    MODIFY_FAIL_ALL_USERCOIN_STATUS(false, 4046, "소유 코인 삭제 실패"),
+    MODIFY_FAIL_USERCOIN(false, 4047, "소유 코인 수정 실패"),
+    MODIFY_FAIL_PRICE_AVG(false, 4048, "매수평단가 수정 실패"),
+    MODIFY_FAIL_PORTFOLIO(false, 4049, "포트폴리오 삭제 실패"),
+    DUPLICATED_PORTFOLIO(false, 4050, "포트폴리오 중복으로 생성 실패"),
+    MODIFY_FAIL_TOTAL(false, 4051, "총자산 수정 실패"),
+    PRICE_AVG_RANGE_ERROR(false, 4052, "매수평단가 범위 오류로 수정 실패"),
+    AMOUNT_RANGE_ERROR(false, 4053, "코인 amount 범위 오류로 수정 실패"),
+    COIN_AMOUNT_OVER(false, 4054, "매도하는 코인이 기존보다 많습니다."),
+    DELETE_FAIL_REPRESENT(false, 4055, "대표 코인 삭제에 실패하였습니다."),
 
-    PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다.");
+    MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
+    DELETE_FAIL_POST(false, 4071, "게시글 삭제에 실패하였습니다."),
+    USER_NOT_EQUAL(false, 4072, "게시글 유저가 아닙니다."),
+    EMPTY_CONTENT(false, 4073, "게시글 내용이 없습니다."),
+    IMPOSSIBLE_POST(false, 4074, "게시글이 존재하지 않습니다.");
+
+
+
+
 
 
     // 5000 : 필요시 만들어서 쓰세요
