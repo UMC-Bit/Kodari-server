@@ -3,7 +3,9 @@ package com.bit.kodari.repository.account;
 import com.bit.kodari.config.BaseException;
 //import com.bit.kodari.config.secret.Secret;
 import com.bit.kodari.dto.AccountDto;
+import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.repository.account.AccountSql;
+import com.bit.kodari.repository.portfolio.PortfolioSql;
 import com.bit.kodari.repository.usercoin.UserCoinSql;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -108,11 +110,12 @@ public class AccountRepository {
     }
 
     //현금 자산 수정
-    public int modifyProperty(AccountDto.PatchPropertyReq patchPropertyReq) {
+    public int modifyProperty(AccountDto.PatchPropertyReq patchPropertyReq, double totalProperty) {
         String qry = AccountSql.UPDATE_PROPERTY;
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", patchPropertyReq.getAccountIdx())
                 .addValue("accountIdx", patchPropertyReq.getAccountIdx())
-                .addValue("property", patchPropertyReq.getProperty());
+                .addValue("property", patchPropertyReq.getProperty())
+                .addValue("totalProperty", totalProperty);
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
@@ -126,9 +129,15 @@ public class AccountRepository {
     }
 
     //계좌 삭제
-    public int deleteByName(AccountDto.PatchAccountDelReq patchAccountDelReq) {
+    public int deleteByIdx(AccountDto.PatchAccountDelReq patchAccountDelReq) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", patchAccountDelReq.getAccountIdx());
         return namedParameterJdbcTemplate.update(AccountSql.DELETE, parameterSource);
+    }
+
+    //계좌 삭제 - 계좌, 포트폴리오만
+    public int deleteTwo(AccountDto.PatchAccountDelReq patchAccountDelReq) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", patchAccountDelReq.getAccountIdx());
+        return namedParameterJdbcTemplate.update(AccountSql.DELETE_TWO, parameterSource);
     }
 
     // accountIdx로 userIdx 가져오기
@@ -356,6 +365,21 @@ public class AccountRepository {
                             rs.getInt("accountIdx"))
             );
             return getAccountIdxRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    // accountIdx로 모든 userCoinIdx 가져오기 - List
+    public List<AccountDto.GetUserCoinIdxRes> getUserCoinIdx(int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        try {
+            List<AccountDto.GetUserCoinIdxRes> getUserCoinIdxRes =  namedParameterJdbcTemplate.query(AccountSql.GET_USER_COIN_IDX_LIST, parameterSource,
+                    (rs, rowNum) -> new AccountDto.GetUserCoinIdxRes(
+                            rs.getInt("userCoinIdx"))
+            );
+            return getUserCoinIdxRes;
 
         }catch(EmptyResultDataAccessException e){
             return null;
