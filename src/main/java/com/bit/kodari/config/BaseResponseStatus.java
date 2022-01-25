@@ -45,6 +45,8 @@ public enum BaseResponseStatus {
     COINIDX_RANGE_ERROR(false,2026,"코인 인덱스를 확인해주세요."),
     EMPTY_DATE(false,2027,"거래시각을 입력해주세요."),
     ACCONTIDX_RANGE_ERROR(false,2028,"계좌 인덱스를 확인해주세요."),
+    LACK_OF_PROPERTY(false,2032,"계좌의 현금 잔액 부족"),
+    LACK_OF_AMOUNT(false,2033,"계좌의 코인 갯수 부족"),
     POST_ACCOUNT_NAME_NULL(false, 2040, "계좌이름을 입력해주세요."),
     INACTIVE_PORTFOLIO(false, 2041, "삭제된 포트폴리오입니다."),
 
@@ -111,7 +113,7 @@ public enum BaseResponseStatus {
     DUPLICATED_PORTFOLIO(false, 4050, "포트폴리오 중복으로 생성 실패"),
     MODIFY_FAIL_TOTAL(false, 4051, "총자산 수정 실패"),
     PRICE_AVG_RANGE_ERROR(false, 4052, "매수평단가 범위 오류로 수정 실패"),
-    AMOUNT_RANGE_ERROR(false, 4053, "코인 amount 범위 오류로 수정 실패"),
+    //AMOUNT_RANGE_ERROR(false, 4053, "코인 amount 범위 오류로 수정 실패"),
     COIN_AMOUNT_OVER(false, 4054, "매도하는 코인이 기존보다 많습니다."),
     DELETE_FAIL_REPRESENT(false, 4055, "대표 코인 삭제에 실패하였습니다."),
 

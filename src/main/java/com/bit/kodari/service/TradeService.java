@@ -4,8 +4,12 @@ import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.TradeDto;
 import com.bit.kodari.dto.UserDto;
+import com.bit.kodari.repository.account.AccountRepository;
+import com.bit.kodari.repository.coin.CoinRepository;
+import com.bit.kodari.repository.portfolio.PortfolioRepository;
 import com.bit.kodari.repository.trade.TradeRepository;
 import com.bit.kodari.repository.user.UserRepository;
+import com.bit.kodari.repository.usercoin.UserCoinRepository;
 import com.bit.kodari.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +21,22 @@ import java.util.List;
 public class TradeService {
     private final TradeRepository tradeRepository;
     private final JwtService jwtService; // JWT부분
+    private final AccountService accountService;
+    private final PortfolioRepository portfolioRepository;
+    private final AccountRepository accountRepository;
+    private final UserCoinRepository userCoinRepository;
+
+
 
     @Autowired //readme 참고
-    public TradeService(TradeRepository tradeRepository, JwtService jwtService) {
+    public TradeService(TradeRepository tradeRepository, JwtService jwtService, AccountService accountService, PortfolioRepository portfolioRepository, AccountRepository accountRepository
+    ,UserCoinRepository userCoinRepository) {
         this.tradeRepository = tradeRepository;
         this.jwtService = jwtService; // JWT부분
+        this.accountService = accountService;
+        this.portfolioRepository = portfolioRepository;
+        this.accountRepository = accountRepository;
+        this.userCoinRepository = userCoinRepository;
     }
 
     // 거래내역 생성(POST)
@@ -35,6 +50,7 @@ public class TradeService {
         double maxFee = 100L;
         String category = postTradeReq.getCategory();
         String date = postTradeReq.getDate();
+
 
         // portIdx 범위 validation
         if(portIdx<=0){
@@ -65,11 +81,37 @@ public class TradeService {
             throw new BaseException(BaseResponseStatus.EMPTY_DATE);
         }
 
+        // 매수를 진행할 때 사용자의 계좌의 돈이 부족한 경우 Validation
+        if(category.equals("buy")){
+            // 계좌의 현금 - (매수하는 코인 평단가 * 갯수) - 수수료 < 0
+            // Trade에서 portIdx를 통해 Portfolio(accountIdx) 구하기
+            // Account에서 property 구하기
+            int accountIdx = portfolioRepository.getAccountIdx(portIdx);
+            double cashProperty = accountRepository.getPropertyByAccount(accountIdx);
+            if((cashProperty - price*amount - price*amount*fee)<0){
+                throw new BaseException(BaseResponseStatus.LACK_OF_PROPERTY);
+            }
+        }
+
+        // 매도를 진행할 때 매도량이 사용자의 소유코인 개수보다 더 많을경우 Validation
+        else if(category.equals("sell")){
+            int accountIdx = portfolioRepository.getAccountIdx(portIdx);
+            // coinIdx, accountIdx로 UserCoin.amount 조회
+            //  소유코인갯수 - 매도량  < 0 면 소유코인 갯수 부족 에러
+            double userCoinAmount = tradeRepository.getUserCoinAmountByAccountIdxCoinIdx(accountIdx,coinIdx);
+            if((userCoinAmount - amount)<0){
+                throw new BaseException(BaseResponseStatus.LACK_OF_AMOUNT);
+            }
+        }
+
         // 입력값 검증되면 생성 요청
         try {
             // 거래내역 생성 요청
             TradeDto.PostTradeRes postTradeRes = tradeRepository.createTrade(postTradeReq);
-            return postTradeRes;
+
+            // 매수,매도 거래내역 등록 완료 시 Account 보유현금, 총 자산 자동 업데이트
+            accountService.updateTradeProperty(postTradeRes.getTradeIdx());
+            return postTradeRes;// 거래내역 반환
 
 //  *********** 해당 부분은 7주차 수업 후 주석해제하서 대체해서 사용해주세요! ***********
 //            //jwt 발급.

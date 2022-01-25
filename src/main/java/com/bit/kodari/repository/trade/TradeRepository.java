@@ -134,10 +134,25 @@ public class TradeRepository {
 
 
 
-    // Trade인덱스로 status 조회,
+    // status 조회: Trade인덱스로 status 조회,
     public String getStatusByTradeIdx(int tradeIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx",tradeIdx);
         return namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_STATUS_BY_TRADEIDX,parameterSource,String.class);
+    }
+
+
+
+    // 현금자산 조회: portIdx 로 Account의 현금자산 조회
+    public double getCashPropertyByPortIdx(int portIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx",portIdx);
+        return namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_PROPERTY_BY_PORTIDX,parameterSource,double.class);
+    }
+
+    // 소유 코인 갯수조회: accountIdx, coinIdx 로 UserCoin의  해당 소유 코인 갯수조회
+    public double getUserCoinAmountByAccountIdxCoinIdx(int accountIdx,int coinIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx",accountIdx)
+                .addValue("coinIdx",coinIdx);
+        return namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_USERCOIN_AMOUNT_BY_ACCOUNTIDX_COINIDX,parameterSource,double.class);
     }
 
 
@@ -198,6 +213,9 @@ public class TradeRepository {
 
         return namedParameterJdbcTemplate.update(TradeSql.UPDATE_DATE, parameterSource);
     }
+
+
+
 
 
 

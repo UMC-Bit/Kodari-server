@@ -45,6 +45,27 @@ class TradeSql {
 			WHERE tradeIdx = :tradeIdx
 """
 
+    // portIdx 로 Account의 현금자산 조회
+    public static final String FIND_PROPERTY_BY_PORTIDX = """
+		SELECT A.property
+        FROM Trade as T
+         join Portfolio as P on T.portIdx = P.portIdx
+         join Account as A on P.accountIdx = A.accountIdx
+        WHERE T.portIdx = :portIdx
+        AND T.status = 'active'
+        ORDER BY T.tradeIdx desc limit 1
+         
+"""
+
+
+    // accountIdx, coinIdx 로 UserCoin의  해당 소유 코인 갯수조회
+    public static final String FIND_USERCOIN_AMOUNT_BY_ACCOUNTIDX_COINIDX = """
+		SELECT amount 
+         FROM UserCoin
+         WHERE accountIdx = :accountIdx AND coinIdx = :coinIdx AND status = 'active'
+
+"""
+
 
 
 
