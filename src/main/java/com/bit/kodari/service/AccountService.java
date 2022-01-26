@@ -132,14 +132,17 @@ public class AccountService {
     public void updateProperty(PatchPropertyReq account) throws BaseException{
         //음수, 너무 큰 수 안되게
         //계좌 활성 상태 확인
-        long property = account.getProperty();
+        double totalProperty = accountRepository.getTotalPropertyByAccount(account.getAccountIdx());
+        double property = accountRepository.getPropertyByAccount(account.getAccountIdx());
+        long newProperty = account.getProperty();
         long max = 100000000000L;
         int userIdx = accountRepository.getUserIdxByAccountIdx(account.getAccountIdx());
-        if(property < 0 || property > max){
+        if(newProperty < 0 || newProperty > max){
             throw new BaseException(PROPERTY_RANGE_ERROR); //4044
         }
+        totalProperty = totalProperty - property + newProperty;
         try {
-            int result = accountRepository.modifyProperty(account);
+            int result = accountRepository.modifyProperty(account, totalProperty);
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(MODIFY_FAIL_PROPERTY); //4041
             }
@@ -193,10 +196,18 @@ public class AccountService {
     }
 
     //계좌 삭제
-    public void deleteByName(PatchAccountDelReq patchAccountDelReq) throws BaseException{
-
+    public void deleteByIdx(PatchAccountDelReq patchAccountDelReq) throws BaseException{
+        List<AccountDto.GetUserCoinIdxRes> getUserCoinIdxRes = accountRepository.getUserCoinIdx(patchAccountDelReq.getAccountIdx());
         try {
-            int result = accountRepository.deleteByName(patchAccountDelReq);
+            int result;
+            //소유코인 없을때
+            if(getUserCoinIdxRes.size() == 0){
+                result = accountRepository.deleteTwo(patchAccountDelReq);
+            }
+            //세개 다 삭제할때
+            else{
+                result = accountRepository.deleteByIdx(patchAccountDelReq);
+            }
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_ACCOUNT_STATUS); //4042
             }
