@@ -35,8 +35,20 @@ dependencies {
     implementation('org.codehaus.groovy:groovy:3.0.8')// groovy 추가
     implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'// 업비트 api관련 OkHttpClient 클래스 관련 추가
+    implementation group: 'org.json', name: 'json', version: '20160810' // JSONOBJECT, JSONArray 클래스 추가
 }
 
 test {
     useJUnitPlatform()
+}
+
+// groovy 파일 aws에서 컴파일 하기위한 설정
+apply plugin: 'groovy'
+
+sourceSets {
+    main {
+        java { srcDirs = [] }
+        groovy { srcDirs += ['src/main/java'] }
+    }
 }
