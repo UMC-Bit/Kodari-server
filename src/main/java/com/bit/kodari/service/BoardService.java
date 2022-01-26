@@ -16,8 +16,8 @@ import static com.bit.kodari.config.BaseResponseStatus.DATABASE_ERROR;
 public class BoardService {
     @Autowired
     BoardRepository boardRepository;
-    // 토론장 전체 카테고리 조회
 
+    // 토론장 전체 카테고리 조회
     public List<BoardDto.GetBoardRes> getBoards() throws BaseException {
         try {
             List<BoardDto.GetBoardRes> getBoardRes = boardRepository.getBoards();
