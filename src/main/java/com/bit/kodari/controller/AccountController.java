@@ -226,7 +226,7 @@ public class AccountController {
     //계좌 삭제하기 - PATCH
     @ResponseBody
     @PatchMapping("/delAccount/{accountIdx}")
-    public BaseResponse<String> deleteByName(@PathVariable("accountIdx") int accountIdx) {
+    public BaseResponse<String> deleteByIdx(@PathVariable("accountIdx") int accountIdx) {
         int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
         try {
             //jwt에서 idx 추출.
@@ -236,7 +236,7 @@ public class AccountController {
                 //return new BaseResponse<>(INVALID_USER_JWT);
             //}
             AccountDto.PatchAccountDelReq patchAccountDelReq = new AccountDto.PatchAccountDelReq(accountIdx);
-            accountService.deleteByName(patchAccountDelReq);
+            accountService.deleteByIdx(patchAccountDelReq);
 
             String result = "계좌가 삭제되었습니다.";
             return new BaseResponse<>(result);

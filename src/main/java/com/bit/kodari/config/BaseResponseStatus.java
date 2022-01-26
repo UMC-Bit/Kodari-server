@@ -116,6 +116,7 @@ public enum BaseResponseStatus {
     //AMOUNT_RANGE_ERROR(false, 4053, "코인 amount 범위 오류로 수정 실패"),
     COIN_AMOUNT_OVER(false, 4054, "매도하는 코인이 기존보다 많습니다."),
     DELETE_FAIL_REPRESENT(false, 4055, "대표 코인 삭제에 실패하였습니다."),
+    COIN_AMOUNT_ZERO(false, 4056, "코인이 전부 매도되었습니다."),
 
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
     DELETE_FAIL_POST(false, 4071, "게시글 삭제에 실패하였습니다."),

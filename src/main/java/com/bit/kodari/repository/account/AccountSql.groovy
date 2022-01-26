@@ -29,7 +29,7 @@ class AccountSql {
 
     //현금 자산 수정
     public static final String UPDATE_PROPERTY = """
-			UPDATE Account SET property = :property WHERE accountIdx = :accountIdx 
+			UPDATE Account SET property = :property, totalProperty = :totalProperty WHERE accountIdx = :accountIdx 
     """
 
     //Trade - 현금 자산 수정
@@ -39,7 +39,7 @@ class AccountSql {
 
     //현금 자산 조회
     public static final String FIND_PROPERTY = """
-			SELECT accountIdx, concat(format(property, 0), '원') as property, totalProperty, status FROM Account WHERE accountIdx = :accountIdx
+			SELECT accountIdx, userIdx, concat(format(property, 0), '원') as property, totalProperty, status FROM Account WHERE accountIdx = :accountIdx
 			"""
 
     //계좌 삭제
@@ -49,6 +49,14 @@ class AccountSql {
 			SET u.status = 'inactive', p.status = 'inactive', a.status = 'inactive' 
 			WHERE u.accountIdx = :accountIdx
 			AND p.accountIdx = :accountIdx
+			AND a.accountIdx = :accountIdx
+    """
+
+    //계좌 삭제 - 계좌랑 포트폴리오
+    public static final String DELETE_TWO = """
+			UPDATE Portfolio AS p, Account AS a 
+			SET p.status = 'inactive', a.status = 'inactive' 
+			WHERE p.accountIdx = :accountIdx
 			AND a.accountIdx = :accountIdx
     """
 
@@ -141,5 +149,10 @@ class AccountSql {
     public static final String GET_ACCOUNT_IDX_THREE ="""
         SELECT accountIdx from Account where userIdx = :userIdx and marketIdx = :marketIdx AND status = 'active'
     """;
+
+    //accountIdx로 모든 userCoinIdx 가져오기
+    public  static final String GET_USER_COIN_IDX_LIST = """
+        SELECT userCoinIdx from UserCoin where accountIdx = :accountIdx and status = 'active'
+    """
 
 }

@@ -201,4 +201,12 @@ import lombok.*;
      public static class GetAccountIdxRes{
          private int accountIdx;
      }
+
+     // accountIdx로 userCoinIdx List로 받아오는 RESPONSE DTO
+     @Data
+     @AllArgsConstructor
+     @NoArgsConstructor
+     public static class GetUserCoinIdxRes{
+         private int userCoinIdx;
+     }
 }
