@@ -141,6 +141,9 @@ public class TradeService {
         }
     }
 
+    // TODO 거래 내역 수정시 - 매수평단가, amount 바뀌게 만들기
+    // TODO 거래 내역 수정시 - 현금자산, 총자산 바뀌게 만들기
+    // TODO sql, dto, repository 만들어서 각각 추가 (코인 가격 수정, 코인 갯수, 수수료, 매수/매도)
 
     // 거래내역 수정 : 코인 가격 수정(Patch)
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
