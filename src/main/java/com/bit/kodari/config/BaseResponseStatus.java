@@ -146,7 +146,7 @@ public enum BaseResponseStatus {
     EMPTY_CONTENT(false, 4085, "내용이 없습니다."),
 
     //글자수 확인
-    OVER_CONTENT(false, 4086, "글자수가 초과되었습니다."),
+    OVER_CONTENT(false, 4086, "글자수가 초과되었습니다.");
 
 
 
