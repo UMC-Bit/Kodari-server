@@ -50,6 +50,8 @@ public enum BaseResponseStatus {
     LACK_OF_AMOUNT(false,2033,"계좌의 코인 갯수 부족"),
     POST_ACCOUNT_NAME_NULL(false, 2040, "계좌이름을 입력해주세요."),
     INACTIVE_PORTFOLIO(false, 2041, "삭제된 포트폴리오입니다."),
+=========
+>>>>>>>>> Temporary merge branch 2
 
 
 
