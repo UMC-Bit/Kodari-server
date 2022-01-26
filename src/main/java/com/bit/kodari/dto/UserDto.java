@@ -1,7 +1,9 @@
 package com.bit.kodari.dto;
 
-import lombok.*;
-
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 public class UserDto {
     // 유저 기본정보
@@ -19,7 +21,7 @@ public class UserDto {
 
     // 회원가입 REQUEST DTO
     @Data
-    @AllArgsConstructor // 해당 클래스 ( name, profileImage)를 받는 생성자를 생성
+    @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
     public static class PostUserReq{
         private String nickName;
