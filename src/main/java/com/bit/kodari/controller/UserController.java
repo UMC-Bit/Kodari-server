@@ -65,7 +65,7 @@ public class UserController {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_LENGTH_NICKNAME);
         }
         // 닉네임 특수문자 포함 예외
-        if (isRegexNickNameSpecial(postUserReq.getNickName())) {
+        if (!isRegexNickNameSpecial(postUserReq.getNickName())) {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
         }
 
@@ -250,7 +250,7 @@ public class UserController {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_LENGTH_NICKNAME);
             }
             // 닉네임 특수문자 포함 예외
-            if (isRegexNickNameSpecial(nickName)) {
+            if (!isRegexNickNameSpecial(nickName)) {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
             }
 
