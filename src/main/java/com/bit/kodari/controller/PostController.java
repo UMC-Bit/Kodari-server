@@ -148,18 +148,30 @@ public class PostController {
 //            if(userIdx == userIdxByJwt){
 //                getUserPostRes.setCheckWriter(true);
 //            }
-//            for(int i=0; i < postCommentIdx.size(); i++ ) {
+//            for(int i=0; i < postCommentIdx.size(); i++ ) { //댓글 유저 확인
 //                List<PostDto.GetUserIdxRes> comment_userIdx = postRepository.getUserIdxByPostCommentIdx(postCommentIdx.get(i).getPostCommentIdx());
 //                if(comment_userIdx.get(i).getUserIdx() == userIdxByJwt){
 //                    getUserPostRes.setCheckCommentWriter(true);
 //                }
 //            }
-//            for(int i=0; i < postReplyIdx.size(); i++ ) {
+//            for(int i=0; i < postReplyIdx.size(); i++ ) { //답글 유저 확인
 //                List<PostDto.GetUserIdxRes> reply_userIdx = postRepository.getUserIdxByPostReplyIdx(postReplyIdx.get(i).getPostReplyIdx());
 //                if(reply_userIdx.get(i).getUserIdx() == userIdxByJwt){
 //                    getUserPostRes.setCheckReplyWriter(true);
 //                }
 //            }
+            for(int i=0; i < postCommentIdx.size(); i++) { //댓글 삭제 여부 확인
+                List<PostDto.GetStatusRes> commentStatus = postRepository.getStatusByPostCommentIdx(postCommentIdx.get(i).getPostCommentIdx());
+                if(commentStatus.equals("inactive")) {
+                    getUserPostRes.setCheckCommentStatus(false);
+                }
+            }
+            for(int i=0; i < postReplyIdx.size(); i++) { //답글 삭제 여부 확인
+                List<PostDto.GetStatusRes> replyStatus = postRepository.getStatusByPostReplyIdx(postReplyIdx.get(i).getPostReplyIdx());
+                if(replyStatus.equals("inactive")) {
+                    getUserPostRes.setCheckReplyStatus(false);
+                }
+            }
             return new BaseResponse<>(getUserPostRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

@@ -138,6 +138,38 @@ public class PostRepository {
         }
     }
 
+    //postCommentIdx로 status 가져오기
+    public List<PostDto.GetStatusRes> getStatusByPostCommentIdx(int postCommentIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
+        try {
+            List<PostDto.GetStatusRes> getStatusRes =  namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_STATUS, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetStatusRes(
+                            rs.getString("status"))
+            );
+            return getStatusRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+
+    //postReplyIdx로 status 가져오기
+    public List<PostDto.GetStatusRes> getStatusByPostReplyIdx(int postReplyIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
+        try {
+            List<PostDto.GetStatusRes> getStatusRes =  namedParameterJdbcTemplate.query(PostSql.GET_REPLY_STATUS, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetStatusRes(
+                            rs.getString("status"))
+            );
+            return getStatusRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+
 
     //postIdx로 Status 가져오기
     public String getStatusByPostIdx(int postIdx) {
@@ -251,7 +283,7 @@ public class PostRepository {
                         rs.getString("content"),
                         rs.getString("time"),
                         rs.getInt("like"),
-                        rs.getInt("dislike"), false, commentList, false, false); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getInt("dislike"), false, commentList, false, false,true, true); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         return post;
     }
     );

@@ -48,6 +48,16 @@ class PostSql {
         SELECT status FROM Post WHERE postIdx = :postIdx
         """
 
+    //postCommentIdx로 status 받아오기
+    public static final String GET_COMMENT_STATUS = """
+        SELECT status FROM PostComment WHERE postCommentIdx = :postCommentIdx
+        """
+
+    //postReplyIdx로 status 받아오기
+    public static final String GET_REPLY_STATUS = """
+        SELECT status FROM PostReply WHERE postReplyIdx = :postReplyIdx
+        """
+
 
     //postCommentIdx로 userIdx 받아오기
     public static final String GET_COMMENT_USER_IDX = """

@@ -135,6 +135,8 @@ public class PostDto {
         private List<GetCommentRes> commentList;
         private boolean checkCommentWriter; // 댓글 유저 확인
         private boolean checkReplyWriter; // 답글 유저 확인
+        private boolean checkCommentStatus; // 댓글 삭제 여부 확인
+        private boolean checkReplyStatus; //답글 삭제 여부 확인
 
     }
 

@@ -29,8 +29,27 @@ public class PostLikeDto {
     @Data
     @Builder // 빌더 클래스 자동 생성
     public static class RegisterLikeRes{
+        private int userIdx;
+        private int postIdx;
         private int likeType;
         //    private String jwt;
+    }
+
+    //토론장 댓글 좋아요 삭제 REQUEST DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PostLikeReq{
+        private int userIdx;
+        private int postLikeIdx;
+    }
+    //토론장 댓글 좋아요 삭제 RESPONSE DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PostLikeRes{
+        private int userIdx;
+        private int postLikeIdx;
     }
 
     //토론장 게시글 좋아요/싫어요 수정
