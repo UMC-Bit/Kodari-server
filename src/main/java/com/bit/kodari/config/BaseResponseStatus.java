@@ -22,6 +22,7 @@ public enum BaseResponseStatus {
     INVALID_JWT(false, 2002, "유효하지 않은 JWT입니다."),
     INVALID_USER_JWT(false,2003,"권한이 없는 유저의 접근입니다."),
 
+
     // users
     USERS_EMPTY_USER_ID(false, 2010, "유저 아이디 값을 확인해주세요."),
 
@@ -49,6 +50,8 @@ public enum BaseResponseStatus {
     LACK_OF_AMOUNT(false,2033,"계좌의 코인 갯수 부족"),
     POST_ACCOUNT_NAME_NULL(false, 2040, "계좌이름을 입력해주세요."),
     INACTIVE_PORTFOLIO(false, 2041, "삭제된 포트폴리오입니다."),
+=========
+>>>>>>>>> Temporary merge branch 2
 
 
 
@@ -116,13 +119,36 @@ public enum BaseResponseStatus {
     //AMOUNT_RANGE_ERROR(false, 4053, "코인 amount 범위 오류로 수정 실패"),
     COIN_AMOUNT_OVER(false, 4054, "매도하는 코인이 기존보다 많습니다."),
     DELETE_FAIL_REPRESENT(false, 4055, "대표 코인 삭제에 실패하였습니다."),
+    COIN_AMOUNT_ZERO(false, 4056, "코인이 전부 매도되었습니다."),
 
+    //수정 실패
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
-    DELETE_FAIL_POST(false, 4071, "게시글 삭제에 실패하였습니다."),
-    USER_NOT_EQUAL(false, 4072, "게시글 유저가 아닙니다."),
-    EMPTY_CONTENT(false, 4073, "게시글 내용이 없습니다."),
-    IMPOSSIBLE_POST(false, 4074, "게시글이 존재하지 않습니다.");
+    MODIFY_FAIL_POST_COMMENT(false, 4071, "게시글 댓글 수정에 실패하였습니다."),
+    MODIFY_FAIL_POST_LIKE(false, 4072, "좋아요/싫어요 수정에 실패하였습니다."),
+    MODIFY_FAIL_POST_REPLY(false, 4073, "답글 수정에 실패하였습니다."),
 
+    //삭제 실패
+    DELETE_FAIL_POST(false, 4074, "게시글 삭제에 실패하였습니다."),
+    DELETE_FAIL_POST_COMMENT(false, 4075, "댓글 삭제에 실패하였습니다."),
+    DELETE_FAIL_POST_LIKE(false, 4076, "좋아요/싫어요 삭제에 실패하였습니다."),
+    DELETE_FAIL_COMMENT_REPLY(false, 4077, "답글 삭제에 실패하였습니다."),
+    DELETE_FAIL_COMMENT_LIKE(false, 4078, "댓글의 좋아요 삭제에 실패하였습니다."),
+
+    //USER 확인
+    USER_NOT_EQUAL(false, 4079, "게시글 유저가 아닙니다."),
+    USER_NOT_EQUAL_COMMENT(false, 4080, "댓글 유저가 아닙니다."),
+    USER_NOT_EQUAL_LIKE(false, 4081, "좋아요/싫어요 누른 유저가 아닙니다."),
+    USER_NOT_EQUAL_REPLY(false, 4082, "답근 유저가 아닙니다."),
+
+    //글 존재여부
+    IMPOSSIBLE_POST(false, 4083, "게시글이 존재하지 않습니다."),
+    IMPOSSIBLE_POST_COMMENT(false, 4084, "댓글이 존재하지 않습니다."),
+
+    //내용확인
+    EMPTY_CONTENT(false, 4085, "내용이 없습니다."),
+
+    //글자수 확인
+    OVER_CONTENT(false, 4086, "글자수가 초과되었습니다.");
 
 
 

@@ -12,6 +12,7 @@ import java.util.List;
 public class BoardRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     BoardSql BoardSql;
+
     public BoardRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
@@ -27,7 +28,7 @@ public class BoardRepository {
         return getBoardRes;
     }
 
-    //토론장 카테고리 조회
+    //토론장 카테고리별 조회
     public List<BoardDto.GetBoardRes> getBoardsByBoardIdx(int boardIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("boardIdx", boardIdx);
         List<BoardDto.GetBoardRes> getBoardRes = namedParameterJdbcTemplate.query(BoardSql.CATEGORY_BOARD, parameterSource,
