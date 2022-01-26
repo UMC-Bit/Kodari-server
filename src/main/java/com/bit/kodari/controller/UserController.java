@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static com.bit.kodari.utils.ValidationRegex.isRegexEmail;
+import static com.bit.kodari.utils.ValidationRegex.*;
 
 // 커밋 되는지 확인하기
 @RestController
@@ -44,21 +46,46 @@ public class UserController {
         // TODO: email 관련한 짧은 validation 예시입니다. 그 외 더 부가적으로 추가해주세요!
 
         // 회원가입 validation : email null값 예외
-        if (postUserReq.getEmail() == null || postUserReq.getEmail().length()==0) {
+        String email = postUserReq.getEmail().replaceAll(" ","");
+        if (email == null || email.length()==0) {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_EMAIL);
         }
         // 회원가입 validation: 이메일 정규표현 = 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
         if (!isRegexEmail(postUserReq.getEmail())) {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_EMAIL);
         }
+
+        String nickName = postUserReq.getNickName().replaceAll(" ","");
         // 회원가입 validation : nickName null값 예외
-        if (postUserReq.getNickName() == null || postUserReq.getNickName().length()==0) {
+        if (nickName == null || nickName.length()==0) {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_NICKNAME);
         }
+        // 닉네임 길이 15글자 초과 예외
+        if (postUserReq.getNickName().length()<=0 || postUserReq.getNickName().length()>15) {// 닉네임 길이 Validation
+            return new BaseResponse<>(BaseResponseStatus.POST_USERS_LENGTH_NICKNAME);
+        }
+        // 닉네임 특수문자 포함 예외
+        if (isRegexNickNameSpecial(postUserReq.getNickName())) {
+            return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
+        }
+
+
+
+
+        String password = postUserReq.getPassword().replaceAll(" ","");
         // 회원가입 validation :  password null값 예외
-        if (postUserReq.getPassword() == null || postUserReq.getPassword().length()==0) {
+        if (password == null || password.length()==0) {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_PASSWORD);
         }
+        // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
+        if(!isRegexPasswordKind(postUserReq.getPassword())){
+            return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
+        }
+        // 비밀번호 특수문자 확인 예외
+        if(!isRegexPasswordSpecial(postUserReq.getPassword())){
+            return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
+        }
+
 
 
         try {
@@ -81,7 +108,8 @@ public class UserController {
         try {
             // TODO: 로그인 값들에 대한 형식적인 validatin 처리해주셔야합니다!
             // 로그인 validation : email null값 예외
-            if (postLoginReq.getEmail() == null || postLoginReq.getEmail().length()==0) {
+            String email = postLoginReq.getEmail().replaceAll(" ","");
+            if (email == null || email.length()==0) {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_EMAIL);
             }
             // 로그인 validation: 이메일 정규표현 = 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
@@ -90,7 +118,8 @@ public class UserController {
             }
 
             // 로그인 validation : password null값 예외
-            if (postLoginReq.getPassword() == null || postLoginReq.getPassword().length()==0) {
+            String password = postLoginReq.getPassword().replaceAll(" ","");
+            if (password == null || password.length()==0) {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_PASSWORD);
             }
             // TODO: 유저의 status ex) 비활성화된 유저, 탈퇴한 유저 등을 관리해주고 있다면 해당 부분에 대한 validation 처리도 해주셔야합니다.
@@ -115,25 +144,41 @@ public class UserController {
      * [GET] /users/get/:nickName
      */
     @GetMapping("/get") // (GET) /app/users/get
-    @ApiOperation(value = "유저 조회", notes = "닉네임으로 유저를 조회함, 닉네임을 안적으면 전체 유저 리스트를 반환한다.")
-    public BaseResponse<List<UserDto.GetUserRes>> getUsers(@RequestParam(required = false) String nickName,@RequestParam(required = false) String email) {
+    @ApiOperation(value = "유저 조회", notes = "닉네임 또는 이메일로 유저를 조회함, 닉네임을 안적으면 전체 유저 리스트를 반환한다.")
+    public BaseResponse<List<UserDto.GetUserRes>> getUsers(@RequestParam(required = false) String nickName,@RequestParam(required = false) String email,@RequestParam(required = false) String userIdx) {
         //  @RequestParam은, 1개의 HTTP Request 파라미터를 받을 수 있는 어노테이션(?뒤의 값). default로 RequestParam은 반드시 값이 존재해야 하도록 설정되어 있지만, (전송 안되면 400 Error 유발)
         try {
             //  nickname, 이메일이 없을 경우, 그냥 전체 유저정보를 불러온다.
-            if (nickName == null && email == null) {
+            //nickName = nickName.replaceAll(" ",""); // 공백 제거
+            //email = email.replaceAll(" ","");// 공백 제거
+            /*if ((nickName == null || nickName.length()==0) && (email == null || email.length() == 0)) {
                 List<UserDto.GetUserRes> getUsersRes = userService.getUsers();
                 return new BaseResponse<>(getUsersRes);
             }
-            else if (email == null) {
+            else if ((email == null || email.length() == 0)) {
+                //  nickname이 있을 경우, 조건을 만족하는 유저 조회
+                List<UserDto.GetUserRes> getUsersRes = userService.getUserByNickname(nickName);
+                return new BaseResponse<>(getUsersRes);
+            }*/
+            if ((nickName != null && nickName.length()!=0)) {
                 //  nickname이 있을 경우, 조건을 만족하는 유저 조회
                 List<UserDto.GetUserRes> getUsersRes = userService.getUserByNickname(nickName);
                 return new BaseResponse<>(getUsersRes);
             }
+            else if ((email != null && email.length()!=0)) {
+                // email 있을 경우, 이메일로 유저 조회
+                List<UserDto.GetUserRes> getUserRes = userService.getUserByEmail(email);
+                return new BaseResponse<>(getUserRes);
+            }
+            else if (userIdx != null && userIdx.length()!=0) {
+                // userIdx 있을 경우, 유저인덱스로 유저 조회
+                List<UserDto.GetUserRes> getUserRes = userService.getUserByUserIdx(userIdx);
+                return new BaseResponse<>(getUserRes);
+            }
 
-            // email 있을 경우, 이메일로 유저 조회
-            List<UserDto.GetUserRes> getUserRes = userService.getUserByEmail(email);
-            return new BaseResponse<>(getUserRes);
-
+            // 주어진 정보 없는 경우, 전체 유저 조회
+            List<UserDto.GetUserRes> getUsersRes = userService.getUsers();
+            return new BaseResponse<>(getUsersRes);
 
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -194,6 +239,21 @@ public class UserController {
             }
 
  //**************************************************************************
+            // 닉네임 Validation
+            String nickNameVal = nickName.replaceAll(" ","");
+            // 회원가입 validation : nickName null값 예외
+            if (nickNameVal == null || nickNameVal.length()==0) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_NICKNAME);
+            }
+            // 닉네임 길이 15글자 초과 예외
+            if (nickName.length()<=0 || nickName.length()>15) {// 닉네임 길이 Validation
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_LENGTH_NICKNAME);
+            }
+            // 닉네임 특수문자 포함 예외
+            if (isRegexNickNameSpecial(nickName)) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
+            }
+
             //같다면 유저 닉네임 변경
             UserDto.UpdateNickNameReq updateNickNameReq = new UserDto.UpdateNickNameReq(userIdx,nickName);
             userService.updateNickName(updateNickNameReq);
@@ -228,6 +288,21 @@ public class UserController {
             }
 
  //**************************************************************************
+            // 비밀번호 Validation
+            String passwordVal = password.replaceAll(" ","");
+            // 회원가입 validation :  password null값 예외
+            if (passwordVal == null || passwordVal.length()==0) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_PASSWORD);
+            }
+            // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
+            if(!isRegexPasswordKind(password)){
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
+            }
+            // 비밀번호 특수문자 확인 예외
+            if(!isRegexPasswordSpecial(password)){
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
+            }
+
             //같다면 유저 패스워드 변경
             UserDto.UpdatePasswordReq updatePasswordReq = new UserDto.UpdatePasswordReq(userIdx,password);
             userService.updatePassword(updatePasswordReq);

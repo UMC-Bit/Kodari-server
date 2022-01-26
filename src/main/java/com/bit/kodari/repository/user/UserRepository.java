@@ -133,6 +133,38 @@ public class UserRepository {
     }
 
 
+    // User 조회: 해당 userIdx 갖는 유저 조회
+    public List<UserDto.GetUserRes> getUserByUserIdx(String userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx",userIdx); // userIdx 값 전달 객체
+        try{
+            List<UserDto.GetUserRes> getUserRes = namedParameterJdbcTemplate.query(UserSql.FIND_BY_USERIDX, parameterSource,
+                    // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
+                    (rs, rowNum) -> new UserDto.GetUserRes(
+                            rs.getInt("userIdx"),
+                            rs.getString("nickName"),
+                            rs.getString("email"),
+                            rs.getString("password"),
+                            rs.getString("profileImgUrl"),
+                            rs.getString("status")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+            );
+            return getUserRes;
+        }
+        catch (EmptyResultDataAccessException e) {
+            // EmptyResultDataAccessException 예외 발생시 null 리턴
+            return null;
+        }
+
+    }
+
+
+    // 유저인덱스로 status 조회,
+    public String getStatusByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx",userIdx);
+        return namedParameterJdbcTemplate.queryForObject(UserSql.FIND_STATUS_BY_USERIDX,parameterSource,String.class);
+    }
+
+
+
     // 회원 삭제
     public int deleteUser(UserDto.DeleteUserReq deleteUserReq){
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", deleteUserReq.getUserIdx());
@@ -157,7 +189,7 @@ public class UserRepository {
         return namedParameterJdbcTemplate.update(UserSql.UPDATE_PROFILEIMGURL, parameterSource);
     }
 
-    // 회원 프로필사진 변경
+    // 회원 패스워드 변경
     public int updatePassword(UserDto.UpdatePasswordReq updatePasswordReq){
         //SqlParameterSource parameterSource = new MapSqlParameterSource("nickName", updateNickNameReq.getNickName());
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", updatePasswordReq.getUserIdx())
