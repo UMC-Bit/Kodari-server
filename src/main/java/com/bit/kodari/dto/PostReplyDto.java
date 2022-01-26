@@ -63,6 +63,7 @@ public class PostReplyDto {
         private String profileImgUrl;
         private String nickName;
         private String content;
+        private String time;
     }
 
 

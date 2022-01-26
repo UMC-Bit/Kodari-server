@@ -152,6 +152,7 @@ public class PostCommentRepository {
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
                         rs.getString("content"),
+                        rs.getString("time"),
                         rs.getInt("like"), false) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         );
 
@@ -166,6 +167,7 @@ public class PostCommentRepository {
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
                         rs.getString("content"),
+                        rs.getString("time"),
                         rs.getInt("like"))
         );
 

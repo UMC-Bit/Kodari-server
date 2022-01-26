@@ -132,6 +132,8 @@ public class PostController {
     @ApiOperation(value = "게시글별 조회", notes = "토론장 게시글별 조회함")
     public BaseResponse<PostDto.GetUserPostRes> getComments(@RequestParam int postIdx) {
         int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
+        List<PostDto.GetCommentDeleteRes> postCommentIdx = postRepository.getPostCommentIdxByPostIdx(postIdx);
+        List<PostDto.GetReplyDeleteRes> postReplyIdx = postRepository.getReplyIdxByPostIdx(postIdx);
         try {
 
 //            //jwt에서 idx 추출.
@@ -141,10 +143,22 @@ public class PostController {
 //            if(userIdx != userIdxByJwt){
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
-
+//
             PostDto.GetUserPostRes getUserPostRes = postService.getPostsByPostIdx(postIdx);
 //            if(userIdx == userIdxByJwt){
 //                getUserPostRes.setCheckWriter(true);
+//            }
+//            for(int i=0; i < postCommentIdx.size(); i++ ) {
+//                List<PostDto.GetUserIdxRes> comment_userIdx = postRepository.getUserIdxByPostCommentIdx(postCommentIdx.get(i).getPostCommentIdx());
+//                if(comment_userIdx.get(i).getUserIdx() == userIdxByJwt){
+//                    getUserPostRes.setCheckCommentWriter(true);
+//                }
+//            }
+//            for(int i=0; i < postReplyIdx.size(); i++ ) {
+//                List<PostDto.GetUserIdxRes> reply_userIdx = postRepository.getUserIdxByPostReplyIdx(postReplyIdx.get(i).getPostReplyIdx());
+//                if(reply_userIdx.get(i).getUserIdx() == userIdxByJwt){
+//                    getUserPostRes.setCheckReplyWriter(true);
+//                }
 //            }
             return new BaseResponse<>(getUserPostRes);
         } catch (BaseException exception) {

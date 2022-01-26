@@ -108,7 +108,8 @@ public class PostReplyRepository {
                 (rs, rowNum) -> new PostReplyDto.GetReplyRes(
                         rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
-                        rs.getString("content"))
+                        rs.getString("content"),
+                        rs.getString("time"))
         );
 
         return getReplyCommentRes;
@@ -121,7 +122,8 @@ public class PostReplyRepository {
                 (rs, rowNum) -> new PostReplyDto.GetReplyRes(
                         rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
-                        rs.getString("content"))
+                        rs.getString("content"),
+                        rs.getString("time"))
         );
 
         return getReplyUserRes;

@@ -80,6 +80,7 @@ public class PostCommentDto {
         private String nickName;
         private String profileImgUrl;
         private String content;
+        private String time;
         private int like;
 
     }
@@ -92,6 +93,7 @@ public class PostCommentDto {
         private String nickName;
         private String profileImgUrl;
         private String content;
+        private String time;
         private int like;
         private boolean checkWriter; //게시글 유저 확인
 

@@ -29,6 +29,7 @@ public class CommentLikeDto {
     @Builder // 빌더 클래스 자동 생성
     public static class RegisterCommentLikeRes{
         private int userIdx;
+        private int postCommentLikeIdx;
         //    private String jwt;
     }
 
@@ -43,14 +44,21 @@ public class CommentLikeDto {
 //        private int like;
 //    }
 
-    //토론장 댓글 좋아요 삭제
+    //토론장 댓글 좋아요 삭제 REQUEST DTO
     @Data
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class DeleteLikeReq{
+    public static class CommentLikeReq{
+        private int userIdx;
         private int commentLikeIdx;
-        private int like = 1;
     }
-
+    //토론장 댓글 좋아요 삭제 RESPONSE DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class CommentLikeRes{
+        private int userIdx;
+        private int commentLikeIdx;
+    }
 
 }

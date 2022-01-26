@@ -88,6 +88,22 @@ public class PostDto {
         private int postReplyIdx;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetUserIdxRes{
+        private int userIdx;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetStatusRes{
+        private String status;
+    }
+
+
 
     //토론장 게시글 조회
     @Data
@@ -98,6 +114,7 @@ public class PostDto {
         private String nickName; //유저 닉네임
         private String profileImgUrl; //유저 프로필
         private String content; //게시글 내용
+        private String time; // 게시글 시간
         private int like = 0;
         private int dislike = 0;
     }
@@ -111,10 +128,13 @@ public class PostDto {
         private String nickName; //유저 닉네임
         private String profileImgUrl; //유저 프로필
         private String content; //게시글 내용
+        private String time; //게시글 시간
         private int like = 0;
         private int dislike = 0;
         private boolean checkWriter; // 게시글 유저 확인
         private List<GetCommentRes> commentList;
+        private boolean checkCommentWriter; // 댓글 유저 확인
+        private boolean checkReplyWriter; // 답글 유저 확인
 
     }
 
@@ -126,6 +146,7 @@ public class PostDto {
         private String profileImgUrl;
         private String nickName;
         private String content;
+        private String time; //댓글 시간
         private int like;
         private List<GetReplyRes> replyList;
     }
@@ -138,7 +159,11 @@ public class PostDto {
         private String profileImgUrl;
         private String nickName;
         private String content;
+        private String time; //답글 시간
+
     }
+
+
 
 
 }

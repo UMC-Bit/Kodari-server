@@ -43,14 +43,26 @@ class PostReplySql {
 
     //토론장 게시글 댓글별 답글조회
     public static final String LIST_COMMENT_REPLY = """
-         SELECT u.profileImgUrl, u.nickName, r.content
+         SELECT u.profileImgUrl, u.nickName, r.content,
+         case
+                when timestampdiff(hour, r.updateAt, current_timestamp()) < 24 then date_format(r.updateAt, '%m/%d %H:%i')
+                when timestampdiff(day, r.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, r.updateAt , NOW()), '일 전')
+                when timestampdiff(month, r.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, r.updateAt , NOW()), '달 전')
+                else CONCAT(TIMESTAMPDIFF(year, r.updateAt , NOW()), '년 전')
+                end as time
          FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx join User as u on r.userIdx = u.userIdx 
          WHERE r.postCommentIdx = :postCommentIdx and c.status = 'active' and r.status = 'active'
          """
 
     //토론장 유저별 답글 조회
     public static final String LIST_USER_REPLY = """
-         SELECT u.profileImgUrl, u.nickName, r.content
+         SELECT u.profileImgUrl, u.nickName, r.content,
+         case
+                when timestampdiff(hour, r.updateAt, current_timestamp()) < 24 then date_format(r.updateAt, '%m/%d %H:%i')
+                when timestampdiff(day, r.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, r.updateAt , NOW()), '일 전')
+                when timestampdiff(month, r.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, r.updateAt , NOW()), '달 전')
+                else CONCAT(TIMESTAMPDIFF(year, r.updateAt , NOW()), '년 전')
+                end as time
          FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx join User as u on r.userIdx = u.userIdx 
          WHERE r.userIdx = :userIdx and c.status = 'active' and r.status = 'active'
          """

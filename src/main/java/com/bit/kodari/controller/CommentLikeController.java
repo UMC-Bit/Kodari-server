@@ -11,6 +11,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @Slf4j
 @RestController
 @RequestMapping("/comment/likes")
@@ -28,26 +31,64 @@ public class CommentLikeController {
     }
 
     /*
-        토론장 댓글 좋아요 선택
+        토론장 댓글 좋아요 선택 체크
       */
     @PostMapping(value="/choose")
-    @ApiOperation(value = "좋아요 선택", notes = "토론장 댓글 좋아요를 선택함.")
-    public BaseResponse<CommentLikeDto.RegisterCommentLikeRes> createCommentLike(@RequestBody CommentLikeDto.RegisterCommentLikeReq registerCommentLikeReq){
+    @ApiOperation(value = "좋아요 선택 체크", notes = "토론장 댓글 좋아요 등록, 취소 체크 함")
+    public BaseResponse<CommentLikeDto.CommentLikeRes> checkCommentLike(@RequestBody CommentLikeDto.RegisterCommentLikeReq registerCommentLikeReq){
         int userIdx = registerCommentLikeReq.getUserIdx();
-        try {
+        int postCommentIdx = registerCommentLikeReq.getPostCommentIdx();
+        String exist_user = commentLikeRepository.getUser(userIdx, postCommentIdx);
 //            //jwt에서 idx 추출.
 //            int userIdxByJwt = jwtService.getUserIdx();
 //            //userIdx와 접근한 유저가 같은지 확인
 //            if(userIdx != userIdxByJwt){
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
-            //같다면 유저네임 변경
-            CommentLikeDto.RegisterCommentLikeRes registerCommentLikeRes = commentLikeService.chooseCommentLike(registerCommentLikeReq);
+            //유저가 존재하면 좋아요 취소
+            if(exist_user.equals("true")) {
+                int commentLikeIdx = commentLikeRepository.getCommentLikeIdxByIdx(userIdx, postCommentIdx);
+                CommentLikeDto.CommentLikeReq deleteLikeReq = new CommentLikeDto.CommentLikeReq(userIdx, commentLikeIdx);
+                return deleteCommentLike(deleteLikeReq);
+                //commentLikeService.checkUserLike(exist_user, commentLikeIdx, response);
+            }else{ // 좋아요 등록
+                return createCommentLike(registerCommentLikeReq);
+            }
+    }
+
+
+    /*
+        토론장 댓글 좋아요 선택
+      */
+    @PostMapping(value="/like")
+    @ApiOperation(value = "좋아요 선택", notes = "토론장 댓글 좋아요를 선택함.")
+    public BaseResponse<CommentLikeDto.CommentLikeRes> createCommentLike(@RequestBody CommentLikeDto.RegisterCommentLikeReq registerCommentLikeReq){
+        int userIdx = registerCommentLikeReq.getUserIdx();
+        int postCommentIdx = registerCommentLikeReq.getPostCommentIdx();
+        int commentLikeIdx = commentLikeRepository.getCommentLikeIdxByIdx(userIdx, postCommentIdx);
+        try {
+            CommentLikeDto.CommentLikeRes registerCommentLikeRes = commentLikeService.chooseCommentLike(registerCommentLikeReq);
+
             return new BaseResponse<>(registerCommentLikeRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /*
+        토론장 댓글 좋아요 취소
+      */
+    @PostMapping(value="/delete")
+    @ApiOperation(value = "좋아요 취소 선택", notes = "토론장 댓글 좋아요를 선택함.")
+    public BaseResponse<CommentLikeDto.CommentLikeRes> deleteCommentLike(@RequestBody CommentLikeDto.CommentLikeReq deleteLikeReq){
+        try {
+            CommentLikeDto.CommentLikeRes deleteLikeRes = commentLikeService.deleteLike(deleteLikeReq);
+            return new BaseResponse<>(deleteLikeRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
 
 //    /*
 //            토론장 댓글 좋아요 수정
@@ -75,12 +116,14 @@ public class CommentLikeController {
 //        }
 //    }
 
+
     /*
             토론장 댓글 좋아요 삭제
          */
+    /*
     @DeleteMapping("/delete")
     @ApiOperation(value = "좋아요 삭제", notes = "토론장 댓글의 좋아요 삭제함.")
-    public BaseResponse<String> DeleteCommentLike(@RequestParam int commentLikeIdx, @RequestParam int like) {
+    public BaseResponse<CommentLikeDto.DeleteLikeRes> DeleteCommentLike(@RequestParam int commentLikeIdx) {
         try {
 //            //jwt에서 idx 추출.
 //            int userIdxByJwt = jwtService.getUserIdx();
@@ -89,15 +132,13 @@ public class CommentLikeController {
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
             //같다면 유저네임 변경
-            CommentLikeDto.DeleteLikeReq deleteLikeReq = new CommentLikeDto.DeleteLikeReq(commentLikeIdx, like);
-            commentLikeService.deleteLike(deleteLikeReq);
-            String result = "토론장 댓글의 좋아요가 삭제되었습니다.";
-            return new BaseResponse<>(result);
+            CommentLikeDto.DeleteLikeReq deleteLikeReq = new CommentLikeDto.DeleteLikeReq(commentLikeIdx);
+            CommentLikeDto.DeleteLikeRes deleteLikeRes = commentLikeService.deleteLike(deleteLikeReq);
+            //String result = "토론장 댓글의 좋아요가 삭제되었습니다.";
+            return new BaseResponse<>(deleteLikeRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
-    }
-
-
+    }*/
 
 }

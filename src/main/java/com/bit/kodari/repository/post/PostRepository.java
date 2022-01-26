@@ -44,6 +44,8 @@ public class PostRepository {
         });
     }
 
+
+
     //postIdx 게시글 삭제 시 관련된 댓글 삭제
     public List<PostDto.GetCommentDeleteRes> getPostCommentIdxByPostIdx(int postIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
@@ -100,6 +102,36 @@ public class PostRepository {
                             rs.getInt("postReplyIdx"))
             );
             return getReplyDeleteRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    //postCommentIdx로 userIdx 가져오기
+    public List<PostDto.GetUserIdxRes> getUserIdxByPostCommentIdx(int postCommentIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
+        try {
+            List<PostDto.GetUserIdxRes> getUserIdxRes =  namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_USER_IDX, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetUserIdxRes(
+                            rs.getInt("userIdx"))
+            );
+            return getUserIdxRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    //postCommentIdx로 userIdx 가져오기
+    public List<PostDto.GetUserIdxRes> getUserIdxByPostReplyIdx(int postReplyIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
+        try {
+            List<PostDto.GetUserIdxRes> getUserIdxRes =  namedParameterJdbcTemplate.query(PostSql.GET_REPLY_USER_IDX, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetUserIdxRes(
+                            rs.getInt("userIdx"))
+            );
+            return getUserIdxRes;
 
         }catch(EmptyResultDataAccessException e){
             return null;
@@ -176,6 +208,7 @@ public class PostRepository {
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
                         rs.getString("content"),
+                        rs.getString("time"),
                         rs.getInt("like"),
                         rs.getInt("dislike")
                 // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
@@ -193,6 +226,7 @@ public class PostRepository {
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
                         rs.getString("content"),
+                        rs.getString("time"),
                         rs.getInt("like"),
                         rs.getInt("dislike")
                         // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
@@ -215,8 +249,9 @@ public class PostRepository {
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
                         rs.getString("content"),
+                        rs.getString("time"),
                         rs.getInt("like"),
-                        rs.getInt("dislike"), false, commentList); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getInt("dislike"), false, commentList, false, false); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         return post;
     }
     );
@@ -236,6 +271,7 @@ public class PostRepository {
                         rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
                         rs.getString("content"),
+                        rs.getString("time"),
                         rs.getInt("like"),
                         getReplyByCommentIdx(rs.getInt("postCommentIdx"))
                 ));
@@ -253,7 +289,8 @@ public class PostRepository {
                 (rs, rowNum) -> new PostDto.GetReplyRes(
                         rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
-                        rs.getString("content")
+                        rs.getString("content"),
+                        rs.getString("time")
                         // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                 ));
         return getReplyRes;
@@ -266,7 +303,8 @@ public class PostRepository {
                 (rs, rowNum) -> new PostDto.GetReplyRes(
                         rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
-                        rs.getString("content")
+                        rs.getString("content"),
+                        rs.getString("time")
                         // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                 ));
         return getReplyRes;

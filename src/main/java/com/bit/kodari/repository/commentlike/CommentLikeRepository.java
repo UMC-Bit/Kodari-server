@@ -17,13 +17,13 @@ public class CommentLikeRepository {
     }
 
     //토론장 댓글 좋아요 등록
-    public CommentLikeDto.RegisterCommentLikeRes chooseCommentLike(CommentLikeDto.RegisterCommentLikeReq like) {
+    public CommentLikeDto.CommentLikeRes chooseCommentLike(CommentLikeDto.RegisterCommentLikeReq like) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("userIdx", like.getUserIdx())
                 .addValue("postCommentIdx", like.getPostCommentIdx());
         int affectedRows = namedParameterJdbcTemplate.update(CommentLikeSql.CHOOSE_COMMENT_LIKE, parameterSource, keyHolder);
-        return CommentLikeDto.RegisterCommentLikeRes.builder().userIdx(like.getUserIdx()).build();
+        return new CommentLikeDto.CommentLikeRes(like.getUserIdx(), keyHolder.getKey().intValue());
     }
 
     //commentLikeIdx로 좋아요한 userIdx 가져오기
@@ -51,6 +51,34 @@ public class CommentLikeRepository {
             }
 
             return postCommentIdx;
+        });
+    }
+
+    //userIdx와 postCommentIdx로 commentLikeIdx가져오기
+    public int getCommentLikeIdxByIdx(int userIdx, int postCommentIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
+                .addValue("postCommentIdx", postCommentIdx);
+        return namedParameterJdbcTemplate.query(commentLikeSql.GET_COMMENT_LIKE_IDX, parameterSource, rs -> {
+            int commentLikeIdx = 0;
+            if (rs.next()) {
+                commentLikeIdx = rs.getInt("commentLikeIdx");
+            }
+
+            return commentLikeIdx;
+        });
+    }
+
+    //같은 postCommentIdx에 유저가 또 있는 확인하기
+    public String getUser(int userIdx, int postCommentIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
+                .addValue("postCommentIdx", postCommentIdx);
+        return namedParameterJdbcTemplate.query(commentLikeSql.EXIST_USER, parameterSource, rs -> {
+            String exist = " ";
+            if (rs.next()) {
+                exist = rs.getString("exist");
+            }
+
+            return exist;
         });
     }
 
@@ -103,11 +131,13 @@ public class CommentLikeRepository {
 
 
     //댓글 좋아요 삭제
-    public int deleteLike(CommentLikeDto.DeleteLikeReq deleteLikeReq) {
+    public CommentLikeDto.CommentLikeRes deleteLike(CommentLikeDto.CommentLikeReq deleteLikeReq) {
         String qry = CommentLikeSql.DELETE_COMMENT_LIKE;
-        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", deleteLikeReq.getCommentLikeIdx())
-                .addValue("like", deleteLikeReq.getLike());
-        return namedParameterJdbcTemplate.update(qry, parameterSource);
+        int commentLikeId = deleteLikeReq.getCommentLikeIdx();
+        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", deleteLikeReq.getCommentLikeIdx());
+        namedParameterJdbcTemplate.update(qry, parameterSource);
+        CommentLikeDto.CommentLikeRes deleteLikeRes = new CommentLikeDto.CommentLikeRes(deleteLikeReq.getUserIdx(), commentLikeId);
+        return deleteLikeRes;
     }
 
 }
