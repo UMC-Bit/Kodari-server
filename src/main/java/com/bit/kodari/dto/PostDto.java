@@ -43,7 +43,7 @@ public class PostDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
     public static class PatchPostReq{
         private int postIdx;
-        private int userIdx;
+        private int coinIdx;
         private String content;
     }
 
@@ -131,6 +131,7 @@ public class PostDto {
         private String time; //게시글 시간
         private int like = 0;
         private int dislike = 0;
+        private int comment_cnt; //댓글 수
         private boolean checkWriter; // 게시글 유저 확인
         private List<GetCommentRes> commentList;
         private boolean checkCommentWriter; // 댓글 유저 확인

@@ -72,7 +72,7 @@ public class PostController {
 //            if(userIdx != userIdxByJwt){
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
-            PostDto.PatchPostReq patchPostReq = new PostDto.PatchPostReq(postIdx, userIdx, post.getContent());
+            PostDto.PatchPostReq patchPostReq = new PostDto.PatchPostReq(postIdx, post.getCoinIdx(), post.getContent());
             postService.modifyPost(patchPostReq);
             String result = "토론장 게시글이 수정되었습니다.";
             return new BaseResponse<>(result);
@@ -120,6 +120,18 @@ public class PostController {
             // query string인 userIdx이 있을 경우, 조건을 만족하는 상품정보들을 불러온다.
             List<PostDto.GetPostRes> getPostsRes = postService.getPostsByUserIdx(userIdx);
             return new BaseResponse<>(getPostsRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    //토론장 게시글 코인별 댓글 조회
+    @GetMapping("/coin") // (GET) 127.0.0.1:9000/comments
+    @ApiOperation(value = "코인별 게시글 목록 조회", notes = "토론장 코인별 게시글을 조회함")
+    public BaseResponse<List<PostDto.GetPostRes>> getPosts(@RequestParam String coinName) {
+        try {
+            List<PostDto.GetPostRes> getCoinsRes = postService.getPostsByCoinName(coinName);
+            return new BaseResponse<>(getCoinsRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }

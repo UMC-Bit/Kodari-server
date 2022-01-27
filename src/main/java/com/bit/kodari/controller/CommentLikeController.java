@@ -69,7 +69,7 @@ public class CommentLikeController {
         int commentLikeIdx = commentLikeRepository.getCommentLikeIdxByIdx(userIdx, postCommentIdx);
         try {
             CommentLikeDto.CommentLikeRes registerCommentLikeRes = commentLikeService.chooseCommentLike(registerCommentLikeReq);
-            return new BaseResponse<>(registerCommentLikeRes, BaseResponseStatus.SUCCESS_COMMENT_LIKE_DELETE);
+            return new BaseResponse<>(registerCommentLikeRes, BaseResponseStatus.SUCCESS_COMMENT_LIKE_REGISTER);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

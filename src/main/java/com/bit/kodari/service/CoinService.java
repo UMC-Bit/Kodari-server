@@ -28,4 +28,15 @@ public class CoinService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
+    // 토론장 코인이름 조회
+    public List<CoinDto.GetCoinRes> getCoinsByCoinName(String coinName) throws BaseException {
+        try {
+            List<CoinDto.GetCoinRes> getCoinsRes = coinRepository.getCoinsByCoinName(coinName);
+            return getCoinsRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
