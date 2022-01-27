@@ -20,10 +20,18 @@ public class PortfolioService {
 
     //포트폴리오 등록
     //비티코인, 이더리움, 솔라나 로 자동 넣어주기
+    //해당 계좌의 유저가 맞는지 확인
     public PortfolioDto.PostPortfolioRes registerPortfolio(PortfolioDto.PostPortfolioReq postPortfolioReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postPortfolioReq.getAccountIdx();
         String status = portfolioRepository.getAccountStatus(accountIdx);
+        // accountIdx로 불러온 userIdx
+        int accountUser = portfolioRepository.getAccountUserIdx(accountIdx);
+
+        //해당 유저의 계좌인지 확인
+        if(accountUser != postPortfolioReq.getUserIdx()){
+            throw new BaseException(NO_MATCH_USER_ACCOUNT); //2042
+        }
 
         List<PortfolioDto.GetAllPortfolioRes> getAllPortfolioRes = portfolioRepository.getAllPortfolio();
         // userIdx로 모든 portIdx 가져오기

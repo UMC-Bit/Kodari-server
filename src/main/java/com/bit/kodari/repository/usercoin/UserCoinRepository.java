@@ -3,6 +3,7 @@ package com.bit.kodari.repository.usercoin;
 import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.repository.account.AccountSql;
+import com.bit.kodari.repository.portfolio.PortfolioSql;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -288,6 +289,19 @@ public class UserCoinRepository {
             }
 
             return property;
+        });
+    }
+
+    //accountIdx로 계좌 userIdx 가져오기
+    public int getAccountUserIdx(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(UserCoinSql.GET_ACCOUNT_USER, parameterSource, rs -> {
+            int userIdx = 0;
+            if (rs.next()) {
+                userIdx = rs.getInt("userIdx");
+            }
+
+            return userIdx;
         });
     }
 }

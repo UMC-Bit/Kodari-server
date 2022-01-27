@@ -225,4 +225,17 @@ public class PortfolioRepository {
         }
     }
 
+    //accountIdx로 계좌 userIdx 가져오기
+    public int getAccountUserIdx(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(PortfolioSql.GET_ACCOUNT_USER, parameterSource, rs -> {
+            int userIdx = 0;
+            if (rs.next()) {
+                userIdx = rs.getInt("userIdx");
+            }
+
+            return userIdx;
+        });
+    }
+
 }

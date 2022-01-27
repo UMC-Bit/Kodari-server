@@ -51,7 +51,8 @@ public enum BaseResponseStatus {
     POST_ACCOUNT_NAME_NULL(false, 2040, "계좌이름을 입력해주세요."),
     INACTIVE_PORTFOLIO(false, 2041, "삭제된 포트폴리오입니다."),
 
-
+    //
+    NO_MATCH_USER_ACCOUNT(false, 2042, "유저의 계좌가 아닙니다."),
 
 
     /**
@@ -119,6 +120,7 @@ public enum BaseResponseStatus {
     COIN_AMOUNT_OVER(false, 4054, "매도하는 코인이 기존보다 많습니다."),
     DELETE_FAIL_REPRESENT(false, 4055, "대표 코인 삭제에 실패하였습니다."),
     COIN_AMOUNT_ZERO(false, 4056, "코인이 전부 매도되었습니다."),
+    NO_USER_COIN(false, 4057, "해당 계좌의 코인이 존재하지 않습니다."),
 
     //수정 실패
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),

@@ -82,4 +82,9 @@ class PortfolioSql {
     public  static final String GET_USER_COIN_IDX = """
         SELECT userCoinIdx from UserCoin where accountIdx = :accountIdx and status = 'active'
     """
+
+    //accountIdx로 계좌 userIdx 가져오기
+    public static final String GET_ACCOUNT_USER ="""
+        SELECT userIdx from Account where accountIdx = :accountIdx
+    """;
 }

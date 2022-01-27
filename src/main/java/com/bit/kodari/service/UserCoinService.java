@@ -20,6 +20,8 @@ public class UserCoinService {
     private UserCoinRepository userCoinRepository;
 
     //소유 코인 등록
+    //이미 등록되어 있는 코인은 등록할 수 없음.
+    //해당 유저의 계좌인지 확인.
     public UserCoinDto.PostUserCoinRes registerUserCoin(UserCoinDto.PostUserCoinReq postUserCoinReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postUserCoinReq.getAccountIdx();
@@ -29,6 +31,14 @@ public class UserCoinService {
         double amount = postUserCoinReq.getAmount();
         double max = 100000000000L;
 
+        // accountIdx로 불러온 userIdx
+        int accountUser = userCoinRepository.getAccountUserIdx(accountIdx);
+
+        //해당 유저의 계좌인지 확인
+        if(accountUser != postUserCoinReq.getUserIdx()){
+            throw new BaseException(NO_MATCH_USER_ACCOUNT); //2042
+        }
+
         //매수평단가, amount 0, 음수는 안됨, max 초과 안됨.
         if(priceAvg <= 0 || priceAvg > max){
             throw new BaseException(PRICE_AVG_RANGE_ERROR); //4052
@@ -36,6 +46,7 @@ public class UserCoinService {
             throw new BaseException(AMOUNT_RANGE_ERROR); //4053
         }
 
+        //계좌 활성 상태 확인
         if(status.equals("inactive")){
             throw new BaseException(FAILED_TO_PROPERTY_RES); //3040
         }
