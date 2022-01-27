@@ -3,6 +3,7 @@ package com.bit.kodari.repository.usercoin;
 import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.repository.account.AccountSql;
+import com.bit.kodari.repository.portfolio.PortfolioSql;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -87,6 +88,14 @@ public class UserCoinRepository {
     public int deletebyUserIdx(UserCoinDto.PatchDelByUserIdxReq patchDelByUserIdxReq) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", patchDelByUserIdxReq.getUserIdx());
         return namedParameterJdbcTemplate.update(UserCoinSql.ALL_DELETE, parameterSource);
+    }
+
+
+    // 소유 코인 삭제 : 전체 삭제
+    public int deleteAllUserCoinByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(UserCoinSql.DELETE_ALL, parameterSource);
     }
 
     //매수평단가 계산

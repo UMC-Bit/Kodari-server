@@ -108,8 +108,8 @@ class TradeSql {
 
     // 거래내역 삭제 : 전체삭제
     public static final String DELETE_ALL = """
-			DELETE FROM Trade as T join Port as P on T.portIdx = P.portIdx
-			WHERE userIdx = :userIdx;
+			DELETE T from Trade as T right join Portfolio as P ON T.portIdx = P.portIdx
+            WHERE P.userIdx = :userIdx;
 """
 
 

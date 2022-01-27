@@ -28,14 +28,25 @@ public class UserService {
     private final JwtService jwtService; // JWT부분
     private final TradeService tradeService;
     private final ProfitService profitService;
+    private final AccountService accountService;
+    private final PortfolioService portfolioService;
+    private final UserCoinService userCoinService;
+    private final RepresentService representService;
+
+
 
 
     @Autowired //readme 참고
-    public UserService(UserRepository userRepository, JwtService jwtService, TradeService tradeService, ProfitService profitService) {
+    public UserService(UserRepository userRepository, JwtService jwtService, TradeService tradeService, ProfitService profitService
+    ,AccountService accountService ,PortfolioService portfolioService, UserCoinService userCoinService, RepresentService representService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService; // JWT부분
         this.tradeService = tradeService;
         this.profitService = profitService;
+        this.accountService = accountService;
+        this.portfolioService = portfolioService;
+        this.userCoinService = userCoinService;
+        this.representService = representService;
 
     }
     // ******************************************************************************
@@ -208,9 +219,28 @@ public class UserService {
 
         // 유저 삭제가 완성되면
         // 해당 유저의 거래내역 전체 삭제
-//        tradeService.deleteAllTradeByUserIdx(deleteUserReq.getUserIdx());
-//        // 해당 유저의 수익내역 전체 삭제
-//        profitService.deleteAllProfitByUserIdx(deleteUserReq.getUserIdx());
+        // 주의: 참조관계 따져서 순서도 맞아야 삭제가능
+        tradeService.deleteAllTradeByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 거래내역 삭제 완료");
+        // 해당 유저의 수익내역 전체 삭제
+        profitService.deleteAllProfitByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 수익내역 삭제 완료");
+        // 해당 유저의 데표코인 전체 삭제
+        representService.deleteAllReprsentByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 대표코인 삭제 완료");
+        // 해당 유저의 소유코인 전체 삭제
+        userCoinService.deleteAllUserCoinByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 소유코인 삭제 완료");
+        // 해당 유저의 포트폴리오 전체 삭제
+        portfolioService.deleteAllPortfolioByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 포트폴리오 삭제 완료");
+        // 해당 유저의 계좌 전체 삭제
+        accountService.deleteAllAccountByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 계좌 삭제 완료");
+
+
+
+
 
     }
 

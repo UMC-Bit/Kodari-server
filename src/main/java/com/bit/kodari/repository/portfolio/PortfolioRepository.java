@@ -117,6 +117,14 @@ public class PortfolioRepository {
     }
 
 
+    // 포트폴리오 삭제 : 전체 삭제
+    public int deleteAllPortfolioByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(PortfolioSql.DELETE_ALL, parameterSource);
+    }
+
+
     /**
      * 가져오기
      */

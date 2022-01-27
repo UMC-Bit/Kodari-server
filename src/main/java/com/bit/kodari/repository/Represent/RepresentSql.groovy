@@ -18,6 +18,12 @@ class RepresentSql {
 			   DELETE FROM Represent WHERE representIdx = :representIdx
     """
 
+    // 대표 코인 삭제 : 전체삭제
+    public static final String DELETE_ALL = """
+			DELETE R from Represent as R right join Portfolio as P ON R.portIdx = P.portIdx
+            WHERE P.userIdx = :userIdx;
+"""
+
     //portIdx로 userIdx 가져오기
     public static final String GET_USER_IDX_BY_PORT ="""
         SELECT userIdx from Portfolio where portIdx = :portIdx
