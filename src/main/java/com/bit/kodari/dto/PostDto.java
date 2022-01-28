@@ -117,6 +117,7 @@ public class PostDto {
         private String time; // 게시글 시간
         private int like = 0;
         private int dislike = 0;
+        private int comment_cnt;
     }
 
     //토론장 게시글별 조회

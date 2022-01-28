@@ -107,8 +107,7 @@ public class PostCommentController {
     //토론장 게시글 유저별 댓글 조회
     @GetMapping("/user") // (GET) 127.0.0.1:9000/comments
     @ApiOperation(value = "유저별 댓글 목록 조회", notes = "토론장 게시글 유저별 댓글을 조회함")
-    public BaseResponse<List<PostCommentDto.GetCommentRes>> getPosts(@RequestParam int userIdx) {
-
+    public BaseResponse<List<PostCommentDto.GetCommentRes>> getComments(@RequestParam int userIdx) {
         try {
             List<PostCommentDto.GetCommentRes> getCommentsRes = postCommentService.getCommentsByUserIdx(userIdx);
             return new BaseResponse<>(getCommentsRes);

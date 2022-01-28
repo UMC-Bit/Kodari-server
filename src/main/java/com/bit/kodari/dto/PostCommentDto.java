@@ -92,7 +92,7 @@ public class PostCommentDto {
     public static class GetCommentRes{
         private String content;
         private String time;
-        private List<PostCommentDto.GetPostsRes> postList; //관련된 게시글
+        private List<GetPostsRes> postList; //관련된 게시글
 
     }
 

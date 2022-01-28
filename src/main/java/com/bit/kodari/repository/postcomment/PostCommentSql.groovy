@@ -69,15 +69,16 @@ class PostCommentSql {
 
     //토론장 유저별 댓글 조회
     public static final String LIST_USER_COMMENT = """
-         SELECT content,
+         SELECT c.postIdx, c.content,
          case
                 when timestampdiff(hour, c.updateAt, current_timestamp()) < 24 then date_format(c.updateAt, '%m/%d %H:%i')
                 when timestampdiff(day, c.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, c.updateAt , NOW()), '일 전')
                 when timestampdiff(month, c.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, c.updateAt , NOW()), '달 전')
                 else CONCAT(TIMESTAMPDIFF(year, c.updateAt , NOW()), '년 전')
                 end as time
-         FROM PostComment
-         WHERE userIdx = :userIdx and status = 'active' 
+         FROM PostComment as c join Post as p on c.postIdx = p.postIdx
+            join User as u on u.userIdx = c.userIdx
+         WHERE c.userIdx = :userIdx and c.status = 'active' 
          """
 
     //토론장 유저별 게시글 조회
@@ -89,12 +90,14 @@ class PostCommentSql {
            when timestampdiff(month, c.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, c.updateAt , NOW()), '달 전')
            else CONCAT(TIMESTAMPDIFF(year, c.updateAt , NOW()), '년 전')
            end as time,
-           COUNT(case when c.postCommentIdx then 1 end) as 'comment_cnt'
+        (SELECT COUNT(ifnull(c.postCommentIdx,0)) as 'comment_cnt'
+        FROM PostComment as c join Post as p on c.postIdx = p.postIdx
+        WHERE c.status = 'active' and p.postIdx = :postIdx) as 'comment_cnt'
         FROM Post as p join User as u on p.userIdx = u.userIdx
                LEFT join PostComment as c on p.postIdx = c.postIdx
                Left join PostLike as l on l.postIdx = p.postIdx
-        WHERE c.postIdx = :postIdx and p.status = 'active' and c.status = 'active'
-        group by u.nickName, u.profileImgUrl, p.content
+        WHERE p.postIdx = :postIdx and p.status = 'active'
+        group by u.nickName, u.profileImgUrl, p.content, p.postIdx
          """
 
 //    //토론장 게시글별 댓글 조회
