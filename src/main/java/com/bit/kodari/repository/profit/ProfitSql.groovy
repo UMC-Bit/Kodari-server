@@ -9,8 +9,8 @@ class ProfitSql {
 """
 
     public static final String FIND_BY_PROFITIDX = """
-        SELECT * from Profit where profitIdx = :profitIdx
-        WHERE status = "active"
+        SELECT * from Profit
+        WHERE profitIdx = :profitIdx AND status = 'active'
 
 """
 
@@ -23,7 +23,7 @@ class ProfitSql {
     public static final String FIND_BY_ACCOUNTIDX = """
          SELECT profitIdx, accountIdx, TRUNCATE(profitRate,2) profitRate, TRUNCATE(earning,0) earning, status, createAt
          FROM Profit
-         WHERE accountIdx = :accountIdx AND status = "active"
+         WHERE accountIdx = :accountIdx AND status = 'active'
          ORDER BY createAt asc
          """
 
@@ -73,7 +73,7 @@ class ProfitSql {
 
     // Profit 수익내역 삭제: 특정 계좌의 수익내역 삭제
     public static final String DELETE ="""
-        UPDATE Profit SET status="inactive" WHERE profitIdx = :profitIdx
+        UPDATE Profit SET status='inactive' WHERE profitIdx = :profitIdx
 """
 
 
