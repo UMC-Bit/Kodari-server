@@ -101,12 +101,13 @@ public class PostCommentDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetPostsRes{
-        private String nickName; //유저 닉네임
         private String profileImgUrl; //유저 프로필
+        private String nickName; //유저 닉네임
         private String content; //게시글 내용
         private String time; //게시글 시간
         private int like = 0;
         private int dislike = 0;
+        private int comment_cnt; // 댓글 수
     }
 
 //

@@ -88,11 +88,12 @@ class PostCommentSql {
            when timestampdiff(day, c.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, c.updateAt , NOW()), '일 전')
            when timestampdiff(month, c.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, c.updateAt , NOW()), '달 전')
            else CONCAT(TIMESTAMPDIFF(year, c.updateAt , NOW()), '년 전')
-           end as time
+           end as time,
+           COUNT(case when c.postCommentIdx then 1 end) as 'comment_cnt'
         FROM Post as p join User as u on p.userIdx = u.userIdx
-               join PostComment as c on p.postIdx = c.postIdx
+               LEFT join PostComment as c on p.postIdx = c.postIdx
                Left join PostLike as l on l.postIdx = p.postIdx
-        WHERE c.userIdx = :userIdx and p.status = 'active'
+        WHERE c.postIdx = :postIdx and p.status = 'active' and c.status = 'active'
         group by u.nickName, u.profileImgUrl, p.content
          """
 
