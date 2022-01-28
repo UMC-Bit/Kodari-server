@@ -72,6 +72,7 @@ public class UserCoinDto {
     @NoArgsConstructor
     public static class GetUserCoinIdxRes{
         private String coinName;
+        private String symbol;
         private int userIdx;
         private double priceAvg;
         private double amount;
@@ -86,6 +87,7 @@ public class UserCoinDto {
     @NoArgsConstructor
     public static class GetUserCoinRes{
         private String coinName;
+        private String symbol;
         private int userIdx;
         private double priceAvg;
         private double amount;

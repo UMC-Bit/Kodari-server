@@ -9,7 +9,7 @@ class UserCoinSql {
 
     //특정 소유 코인 조회
     public static final String FIND_USER_COIN_IDX = """
-			SELECT c.coinName, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userCoinIdx = :userCoinIdx AND u.status = 'active'
+			SELECT c.coinName, c.symbol, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName, symbol from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userCoinIdx = :userCoinIdx AND u.status = 'active'
 			"""
 
     //소유 코인 조회
@@ -18,7 +18,7 @@ class UserCoinSql {
     //concat(format(u.priceAvg, 0), '원') as priceAvg
     //format(u.priceAvg, 0) as priceAvg
     public static final String FIND_USER_COIN = """
-			SELECT c.coinName, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userIdx = :userIdx AND u.status = 'active'
+			SELECT c.coinName, c.symbol, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName, symbol from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userIdx = :userIdx AND u.status = 'active'
 			"""
 
     //소유 코인 수정
