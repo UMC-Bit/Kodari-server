@@ -248,6 +248,13 @@ public class UserService {
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void updateNickName(UserDto.UpdateNickNameReq updateNickNameReq) throws BaseException{
 
+        // 닉네임 중복 확인 validation: 해당 닉네임을 가진 유저가 있는지 확인
+        String nickName = updateNickNameReq.getNickName();
+        List<UserDto.GetUserRes> nickNameUser = userRepository.getUserByNickname(nickName); // 닉네임으로 유저 조회
+        if(nickNameUser.size() != 0){ //  이미 존재하면 이메일 중복 예외
+            throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_NICKNAME);
+        }
+
         int result = userRepository.updateNickName(updateNickNameReq);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);

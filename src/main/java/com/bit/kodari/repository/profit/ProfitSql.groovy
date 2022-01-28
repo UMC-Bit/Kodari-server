@@ -54,6 +54,14 @@ class ProfitSql {
 """
 
 
+    // 수익 조회: 전체 accountIdx 조회
+    public static final String FIND_ACCOUNTIDX = """
+        SELECT A.userIdx
+        FROM Profit as P INNER JOIN Account as A ON P.userIdx = A.userIdx;
+
+"""
+
+
     //  profit인덱스로 해당 유저인덱스 조회
     public static final String FIND_STATUS_BY_PROFITIDX = """
         SELECT status

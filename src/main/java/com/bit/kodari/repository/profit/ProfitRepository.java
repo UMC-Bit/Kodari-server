@@ -121,6 +121,19 @@ public class ProfitRepository {
         //return namedParameterJdbcTemplate.update(TradeSql.UPDATE_PRICE, parameterSource);
     }
 
+    // 수익조회: 전체 accountIdx 조회
+    public List<Integer> getAllAccountIdx(){
+        SqlParameterSource parameterSource = new MapSqlParameterSource();
+
+//        namedParameterJdbcTemplate.query(ProfitSql.DELETE,int.class);
+//        namedParameterJdbcTemplate.query(ProfitSql.DELETE,int.class);
+        return namedParameterJdbcTemplate.queryForList(ProfitSql.FIND_ACCOUNTIDX,parameterSource,int.class);
+//        return namedParameterJdbcTemplate.query(ProfitSql.FIND_ACCOUNTIDX,parameterSource,int.class);
+
+        //return namedParameterJdbcTemplate.update(TradeSql.UPDATE_PRICE, parameterSource);
+    }
+
+
 
 
     //  profit인덱스로 status 값 조회

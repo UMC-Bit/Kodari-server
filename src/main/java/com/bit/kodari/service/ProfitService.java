@@ -204,6 +204,22 @@ public class ProfitService {
     }
 
 
+    // 수익내역 조회: 수익내역의 accountIdx 전체조회
+    @Transactional
+    public List<Integer> getAllAccountIdx() throws BaseException {
+        List<Integer> getAllAccountIdxRes = profitRepository.getAllAccountIdx();
+        // 거래내역 없는 경우 validation
+        if(getAllAccountIdxRes.size() == 0) {
+            throw new BaseException(BaseResponseStatus.GET_TRADES_NOT_EXISTS);
+        }
+        try {
+            return getAllAccountIdxRes;
+        } catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+
 
     // 수익내역 삭제 : status 변경
     @Transactional
