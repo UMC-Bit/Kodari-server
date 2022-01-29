@@ -135,10 +135,8 @@ public class PostDto {
         private int comment_cnt; //댓글 수
         private boolean checkWriter; // 게시글 유저 확인
         private List<GetCommentRes> commentList; //댓글과 답글 리스트
-        private boolean checkCommentWriter; // 댓글 유저 확인
-        private boolean checkReplyWriter; // 답글 유저 확인
-        private boolean checkCommentStatus; // 댓글 삭제 여부 확인
-        private boolean checkReplyStatus; //답글 삭제 여부 확인
+
+
 
     }
 
@@ -152,6 +150,8 @@ public class PostDto {
         private String content;
         private String time; //댓글 시간
         private int like;
+        private boolean checkCommentWriter; // 댓글 유저 확인
+        private String comment_status; // 댓글 삭제 여부 확인
         private List<GetReplyRes> replyList; //답글 리스트
     }
 
@@ -164,6 +164,9 @@ public class PostDto {
         private String nickName;
         private String content;
         private String time; //답글 시간
+        private boolean checkReplyWriter; // 답글 유저 확인
+        private String reply_status; //답글 삭제 여부 확인
+
 
     }
 

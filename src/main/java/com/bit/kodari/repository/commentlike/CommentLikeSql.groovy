@@ -46,7 +46,7 @@ class CommentLikeSql {
     public static final String EXIST_USER = """
         SELECT IF(userIdx, 'true', 'false' ) as 'exist'
         FROM CommentLike
-        WHERE userIdx = :userIdx and postCommentIdx = :postCommentIdx  
+        WHERE userIdx = :userIdx and postCommentIdx = :postCommentIdx
         """
 
     //토론장 게시글 좋아요/싫어요 삭제

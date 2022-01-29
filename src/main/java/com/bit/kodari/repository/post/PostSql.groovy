@@ -175,7 +175,7 @@ class PostSql {
 
     //토론장 게시글별 댓글 조회
     public static final String LIST_COMMENT = """
-        SELECT c.postCommentIdx, u.profileImgUrl, u.nickName, c.content, count(case when cl.like = 1 then 1 end) as 'like',
+        SELECT c.userIdx, c.postCommentIdx, u.profileImgUrl, u.nickName, c.content, count(case when cl.like = 1 then 1 end) as 'like',
         case
                 when timestampdiff(hour, c.updateAt, current_timestamp()) < 24 then date_format(c.updateAt, '%m/%d %H:%i')
                 when timestampdiff(day, c.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, c.updateAt , NOW()), '일 전')
@@ -184,14 +184,21 @@ class PostSql {
                 end as 'time'
         FROM PostComment as c join User as u on c.userIdx = u.userIdx join Post as p on c.postIdx = p.postIdx
             LEFT join CommentLike as cl on c.postCommentIdx = cl.postCommentIdx
-        WHERE c.postIdx = :postIdx and c.status = 'active'
-        GROUP BY c.postCommentIdx, u.profileImgUrl, u.nickName, c.content
+        WHERE c.postIdx = :postIdx
+        GROUP BY c.userIdx, c.postCommentIdx, u.profileImgUrl, u.nickName, c.content
         """
+
+    //게시글의 달린 댓글의 status 가져오기
+    public static final String GET_POST_COMMENT_STATUS = """
+    SELECT c.status AS 'comment_status'
+    FROM PostComment as c join Post as p on c.postIdx = p.postIdx
+    WHERE c.userIdx = :userIdx and p.postIdx = :postIdx
+    """
 
 
     // 토론장 commentIdx로 답글 조회
     public static final String LIST_REPLY_BY_COMMENT_ID = """
-        SELECT u.profileImgUrl, u.nickName, r.content,
+        SELECT r.userIdx, u.profileImgUrl, u.nickName, r.content,
         case
                 when timestampdiff(hour, r.updateAt, current_timestamp()) < 24 then date_format(r.updateAt, '%m/%d %H:%i')
                 when timestampdiff(day, r.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, r.updateAt , NOW()), '일 전')
@@ -201,8 +208,16 @@ class PostSql {
         FROM PostReply as r join User as u on r.userIdx = u.userIdx
                     join PostComment as c on r.postCommentIdx = c.postCommentIdx
                     join Post as p on c.postIdx = p.postIdx
-        WHERE r.postCommentIdx = :postCommentIdx and r.status = 'active'
+        WHERE r.postCommentIdx = :postCommentIdx
     """
+
+    //게시글의 댓글에 달린 답글의 status 가져오기
+    public static final String GET_COMMENT_REPLY_STATUS = """
+    SELECT r.status as 'reply_status'
+    FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx
+    WHERE r.userIdx = :userIdx and c.postCommentIdx = :postCommentIdx
+    """
+
 //    //토론장 게시글별 댓글의 답글 조회
 //    public static final String LIST_REPLY = """
 //        SELECT u.profileImgUrl, u.nickName, r.content,

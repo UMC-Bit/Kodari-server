@@ -172,18 +172,24 @@ public class PostController {
 //                    getUserPostRes.setCheckReplyWriter(true);
 //                }
 //            }
-            for(int i=0; i < postCommentIdx.size(); i++) { //댓글 삭제 여부 확인
-                List<PostDto.GetStatusRes> commentStatus = postRepository.getStatusByPostCommentIdx(postCommentIdx.get(i).getPostCommentIdx());
-                if(commentStatus.equals("inactive")) {
-                    getUserPostRes.setCheckCommentStatus(false);
-                }
-            }
-            for(int i=0; i < postReplyIdx.size(); i++) { //답글 삭제 여부 확인
-                List<PostDto.GetStatusRes> replyStatus = postRepository.getStatusByPostReplyIdx(postReplyIdx.get(i).getPostReplyIdx());
-                if(replyStatus.equals("inactive")) {
-                    getUserPostRes.setCheckReplyStatus(false);
-                }
-            }
+//            for(int i=0; i < postCommentIdx.size(); i++) { //댓글 삭제 여부 확인
+//                List<PostDto.GetStatusRes> commentStatus = postRepository.getStatusByPostCommentIdx(postCommentIdx.get(i).getPostCommentIdx());
+//                if(commentStatus.equals("inactive")) {
+//                    List<PostDto.GetCommentRes> getCommentRes = postRepository.getCommentByPostIdx(postIdx);
+//                    for(int j=0; j < getCommentRes.size(); j++) {
+//                        getCommentRes.get(i).setCheckCommentStatus(false);
+//                    }
+//                }
+//            }
+//            for(int i=0; i < postReplyIdx.size(); i++) { //답글 삭제 여부 확인
+//                List<PostDto.GetStatusRes> replyStatus = postRepository.getStatusByPostReplyIdx(postReplyIdx.get(i).getPostReplyIdx());
+//                if(replyStatus.equals("inactive")) {
+//                    List<PostDto.GetReplyRes> getReplyRes = postRepository.getReplyByCommentIdx(postCommentIdx.get(i));
+//                    for(int j=0; j < getCommentRes.size(); j++) {
+//                        getCommentRes.get(i).setCheckCommentStatus(false);
+//                    }
+//                }
+//            }
             return new BaseResponse<>(getUserPostRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
