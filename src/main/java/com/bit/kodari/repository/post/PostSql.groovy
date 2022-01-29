@@ -59,9 +59,9 @@ class PostSql {
         """
 
 
-    //postCommentIdx로 userIdx 받아오기
+    //postIdx로 userIdx 받아오기
     public static final String GET_COMMENT_USER_IDX = """
-        SELECT userIdx FROM PostComment WHERE postCommentIdx = :postCommentIdx
+        SELECT userIdx FROM PostComment WHERE postIdx = :postIdx
         """
 
     //postReplyIdx로 userIdx 받아오기

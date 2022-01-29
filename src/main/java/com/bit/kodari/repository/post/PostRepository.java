@@ -379,34 +379,34 @@ public class PostRepository {
 //
 //
 //
-//    //postCommentIdx로 userIdx 가져오기
-//    public List<PostDto.GetUserIdxRes> getUserIdxByPostCommentIdx(int postCommentIdx){
-//        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
-//        try {
-//            List<PostDto.GetUserIdxRes> getUserIdxRes =  namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_USER_IDX, parameterSource,
-//                    (rs, rowNum) -> new PostDto.GetUserIdxRes(
-//                            rs.getInt("userIdx"))
-//            );
-//            return getUserIdxRes;
-//
-//        }catch(EmptyResultDataAccessException e){
-//            return null;
-//        }
-//    }
-//
-//    //postCommentIdx로 userIdx 가져오기
-//    public List<PostDto.GetUserIdxRes> getUserIdxByPostReplyIdx(int postReplyIdx){
-//        SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
-//        try {
-//            List<PostDto.GetUserIdxRes> getUserIdxRes =  namedParameterJdbcTemplate.query(PostSql.GET_REPLY_USER_IDX, parameterSource,
-//                    (rs, rowNum) -> new PostDto.GetUserIdxRes(
-//                            rs.getInt("userIdx"))
-//            );
-//            return getUserIdxRes;
-//
-//        }catch(EmptyResultDataAccessException e){
-//            return null;
-//        }
-//    }
+    //postIdx로 userIdx 가져오기
+    public List<PostDto.GetUserIdxRes> getUserIdxByPostCommentIdx(int postIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+        try {
+            List<PostDto.GetUserIdxRes> getUserIdxRes =  namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_USER_IDX, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetUserIdxRes(
+                            rs.getInt("userIdx"))
+            );
+            return getUserIdxRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    //postCommentIdx로 userIdx 가져오기
+    public List<PostDto.GetUserIdxRes> getUserIdxByPostReplyIdx(int postReplyIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
+        try {
+            List<PostDto.GetUserIdxRes> getUserIdxRes =  namedParameterJdbcTemplate.query(PostSql.GET_REPLY_USER_IDX, parameterSource,
+                    (rs, rowNum) -> new PostDto.GetUserIdxRes(
+                            rs.getInt("userIdx"))
+            );
+            return getUserIdxRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
 
 }

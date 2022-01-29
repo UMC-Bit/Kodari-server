@@ -148,48 +148,49 @@ public class PostController {
         List<PostDto.GetReplyDeleteRes> postReplyIdx = postRepository.getReplyIdxByPostIdx(postIdx);
         try {
 
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            // jwt validation check
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-//
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            // jwt validation check
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
             PostDto.GetUserPostRes getUserPostRes = postService.getPostsByPostIdx(postIdx);
-//            if(userIdx == userIdxByJwt){
-//                getUserPostRes.setCheckWriter(true);
-//            }
-//            for(int i=0; i < postCommentIdx.size(); i++ ) { //댓글 유저 확인
-//                List<PostDto.GetUserIdxRes> comment_userIdx = postRepository.getUserIdxByPostCommentIdx(postCommentIdx.get(i).getPostCommentIdx());
-//                if(comment_userIdx.get(i).getUserIdx() == userIdxByJwt){
-//                    getUserPostRes.setCheckCommentWriter(true);
-//                }
-//            }
-//            for(int i=0; i < postReplyIdx.size(); i++ ) { //답글 유저 확인
-//                List<PostDto.GetUserIdxRes> reply_userIdx = postRepository.getUserIdxByPostReplyIdx(postReplyIdx.get(i).getPostReplyIdx());
-//                if(reply_userIdx.get(i).getUserIdx() == userIdxByJwt){
-//                    getUserPostRes.setCheckReplyWriter(true);
-//                }
-//            }
-//            for(int i=0; i < postCommentIdx.size(); i++) { //댓글 삭제 여부 확인
-//                List<PostDto.GetStatusRes> commentStatus = postRepository.getStatusByPostCommentIdx(postCommentIdx.get(i).getPostCommentIdx());
-//                if(commentStatus.equals("inactive")) {
-//                    List<PostDto.GetCommentRes> getCommentRes = postRepository.getCommentByPostIdx(postIdx);
-//                    for(int j=0; j < getCommentRes.size(); j++) {
-//                        getCommentRes.get(i).setCheckCommentStatus(false);
-//                    }
-//                }
-//            }
-//            for(int i=0; i < postReplyIdx.size(); i++) { //답글 삭제 여부 확인
-//                List<PostDto.GetStatusRes> replyStatus = postRepository.getStatusByPostReplyIdx(postReplyIdx.get(i).getPostReplyIdx());
-//                if(replyStatus.equals("inactive")) {
-//                    List<PostDto.GetReplyRes> getReplyRes = postRepository.getReplyByCommentIdx(postCommentIdx.get(i));
-//                    for(int j=0; j < getCommentRes.size(); j++) {
-//                        getCommentRes.get(i).setCheckCommentStatus(false);
-//                    }
-//                }
-//            }
+            if(userIdx == userIdxByJwt){
+                getUserPostRes.setCheckWriter(true);
+            }
+            List<PostDto.GetUserIdxRes> comment_userIdx = postRepository.getUserIdxByPostCommentIdx(postIdx);
+            List<PostDto.GetCommentRes> getCommentRes = postRepository.getCommentByPostIdx(postIdx);
+
+            for(int i = 0; i < comment_userIdx.size(); i++){
+                if(comment_userIdx.get(i).equals(userIdxByJwt)){
+                    getCommentRes.get(i).setCheckCommentWriter(true);
+                }//유저확인은?
+            }
+            /*
+            for(int i=0; i < postCommentIdx.size(); i++ ) { //댓글 유저 확인
+                if(comment_userIdx.get(i).getUserIdx() == userIdxByJwt){
+                        for(int j=0; j < getCommentRes.size(); j++) {
+                            getCommentRes.get(i).setCheckCommentWriter(true);
+                    }
+                }
+            }*/
+
+            for(int i = 0; i < postReplyIdx.size(); i++){
+
+            }
+
+            for(int i=0; i < postReplyIdx.size(); i++ ) { //답글 유저 확인
+                List<PostDto.GetUserIdxRes> reply_userIdx = postRepository.getUserIdxByPostReplyIdx(postReplyIdx.get(i).getPostReplyIdx());
+                if(reply_userIdx.get(i).getUserIdx() == userIdxByJwt){
+                    List<PostDto.GetReplyRes> getReplyRes = postRepository.getReplyByCommentIdx(postCommentIdx.get(i));
+                    for(int j=0; j < getReplyRes.size(); j++) {
+                        getReplyRes.get(i).setCheckCommentWriter(true);
+                    }
+                }
+            }
+
             return new BaseResponse<>(getUserPostRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
