@@ -122,10 +122,10 @@ public class PostCommentService {
     }
 
         // 특정 유저의 댓글 조회
-    public List<PostCommentDto.GetCommentRes> getCommentsByUserIdx(int userIdx) throws BaseException {
+    public List<PostCommentDto.GetCommentsRes> getCommentsByUserIdx(int userIdx) throws BaseException {
         //PostCommentsql에 삭제된 게시글 댓글 조회 불가능 하도록 처리함
         try {
-            List<PostCommentDto.GetCommentRes> getCommentsRes = postCommentRepository.getCommentsByUserIdx(userIdx);
+            List<PostCommentDto.GetCommentsRes> getCommentsRes = postCommentRepository.getCommentsByUserIdx(userIdx);
             return getCommentsRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

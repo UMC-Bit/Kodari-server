@@ -257,7 +257,7 @@ public class PostRepository {
         return getCoinRes;
     }
 
-    //postIdx로 Status 가져오기
+    //postIdx로 댓글 수 가져오기
     public int getCommentCount(int postIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
         return namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_COUNT, parameterSource, rs -> {
@@ -286,7 +286,7 @@ public class PostRepository {
                         rs.getString("content"),
                         rs.getString("time"),
                         rs.getInt("like"),
-                        rs.getInt("dislike"), rs.getInt("comment_cnt"), false, commentList, false, false,true, true); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getInt("dislike"), getCommentCount(rs.getInt("postIdx")), false, commentList, false, false,true, true); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         return post;
     }
     );

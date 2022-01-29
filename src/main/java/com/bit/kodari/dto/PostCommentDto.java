@@ -89,7 +89,7 @@ public class PostCommentDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class GetCommentRes{
+    public static class GetCommentsRes{
         private String content;
         private String time;
         private List<GetPostsRes> postList; //관련된 게시글
@@ -101,6 +101,7 @@ public class PostCommentDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetPostsRes{
+        private String symbol;
         private String profileImgUrl; //유저 프로필
         private String nickName; //유저 닉네임
         private String content; //게시글 내용

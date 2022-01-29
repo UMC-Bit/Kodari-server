@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.bit.kodari.config.BaseResponseStatus.INVALID_USER_JWT;
+
 @Slf4j
 @RestController
 @RequestMapping("/comment/likes")
