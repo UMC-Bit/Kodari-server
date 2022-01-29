@@ -54,10 +54,11 @@ class ProfitSql {
 """
 
 
-    // 수익 조회: 전체 accountIdx 조회
+    // 수익 조회: 수익내역의 전체 accountIdx 중복제거 조회
     public static final String FIND_ACCOUNTIDX = """
-        SELECT A.userIdx
-        FROM Profit as P INNER JOIN Account as A ON P.userIdx = A.userIdx;
+SELECT DISTINCT A.accountIdx # DISTINCT : 중복제거
+FROM Profit as P INNER JOIN Account as A ON P.accountIdx = A.accountIdx
+WHERE P.status = 'active';
 
 """
 
