@@ -147,50 +147,32 @@ public class PostController {
         List<PostDto.GetCommentDeleteRes> postCommentIdx = postRepository.getPostCommentIdxByPostIdx(postIdx);
         List<PostDto.GetReplyDeleteRes> postReplyIdx = postRepository.getReplyIdxByPostIdx(postIdx);
         try {
-
-            //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
-            // jwt validation check
-            //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
-
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            // jwt validation check
+//            //userIdx와 접근한 유저가 같은지 확인
+//
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
+//            List<PostDto.GetCommentRes> commentRes = postRepository.getCommentByPostIdx(postIdx);
             PostDto.GetUserPostRes getUserPostRes = postService.getPostsByPostIdx(postIdx);
-            if(userIdx == userIdxByJwt){
-                getUserPostRes.setCheckWriter(true);
-            }
-            List<PostDto.GetUserIdxRes> comment_userIdx = postRepository.getUserIdxByPostCommentIdx(postIdx);
-            List<PostDto.GetCommentRes> getCommentRes = postRepository.getCommentByPostIdx(postIdx);
-
-            for(int i = 0; i < comment_userIdx.size(); i++){
-                if(comment_userIdx.get(i).equals(userIdxByJwt)){
-                    getCommentRes.get(i).setCheckCommentWriter(true);
-                }//유저확인은?
-            }
-            /*
-            for(int i=0; i < postCommentIdx.size(); i++ ) { //댓글 유저 확인
-                if(comment_userIdx.get(i).getUserIdx() == userIdxByJwt){
-                        for(int j=0; j < getCommentRes.size(); j++) {
-                            getCommentRes.get(i).setCheckCommentWriter(true);
-                    }
-                }
-            }*/
-
-            for(int i = 0; i < postReplyIdx.size(); i++){
-
-            }
-
-            for(int i=0; i < postReplyIdx.size(); i++ ) { //답글 유저 확인
-                List<PostDto.GetUserIdxRes> reply_userIdx = postRepository.getUserIdxByPostReplyIdx(postReplyIdx.get(i).getPostReplyIdx());
-                if(reply_userIdx.get(i).getUserIdx() == userIdxByJwt){
-                    List<PostDto.GetReplyRes> getReplyRes = postRepository.getReplyByCommentIdx(postCommentIdx.get(i));
-                    for(int j=0; j < getReplyRes.size(); j++) {
-                        getReplyRes.get(i).setCheckCommentWriter(true);
-                    }
-                }
-            }
-
+//            if(userIdx == userIdxByJwt){
+//                getUserPostRes.setCheckWriter(true); //접근한 유저가 게시글 글쓴 유저인지 확인
+//            }
+//            for(int i = 0; i < commentRes.size(); i++){
+//                if(commentRes.get(i).getUserIdx() == userIdxByJwt){
+//                    commentRes.get(i).setCheckCommentWriter(true);
+//                }
+//                List<PostDto.GetReplyRes> replyRes = postRepository.getReplyByCommentIdx(commentRes.get(i).getPostCommentIdx());
+//                for(int j = 0; j < replyRes.size(); j++){
+//                    if(replyRes.get(j).getUserIdx() == userIdxByJwt){
+//                        replyRes.get(j).setCheckReplyWriter(true);
+//                    }
+//                }
+//                commentRes.get(i).setReplyList(replyRes);
+//            }
+//            getUserPostRes.setCommentList(commentRes);
             return new BaseResponse<>(getUserPostRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

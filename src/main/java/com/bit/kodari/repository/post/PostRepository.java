@@ -303,6 +303,8 @@ public class PostRepository {
         try{
         List<PostDto.GetCommentRes> getCommentRes = namedParameterJdbcTemplate.query(PostSql.LIST_COMMENT, parameterSource,
                 (rs, rowNum) -> new PostDto.GetCommentRes(
+                        rs.getInt("userIdx"),
+                        rs.getInt("postCommentIdx"),
                         rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
                         rs.getString("content"),
@@ -337,6 +339,7 @@ public class PostRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
         List<PostDto.GetReplyRes> getReplyRes = namedParameterJdbcTemplate.query(PostSql.LIST_REPLY_BY_COMMENT_ID, parameterSource,
                 (rs, rowNum) -> new PostDto.GetReplyRes(
+                        rs.getInt("userIdx"),
                         rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
                         rs.getString("content"),
@@ -395,8 +398,8 @@ public class PostRepository {
     }
 
     //postCommentIdx로 userIdx 가져오기
-    public List<PostDto.GetUserIdxRes> getUserIdxByPostReplyIdx(int postReplyIdx){
-        SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
+    public List<PostDto.GetUserIdxRes> getUserIdxByPostReplyIdx(int postIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
         try {
             List<PostDto.GetUserIdxRes> getUserIdxRes =  namedParameterJdbcTemplate.query(PostSql.GET_REPLY_USER_IDX, parameterSource,
                     (rs, rowNum) -> new PostDto.GetUserIdxRes(

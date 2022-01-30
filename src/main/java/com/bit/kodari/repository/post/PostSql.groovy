@@ -66,7 +66,9 @@ class PostSql {
 
     //postReplyIdx로 userIdx 받아오기
     public static final String GET_REPLY_USER_IDX = """
-        SELECT userIdx FROM PostReply WHERE postReplyIdx = :postReplyIdx
+        SELECT r.userIdx FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx
+            join Post as p on c.postIdx = p.postIdx
+        WHERE p.postIdx = :postIdx
         """
 
 

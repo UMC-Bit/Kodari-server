@@ -145,6 +145,8 @@ public class PostDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetCommentRes{
+        private int userIdx;
+        private int postCommentIdx;
         private String profileImgUrl;
         private String nickName;
         private String content;
@@ -160,14 +162,13 @@ public class PostDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetReplyRes{
+        private int userIdx;
         private String profileImgUrl;
         private String nickName;
         private String content;
         private String time; //답글 시간
         private boolean checkReplyWriter; // 답글 유저 확인
         private String reply_status; //답글 삭제 여부 확인
-
-
     }
 
 
