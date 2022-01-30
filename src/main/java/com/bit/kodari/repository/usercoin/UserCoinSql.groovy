@@ -19,7 +19,7 @@ class UserCoinSql {
     //format(u.priceAvg, 0) as priceAvg
     public static final String FIND_USER_COIN = """
 			SELECT p.portIdx, c.coinName, c.symbol, c.coinImg, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u 
-			join (select coinIdx, coinName, symbol from Coin) as c on c.coinIdx = u.coinIdx 
+			join (select coinIdx, coinName, symbol, coinImg from Coin) as c on c.coinIdx = u.coinIdx 
 			join Account as a on a.accountIdx = u.accountIdx
 			join Portfolio as p on p.accountIdx = a.accountIdx
 			WHERE p.portIdx = :portIdx AND u.status = 'active'

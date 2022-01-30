@@ -173,7 +173,8 @@ public class TradeService {
         }else if(category.equals("buy")){
             // "buy"매수라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 더해준 후 새로운 것 빼주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
-            newProperty = property + (price * amount) + (price * amount * fee) - (newPrice * amount) - (newPrice * amount * fee); // 새로운 현금 자산 계산
+
+            newProperty = property + ((price * amount) + (price * amount * fee)) - ((newPrice * amount) - (newPrice * amount * fee)); // 새로운 현금 자산 계산
             totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
             priceAvg = (priceAvg * uc_amount - price * amount + newPrice * amount) / uc_amount; //새로운 매수평단가
         }else if(category.equals("sell")){
