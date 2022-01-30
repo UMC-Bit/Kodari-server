@@ -190,13 +190,116 @@ public class ProfitService {
         }
 
 
+        try {
+          return getProfitRes;
+
+        } catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
 
 
 
+    // Profit 수익내역 일별 조회: 특정 계좌의 전체 수익내역 조회
+    @Transactional
+    public List<ProfitDto.GetProfitRes> getDailyProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq) throws BaseException {
+        List<ProfitDto.GetProfitRes> getProfitRes = profitRepository.getDailyProfitByAccountIdx(getProfitReq);
+        // 수익내역 없는 경우 validation
+        // 예외발생 말고 earining=0 으로 주기
+        if(getProfitRes.size() == 0) {
+            ProfitDto.GetProfitRes getProfitResEmpty = new ProfitDto.GetProfitRes(0,getProfitReq.getAccountIdx(),0,"0","inactive","0");
+            getProfitRes.add(getProfitResEmpty);
+            return getProfitRes;
+//            throw new BaseException(BaseResponseStatus.GET_PROFITS_NOT_EXISTS);
+        }
+
+        // 총 손입금 지수형 E 없애기
+        NumberFormat format = NumberFormat.getInstance();
+        format.setGroupingUsed(false);
+        for(int i=0;i<getProfitRes.size();i++){
+
+            String earning = getProfitRes.get(i).getEarning();
+            BigDecimal b = new BigDecimal(earning);
+            //earning = b2.doubleValue();
+            //earning = Double.parseDouble(format.format(earning));
+            getProfitRes.get(i).setEarning( b.toString());
+        }
 
 
         try {
-          return getProfitRes;
+            return getProfitRes;
+
+        } catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+
+
+    // Profit 수익내역 주 별 조회: 특정 계좌의 전체 수익내역 조회
+    @Transactional
+    public List<ProfitDto.GetProfitRes> getWeeklyProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq) throws BaseException {
+        List<ProfitDto.GetProfitRes> getProfitRes = profitRepository.getWeeklyProfitByAccountIdx(getProfitReq);
+        // 수익내역 없는 경우 validation
+        // 예외발생 말고 earining=0 으로 주기
+        if(getProfitRes.size() == 0) {
+            ProfitDto.GetProfitRes getProfitResEmpty = new ProfitDto.GetProfitRes(0,getProfitReq.getAccountIdx(),0,"0","inactive","0");
+            getProfitRes.add(getProfitResEmpty);
+            return getProfitRes;
+//            throw new BaseException(BaseResponseStatus.GET_PROFITS_NOT_EXISTS);
+        }
+
+        // 총 손입금 지수형 E 없애기
+        NumberFormat format = NumberFormat.getInstance();
+        format.setGroupingUsed(false);
+        for(int i=0;i<getProfitRes.size();i++){
+
+            String earning = getProfitRes.get(i).getEarning();
+            BigDecimal b = new BigDecimal(earning);
+            //earning = b2.doubleValue();
+            //earning = Double.parseDouble(format.format(earning));
+            getProfitRes.get(i).setEarning( b.toString());
+        }
+
+
+        try {
+            return getProfitRes;
+
+        } catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+
+
+    // Profit 수익내역 월 별 조회: 특정 계좌의 전체 수익내역 조회
+    @Transactional
+    public List<ProfitDto.GetProfitRes> getMonthlyProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq) throws BaseException {
+        List<ProfitDto.GetProfitRes> getProfitRes = profitRepository.getMonthlyProfitByAccountIdx(getProfitReq);
+        // 수익내역 없는 경우 validation
+        // 예외발생 말고 earining=0 으로 주기
+        if(getProfitRes.size() == 0) {
+            ProfitDto.GetProfitRes getProfitResEmpty = new ProfitDto.GetProfitRes(0,getProfitReq.getAccountIdx(),0,"0","inactive","0");
+            getProfitRes.add(getProfitResEmpty);
+            return getProfitRes;
+//            throw new BaseException(BaseResponseStatus.GET_PROFITS_NOT_EXISTS);
+        }
+
+        // 총 손입금 지수형 E 없애기
+        NumberFormat format = NumberFormat.getInstance();
+        format.setGroupingUsed(false);
+        for(int i=0;i<getProfitRes.size();i++){
+
+            String earning = getProfitRes.get(i).getEarning();
+            BigDecimal b = new BigDecimal(earning);
+            //earning = b2.doubleValue();
+            //earning = Double.parseDouble(format.format(earning));
+            getProfitRes.get(i).setEarning( b.toString());
+        }
+
+
+        try {
+            return getProfitRes;
 
         } catch (Exception exception) {
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);

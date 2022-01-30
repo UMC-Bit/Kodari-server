@@ -77,6 +77,84 @@ public class ProfitRepository {
 
 
 
+    // Profit 수익내역 일별 조회: 특정 계좌의 수익내역 조회
+    public List<ProfitDto.GetProfitRes> getDailyProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", getProfitReq.getAccountIdx());
+
+        try{
+            // Profit 수익내역 조회: 특정 계좌의 수익내역 조회
+            List<ProfitDto.GetProfitRes> getProfitRes = namedParameterJdbcTemplate.query(ProfitSql.FIND_DAILY_BY_ACCOUNTIDX, parameterSource,
+                    // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
+                    (rs, rowNum) -> new ProfitDto.GetProfitRes(
+                            rs.getInt("profitIdx"),
+                            rs.getInt("accountIdx"),
+                            rs.getDouble("profitRate"),
+                            rs.getString("earning"),
+                            rs.getString("status"),
+                            rs.getString("createAt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+            );
+            return getProfitRes;
+        }
+        catch (EmptyResultDataAccessException e) {
+            // EmptyResultDataAccessException 예외 발생시 null 리턴
+            return null;
+        }
+    }
+
+
+
+    // Profit 수익내역 주 별 조회: 특정 계좌의 전체 수익내역 조회
+    public List<ProfitDto.GetProfitRes> getWeeklyProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", getProfitReq.getAccountIdx());
+
+        try{
+            // Profit 수익내역 조회: 특정 계좌의 수익내역 조회
+            List<ProfitDto.GetProfitRes> getProfitRes = namedParameterJdbcTemplate.query(ProfitSql.FIND_WEEKLY_BY_ACCOUNTIDX, parameterSource,
+                    // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
+                    (rs, rowNum) -> new ProfitDto.GetProfitRes(
+                            rs.getInt("profitIdx"),
+                            rs.getInt("accountIdx"),
+                            rs.getDouble("profitRate"),
+                            rs.getString("earning"),
+                            rs.getString("status"),
+                            rs.getString("createAt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+            );
+            return getProfitRes;
+        }
+        catch (EmptyResultDataAccessException e) {
+            // EmptyResultDataAccessException 예외 발생시 null 리턴
+            return null;
+        }
+    }
+
+
+
+    // Profit 수익내역 월 별 조회: 특정 계좌의 전체 수익내역 조회
+    public List<ProfitDto.GetProfitRes> getMonthlyProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", getProfitReq.getAccountIdx());
+
+        try{
+            // Profit 수익내역 조회: 특정 계좌의 수익내역 조회
+            List<ProfitDto.GetProfitRes> getProfitRes = namedParameterJdbcTemplate.query(ProfitSql.FIND_MONTHLY_BY_ACCOUNTIDX, parameterSource,
+                    // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
+                    (rs, rowNum) -> new ProfitDto.GetProfitRes(
+                            rs.getInt("profitIdx"),
+                            rs.getInt("accountIdx"),
+                            rs.getDouble("profitRate"),
+                            rs.getString("earning"),
+                            rs.getString("status"),
+                            rs.getString("createAt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+            );
+            return getProfitRes;
+        }
+        catch (EmptyResultDataAccessException e) {
+            // EmptyResultDataAccessException 예외 발생시 null 리턴
+            return null;
+        }
+    }
+
+
+
 
     // Profit 수익내역 조회: 특정 계좌의 코인심볼 전체조회
     public List<ProfitDto.GetCoinSymbolRes> getSymbolByAccountIdx(int accountIdx){
