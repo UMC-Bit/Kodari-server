@@ -9,7 +9,7 @@ class UserCoinSql {
 
     //특정 소유 코인 조회
     public static final String FIND_USER_COIN_IDX = """
-			SELECT c.coinName, c.symbol, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName, symbol from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userCoinIdx = :userCoinIdx AND u.status = 'active'
+			SELECT c.coinName, c.symbol, c.coinImg, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName, symbol, coinImg from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userCoinIdx = :userCoinIdx AND u.status = 'active'
 			"""
 
     //소유 코인 조회
@@ -18,7 +18,11 @@ class UserCoinSql {
     //concat(format(u.priceAvg, 0), '원') as priceAvg
     //format(u.priceAvg, 0) as priceAvg
     public static final String FIND_USER_COIN = """
-			SELECT c.coinName, c.symbol, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName, symbol from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userIdx = :userIdx AND u.status = 'active'
+			SELECT p.portIdx, c.coinName, c.symbol, c.coinImg, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u 
+			join (select coinIdx, coinName, symbol from Coin) as c on c.coinIdx = u.coinIdx 
+			join Account as a on a.accountIdx = u.accountIdx
+			join Portfolio as p on p.accountIdx = a.accountIdx
+			WHERE p.portIdx = :portIdx AND u.status = 'active'
 			"""
 
     //소유 코인 수정
@@ -54,6 +58,11 @@ class UserCoinSql {
     //accountIdx로 계좌 status 가져오기
     public static final String GET_ACCOUNT_STATUS ="""
         SELECT status from Account where accountIdx = :accountIdx
+    """;
+
+    //portIdx로 userIdx 가져오기
+    public static final String GET_USER_IDX_BY_PORT ="""
+        SELECT userIdx from Portfolio where portIdx = :portIdx and status = 'active'
     """;
 
     /**

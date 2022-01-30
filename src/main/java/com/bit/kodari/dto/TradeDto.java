@@ -146,4 +146,22 @@ public class TradeDto {
     public static class PatchStatusReq{
         private int tradeIdx;
     }
+
+    // 거래내역 수정시 필요 - price, amount, property, totalProperty
+    // RESPONSE DTO
+    // 전체유저 조회 RESPONSE DTOc
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class GetTradeInfoRes{
+        private double price; // 코인 가격
+        private double amount; // 코인 갯수
+        private double fee; // 코인 수수료
+        private String category; //매수 or 매도 : “buy”, “sell”
+        private double property; // 현금 자산
+        private double totalProperty; //총자산
+        private double priceAvg;
+        private double uc_amount;
+        //    private String jwt;
+    }
 }

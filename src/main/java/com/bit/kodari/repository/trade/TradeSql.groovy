@@ -112,5 +112,39 @@ class TradeSql {
 			WHERE userIdx = :userIdx;
 """
 
+    // tradeIdx로 기존의 price, amount, property, totalProperty 구하기
+    public static final String PATCH_TRADE = """
+            SELECT T.price, T.amount, T.fee, T.category, A.property, A.totalProperty , UC.priceAvg, UC.amount as UC_amount
+            FROM Trade as T 
+            join Portfolio as P on P.portIdx = T.portIdx 
+            join Account as A on A.accountIdx = P.accountIdx
+            join UserCoin as UC on UC.accountIdx = P.accountIdx AND UC.coinIdx = T.coinIdx
+            WHERE T.tradeIdx = :tradeIdx
+    """
+
+    // tradeIdx로 userCoinIdx 가져오기
+    public static final String GET_USER_COIN_IDX = """
+            SELECT UC.userCoinIdx From Trade as T Join Portfolio as P on P.portIdx = T.portIdx
+            Join UserCoin as UC on UC.accountIdx = P.accountIdx
+            WHERE T.tradeIdx = :tradeIdx AND UC.coinIdx = T.coinIdx
+    """
+
+    // 매수평단가 수정
+    public static final String PRICE_AVERAGE = """
+			UPDATE UserCoin SET priceAvg = :priceAvg WHERE userCoinIdx = :userCoinIdx
+    """
+
+    // 매수평단가, 코인 갯수 수정
+    public static final String AVG_AMOUNT = """
+			UPDATE UserCoin SET priceAvg = :priceAvg, amount = :amount WHERE userCoinIdx = :userCoinIdx
+    """
+
+    // 현금 자산, 총자산 수정
+    public static final String UPDATE_PROPERTY = """
+			UPDATE Account as A
+			INNER JOIN Portfolio as P on P.accountIdx = A.accountIdx
+			INNER JOIN Trade as T on T.portIdx = P.portIdx
+			SET A.property = :property, A.totalProperty = :totalProperty WHERE T.tradeIdx = :tradeIdx
+    """
 
 }

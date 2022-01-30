@@ -88,9 +88,9 @@ public class UserCoinService {
     }
 
     //소유 코인 조회
-    public List<UserCoinDto.GetUserCoinRes> getUserCoin(int userIdx) throws BaseException {
+    public List<UserCoinDto.GetUserCoinRes> getUserCoin(int portIdx) throws BaseException {
         try {
-            List<UserCoinDto.GetUserCoinRes> getUserCoinRes = userCoinRepository.getUserCoinByUserIdx(userIdx);
+            List<UserCoinDto.GetUserCoinRes> getUserCoinRes = userCoinRepository.getUserCoinByPortIdx(portIdx);
             return getUserCoinRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

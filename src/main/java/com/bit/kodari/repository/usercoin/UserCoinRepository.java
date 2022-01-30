@@ -46,6 +46,7 @@ public class UserCoinRepository {
                 (rs, rowNum) -> new UserCoinDto.GetUserCoinIdxRes(
                         rs.getString("coinName"),
                         rs.getString("symbol"),
+                        rs.getString("coinImg"),
                         rs.getInt("userIdx"),
                         rs.getDouble("priceAvg"),
                         rs.getDouble("amount"),
@@ -56,12 +57,14 @@ public class UserCoinRepository {
     }
 
     //소유 코인 조회
-    public List<UserCoinDto.GetUserCoinRes> getUserCoinByUserIdx(int userIdx){
-        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+    public List<UserCoinDto.GetUserCoinRes> getUserCoinByPortIdx(int portIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
         List<UserCoinDto.GetUserCoinRes> getUserCoinRes = namedParameterJdbcTemplate.query(UserCoinSql.FIND_USER_COIN, parameterSource,
                 (rs, rowNum) -> new UserCoinDto.GetUserCoinRes(
+                        rs.getInt("portIdx"),
                         rs.getString("coinName"),
                         rs.getString("symbol"),
+                        rs.getString("coinImg"),
                         rs.getInt("userIdx"),
                         rs.getDouble("priceAvg"),
                         rs.getDouble("amount"),
@@ -144,6 +147,19 @@ public class UserCoinRepository {
             }
 
             return status;
+        });
+    }
+
+    // portIdx로 userIdx 가져오기
+    public int getUserIdxByPortIdx(int portIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        return namedParameterJdbcTemplate.query(UserCoinSql.GET_USER_IDX_BY_PORT, parameterSource, rs -> {
+            int userIdx = 0;
+            if (rs.next()) {
+                userIdx = rs.getInt("userIdx");
+            }
+
+            return userIdx;
         });
     }
 
