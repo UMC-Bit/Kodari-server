@@ -64,10 +64,10 @@ public class PortfolioRepository {
             PortfolioDto.GetPortfolioRes getPortfolioRes = namedParameterJdbcTemplate.queryForObject(PortfolioSql.GET_PORTFOLIO, parameterSource, (rs, rowNum) -> {
 
                 List<UserCoinDto.UserCoin> userCoinList = getUserCoin(accountIdx);
-                List<RepresentDto.GetRepresentRes> getRepresentResList= getRepresent(portIdx);
-                List<ProfitDto.GetProfitRes> getProfitResList = getProfitByAccountIdx(accountIdx);
+                List<RepresentDto.GetRepresentRes> representCoinList= getRepresent(portIdx);
+                List<ProfitDto.GetProfitRes> profitList = getProfitByAccountIdx(accountIdx);
                     PortfolioDto.GetPortfolioRes portfolio = new PortfolioDto.GetPortfolioRes(rs.getInt("portIdx"),rs.getInt("accountIdx"),rs.getString("accountName"),
-                            rs.getDouble("property"),rs.getDouble("totalProperty"), rs.getInt("userIdx") ,rs.getString("marketName"), userCoinList, getRepresentResList, getProfitResList);
+                            rs.getDouble("property"),rs.getDouble("totalProperty"), rs.getInt("userIdx") ,rs.getString("marketName"), userCoinList, representCoinList, profitList);
                     return portfolio;
             }
             );

@@ -58,8 +58,8 @@ public class PortfolioDto {
         private int userIdx;
         private String marketName;
         private List<UserCoinDto.UserCoin> userCoinList;
-        private List<RepresentDto.GetRepresentRes> getRepresentResList;
-        private List<ProfitDto.GetProfitRes> getProfitResList;
+        private List<RepresentDto.GetRepresentRes> representCoinList;
+        private List<ProfitDto.GetProfitRes> profitList;
         //대표코인 리스트 - 해당 포트폴리오의
         //    private String jwt;
     }
