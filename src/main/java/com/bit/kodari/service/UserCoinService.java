@@ -151,7 +151,8 @@ public class UserCoinService {
         //매수일때
         if(category.equals("buy")){
             //매수평단가 새로 계산해서 업데이트
-            sumCoinAmount = existCoinAmount + newCoinAmount;
+            sumCoinAmount = existCoinAmount + newCoinAmount; //새로운 코인 갯수
+            //새로운 매수평단가
             total = (priceAvg * existCoinAmount + price * newCoinAmount) / sumCoinAmount;
         }else if(category.equals("sell")) {
             sumCoinAmount = existCoinAmount - newCoinAmount;
@@ -166,6 +167,7 @@ public class UserCoinService {
                 //throw new BaseException(COIN_AMOUNT_ZERO); //4056
             }
             else{
+                //새로운 매수평단가
                 total = (priceAvg * existCoinAmount - price * newCoinAmount) / sumCoinAmount;
                 if(total < 0){
                     throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048

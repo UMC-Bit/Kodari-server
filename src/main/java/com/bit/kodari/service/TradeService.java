@@ -409,13 +409,47 @@ public class TradeService {
     // 거래내역 삭제 : status 수정
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void deleteTrade(TradeDto.PatchStatusReq patchStatusReq) throws BaseException{
+        int userCoinIdx = tradeRepository.getUserCoinIdxByTradeIdx(patchStatusReq.getTradeIdx());
+        List<TradeDto.GetTradeInfoRes> getTradeInfoRes = tradeRepository.getTradeInfo(patchStatusReq.getTradeIdx());
+        double price = getTradeInfoRes.get(0).getPrice(); // 코인 원래 가격
+        double amount = getTradeInfoRes.get(0).getAmount(); // 코인 원래 갯수
+        double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
+        String category = getTradeInfoRes.get(0).getCategory(); //매수 or 매도 : “buy”, “sell”
+        double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
+        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
+        double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
+
+        double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
+        double sumCoinAmount = 0; //새로운 코인 전체 갯수
+
         // 이미 삭제된 거래내역 validation
         String status = tradeRepository.getStatusByTradeIdx(patchStatusReq.getTradeIdx());
         if(status.equals("inactive")){
             throw new BaseException(BaseResponseStatus.ALREADY_DELETED_TRADE); //
         }
+
+        if(category.equals("buy")){
+            // "buy"매수라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 더해준 후 새로운 것 빼주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
+            newProperty = property + (price * amount) + (price * amount * fee); // 새로운 현금 자산 계산
+            // TODO 총자산 식 수정해야함.
+            totalProperty = totalProperty - property + newProperty - (price * amount); // 새로운 총 자산
+            sumCoinAmount = uc_amount - amount; // 새로운 총 코인 갯수
+            priceAvg = (priceAvg * uc_amount - price * amount) / sumCoinAmount; //새로운 매수평단가
+        }else if(category.equals("sell")){
+            // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
+            newProperty = property - ((price * amount) + (price * amount * fee)); // 새로운 현금 자산 계산
+            totalProperty = totalProperty - property + newProperty + (price * amount); // 새로운 총 자산
+            sumCoinAmount = uc_amount + amount; // 새로운 총 코인 갯수
+            priceAvg = (priceAvg * uc_amount + price * amount) / sumCoinAmount; //새로운 매수평단가
+        }
+
         // 거래내역 삭제 요청
         int result = tradeRepository.deleteTrade(patchStatusReq);
+        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchStatusReq.getTradeIdx());
+        int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
