@@ -2,6 +2,7 @@ package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponseStatus;
+import com.bit.kodari.dto.ProfitDto;
 import com.bit.kodari.dto.TradeDto;
 import com.bit.kodari.dto.UserDto;
 import com.bit.kodari.repository.account.AccountRepository;
@@ -25,18 +26,20 @@ public class TradeService {
     private final PortfolioRepository portfolioRepository;
     private final AccountRepository accountRepository;
     private final UserCoinRepository userCoinRepository;
+    private final ProfitService profitService;
 
 
 
     @Autowired //readme 참고
     public TradeService(TradeRepository tradeRepository, JwtService jwtService, AccountService accountService, PortfolioRepository portfolioRepository, AccountRepository accountRepository
-    ,UserCoinRepository userCoinRepository) {
+    ,UserCoinRepository userCoinRepository ,ProfitService profitService) {
         this.tradeRepository = tradeRepository;
         this.jwtService = jwtService; // JWT부분
         this.accountService = accountService;
         this.portfolioRepository = portfolioRepository;
         this.accountRepository = accountRepository;
         this.userCoinRepository = userCoinRepository;
+        this.profitService = profitService;
     }
 
     // 거래내역 생성(POST)
@@ -257,6 +260,27 @@ public class TradeService {
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
+
+        // 거래내역 삭제 완료되면 관련 데이터 업데이트
+        // 주의: 업데이트 순서 지켜야 함
+
+        // Profit 최근 수익내역 삭제
+        //  tradeIdx로 accountIdx 불러오고
+        int accountIdx = tradeRepository.getAccountIdxByTradeIdx(patchStatusReq.getTradeIdx());
+        // profit테이블 안의 accountIdx로 profitIdx 불러오기
+        ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
+        List<ProfitDto.GetProfitRes> getProfitRes = profitService.getProfitByAccountIdx(getProfitReq);
+        int profitIdx = getProfitRes.get(0).getProfitIdx();
+        // Profit 내역 삭제요청
+        ProfitDto.PatchStatusReq patchProfitStatusReq = new ProfitDto.PatchStatusReq(profitIdx);
+        profitService.deleteProfit(patchProfitStatusReq);
+
+        // 유저코인 데이터 업데이트
+
+        // account 관련 데이터 업네이트
+
+
+
     }
 
     // 거래내역 삭제 : 전체삭제
