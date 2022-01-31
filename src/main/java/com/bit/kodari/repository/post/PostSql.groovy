@@ -200,7 +200,7 @@ class PostSql {
 
     // 토론장 commentIdx로 답글 조회
     public static final String LIST_REPLY_BY_COMMENT_ID = """
-        SELECT r.userIdx, u.profileImgUrl, u.nickName, r.content,
+        SELECT r.userIdx, r.postReplyIdx, u.profileImgUrl, u.nickName, r.content,
         case
                 when timestampdiff(hour, r.updateAt, current_timestamp()) < 24 then date_format(r.updateAt, '%m/%d %H:%i')
                 when timestampdiff(day, r.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, r.updateAt , NOW()), '일 전')

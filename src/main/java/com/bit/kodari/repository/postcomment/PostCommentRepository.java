@@ -170,6 +170,7 @@ public class PostCommentRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
         List<PostCommentDto.GetPostsRes> getPostsRes = namedParameterJdbcTemplate.query(postCommentSql.LIST_POST, parameterSource,
                     (rs, rowNum) -> new PostCommentDto.GetPostsRes(
+                            rs.getInt("postIdx"),
                             rs.getString("symbol"),
                             rs.getString("profileImgUrl"),
                             rs.getString("nickName"),

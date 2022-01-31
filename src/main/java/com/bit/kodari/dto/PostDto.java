@@ -110,6 +110,7 @@ public class PostDto {
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetPostRes{
+        private int postIdx; //게시글 인덱스
         private String symbol; //코인 심볼
         private String nickName; //유저 닉네임
         private String profileImgUrl; //유저 프로필
@@ -125,6 +126,7 @@ public class PostDto {
     @AllArgsConstructor // 해당 클래스, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetUserPostRes{
+        private int postIdx;
         private String symbol; //코인 심볼
         private String nickName; //유저 닉네임
         private String profileImgUrl; //유저 프로필
@@ -163,6 +165,7 @@ public class PostDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetReplyRes{
         private int userIdx;
+        private int postReplyIdx;
         private String profileImgUrl;
         private String nickName;
         private String content;

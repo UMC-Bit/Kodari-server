@@ -101,6 +101,7 @@ public class PostCommentDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetPostsRes{
+        private int postIdx;
         private String symbol;
         private String profileImgUrl; //유저 프로필
         private String nickName; //유저 닉네임
