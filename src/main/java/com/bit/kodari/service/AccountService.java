@@ -67,6 +67,7 @@ public class AccountService {
     }
 
     //총자산 수정
+    //소유 코인 없으면 총자산 수정X
     public void updateTotal(PatchTotalReq account) throws BaseException {
         int accountIdx = account.getAccountIdx();
         String accountName = accountRepository.getAccountNameByAccountIdx(accountIdx);
@@ -78,10 +79,14 @@ public class AccountService {
 
         List<AccountDto.GetUserCoinRes> getUserCoinRes = accountRepository.getUserCoinByIdx(userIdx, accountIdx);
 
-        for(int i=0; i< getUserCoinRes.size(); i++){
-            priceAvg = getUserCoinRes.get(i).getPriceAvg();
-            amount = getUserCoinRes.get(i).getAmount();
-            totalProperty = totalProperty + (priceAvg * amount);
+        if(getUserCoinRes.size() <=0) {
+            throw new BaseException(NO_USER_COIN); //4057
+        }else{
+            for(int i=0; i< getUserCoinRes.size(); i++){
+                priceAvg = getUserCoinRes.get(i).getPriceAvg();
+                amount = getUserCoinRes.get(i).getAmount();
+                totalProperty = totalProperty + (priceAvg * amount);
+            }
         }
 
         try {

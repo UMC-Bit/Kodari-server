@@ -1,8 +1,12 @@
 package com.bit.kodari.repository.trade;
 
 import com.bit.kodari.dto.TradeDto;
+import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.dto.UserDto;
+import com.bit.kodari.repository.account.AccountSql;
+import com.bit.kodari.repository.portfolio.PortfolioSql;
 import com.bit.kodari.repository.user.UserSql;
+import com.bit.kodari.repository.usercoin.UserCoinSql;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -223,10 +227,31 @@ public class TradeRepository {
         return namedParameterJdbcTemplate.update(TradeSql.UPDATE_DATE, parameterSource);
     }
 
+    // 거래내역 수정 : 가격 수정시 - 매수평단가 수정
+    public int updatePriceAvg(int userCoinIdx, double priceAvg) {
+        String qry = TradeSql.PRICE_AVERAGE;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userCoinIdx", userCoinIdx)
+                .addValue("priceAvg", priceAvg);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
 
+    // 거래내역 수정 : 갯수 수정시 - 매수평단가, 코인갯수 수정
+    public int updateUserCoinInfo(int userCoinIdx, double priceAvg, double amount) {
+        String qry = TradeSql.AVG_AMOUNT;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userCoinIdx", userCoinIdx)
+                .addValue("priceAvg", priceAvg)
+                .addValue("amount", amount);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
 
-
-
+    // 거래내역 수정 : 현금 자산, 총자산 수정
+    public int modifyProperty(double property, double totalProperty, int tradeIdx) {
+        String qry = TradeSql.UPDATE_PROPERTY;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("property", property)
+                .addValue("totalProperty", totalProperty)
+                .addValue("tradeIdx", tradeIdx);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
 
     // 거래내역 삭제 : status 수정
     public int deleteTrade(TradeDto.PatchStatusReq patchStatusReq){
@@ -242,6 +267,47 @@ public class TradeRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
 
         return namedParameterJdbcTemplate.update(TradeSql.DELETE_ALL, parameterSource);
+    }
+
+    //소유 코인 삭제 복구
+    public int updateByUserCoinIdx(int userCoinIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userCoinIdx", userCoinIdx);
+        return namedParameterJdbcTemplate.update(TradeSql.STATUS_ACTIVE_UC, parameterSource);
+    }
+
+    // tradeIdx로  가져오기 - 리스트
+    public List<TradeDto.GetTradeInfoRes> getTradeInfo(int tradeIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);
+        try {
+            List<TradeDto.GetTradeInfoRes> getTradeInfoRes =  namedParameterJdbcTemplate.query(TradeSql.PATCH_TRADE, parameterSource,
+                    (rs, rowNum) -> new TradeDto.GetTradeInfoRes(
+                            rs.getDouble("price"),
+                            rs.getDouble("amount"),
+                            rs.getDouble("fee"),
+                            rs.getString("category"),
+                            rs.getDouble("property"),
+                            rs.getDouble("totalProperty"),
+                            rs.getDouble("priceAvg"),
+                            rs.getDouble("uc_amount"))
+            );
+            return getTradeInfoRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
+    }
+
+    // tradeIdx로 userCoinIdx 가져오기
+    public int getUserCoinIdxByTradeIdx(int tradeIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);
+        return namedParameterJdbcTemplate.query(TradeSql.GET_USER_COIN_IDX, parameterSource, rs -> {
+            int userCoinIdx = 0;
+            if (rs.next()) {
+                userCoinIdx = rs.getInt("userCoinIdx");
+            }
+
+            return userCoinIdx;
+        });
     }
 
 }

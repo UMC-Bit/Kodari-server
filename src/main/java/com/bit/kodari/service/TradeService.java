@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.bit.kodari.config.BaseResponseStatus.MODIFY_FAIL_PRICE_AVG;
+
 @Service
 public class TradeService {
     private final TradeRepository tradeRepository;
@@ -144,19 +146,54 @@ public class TradeService {
         }
     }
 
-
     // 거래내역 수정 : 코인 가격 수정(Patch)
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void updatePrice(TradeDto.PatchPriceReq patchPriceReq) throws BaseException{
-        double price = patchPriceReq.getPrice();
+        double newPrice = patchPriceReq.getPrice(); //새로 수정할 가격
         double max = 100000000000L;
+        int userCoinIdx = tradeRepository.getUserCoinIdxByTradeIdx(patchPriceReq.getTradeIdx());
+        List<TradeDto.GetTradeInfoRes> getTradeInfoRes = tradeRepository.getTradeInfo(patchPriceReq.getTradeIdx());
+        double price = getTradeInfoRes.get(0).getPrice(); // 코인 원래 가격
+        double amount = getTradeInfoRes.get(0).getAmount(); // 코인 원래 갯수
+        double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
+        String category = getTradeInfoRes.get(0).getCategory(); //매수 or 매도 : “buy”, “sell”
+        double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
+        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
+        double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
+
+        double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
 
         // 가격의 범위 validation
-        if(price<=0 || price>max){
+        if(newPrice<=0 || newPrice>max){
             throw new BaseException(BaseResponseStatus.PRICE_RANGE_ERROR);
         }
 
+        // 거래 내역 수정시 - 매수평단가, amount
+        // 거래 내역 수정시 - 현금자산, 총자산
+        if(price<=0 || price>max){
+            throw new BaseException(BaseResponseStatus.PRICE_RANGE_ERROR);
+        }else if(category.equals("buy")){
+            // "buy"매수라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 더해준 후 새로운 것 빼주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
+
+            newProperty = property + ((price * amount) + (price * amount * fee)) - ((newPrice * amount) - (newPrice * amount * fee)); // 새로운 현금 자산 계산
+            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+            priceAvg = (priceAvg * uc_amount - price * amount + newPrice * amount) / uc_amount; //새로운 매수평단가
+        }else if(category.equals("sell")){
+            // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
+            newProperty = property - (price * amount) - (price * amount * fee) + (newPrice * amount) + (newPrice * amount * fee); // 새로운 현금 자산 계산
+            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+        }
+
         int result = tradeRepository.updatePrice(patchPriceReq);
+        if(category.equals("buy")){
+            int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchPriceReq.getTradeIdx());
+            int priceAvgResult = tradeRepository.updatePriceAvg(userCoinIdx, priceAvg);
+        }else if(category.equals("sell")){
+            int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchPriceReq.getTradeIdx());
+        }
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
@@ -168,13 +205,58 @@ public class TradeService {
     public void updateAmount(TradeDto.PatchAmountReq patchAmountReq) throws BaseException{
         double amount = patchAmountReq.getAmount();
         double max = 100000000000L;
+        int userCoinIdx = tradeRepository.getUserCoinIdxByTradeIdx(patchAmountReq.getTradeIdx());
+        List<TradeDto.GetTradeInfoRes> getTradeInfoRes = tradeRepository.getTradeInfo(patchAmountReq.getTradeIdx());
+        double price = getTradeInfoRes.get(0).getPrice(); // 코인 원래 가격
+        double existAmount = getTradeInfoRes.get(0).getAmount(); // 코인 원래 갯수
+        double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
+        String category = getTradeInfoRes.get(0).getCategory(); //매수 or 매도 : “buy”, “sell”
+        double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
+        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
+        double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
+
+        double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
+        double sumCoinAmount = 0; //새로운 코인 전체 갯수
 
         // 갯수의 범위 validation
         if(amount<=0 || amount>max){
             throw new BaseException(BaseResponseStatus.AMOUNT_RANGE_ERROR);
         }
 
+        // 거래 내역 수정시 - 매수평단가, amount
+        // 거래 내역 수정시 - 현금자산, 총자산
+        if(existAmount<=0 || existAmount>max){
+            throw new BaseException(BaseResponseStatus.AMOUNT_RANGE_ERROR);
+        } else if(category.equals("buy")){
+            // "buy"매수라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 더해준 후 새로운 것 빼주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
+            sumCoinAmount = uc_amount - existAmount + amount;
+            if(sumCoinAmount < 0){
+                throw new BaseException(BaseResponseStatus.AMOUNT_RANGE_ERROR);
+            }
+            else{
+                newProperty = property + (price * existAmount) + (price * existAmount * fee) - (price * amount) - (price * amount * fee); // 새로운 현금 자산 계산
+                totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+                priceAvg = (priceAvg * uc_amount - price * existAmount + price * amount) / sumCoinAmount; //새로운 매수평단가
+            }
+
+        }else if(category.equals("sell")){
+            // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
+            sumCoinAmount = uc_amount + existAmount - amount;
+            if(sumCoinAmount < 0){
+                throw new BaseException(BaseResponseStatus.AMOUNT_RANGE_ERROR);
+            }
+            else{
+                newProperty = property - (price * existAmount) - (price * existAmount * fee) + (price * amount) + (price * amount * fee); // 새로운 현금 자산 계산
+                totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+            }
+        }
+
         int result = tradeRepository.updateAmount(patchAmountReq);
+        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchAmountReq.getTradeIdx());
+        int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
@@ -187,13 +269,40 @@ public class TradeService {
     public void updateFee(TradeDto.PatchFeeReq patchFeeReq) throws BaseException{
         double fee = patchFeeReq.getFee();
         double maxFee = 100L;
+        int userCoinIdx = tradeRepository.getUserCoinIdxByTradeIdx(patchFeeReq.getTradeIdx());
+        List<TradeDto.GetTradeInfoRes> getTradeInfoRes = tradeRepository.getTradeInfo(patchFeeReq.getTradeIdx());
+        double price = getTradeInfoRes.get(0).getPrice(); // 코인 원래 가격
+        double amount = getTradeInfoRes.get(0).getAmount(); // 코인 원래 갯수
+        double existFee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
+        String category = getTradeInfoRes.get(0).getCategory(); //매수 or 매도 : “buy”, “sell”
+        double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
+        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+
+        double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
 
         // 수수료 범위 validation
         if(fee<0 || fee>maxFee){
             throw new BaseException(BaseResponseStatus.FEE_RANGE_ERROR);
         }
 
+        // 거래 내역 수정시 - 매수평단가, amount
+        // 거래 내역 수정시 - 현금자산, 총자산
+        if(existFee<0 || existFee>maxFee){
+            throw new BaseException(BaseResponseStatus.FEE_RANGE_ERROR);
+        }else if(category.equals("buy")){
+            // "buy"매수라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 더해준 후 새로운 것 빼주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
+            newProperty = property + (price * amount * existFee) - (price * amount * fee); // 새로운 현금 자산 계산
+            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+        }else if(category.equals("sell")){
+            // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
+            newProperty = property- (price * amount * existFee)+ (price * amount * fee); // 새로운 현금 자산 계산
+            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+        }
+
         int result = tradeRepository.updateFee(patchFeeReq);
+        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchFeeReq.getTradeIdx());
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
@@ -205,12 +314,65 @@ public class TradeService {
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void updateCategory(TradeDto.PatchCategoryReq patchCategoryReq) throws BaseException{
         String category = patchCategoryReq.getCategory();
+        int userCoinIdx = tradeRepository.getUserCoinIdxByTradeIdx(patchCategoryReq.getTradeIdx());
+        List<TradeDto.GetTradeInfoRes> getTradeInfoRes = tradeRepository.getTradeInfo(patchCategoryReq.getTradeIdx());
+        double price = getTradeInfoRes.get(0).getPrice(); // 코인 원래 가격
+        double amount = getTradeInfoRes.get(0).getAmount(); // 코인 원래 갯수
+        double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
+        String existCategory = getTradeInfoRes.get(0).getCategory(); // 원래 매수 or 매도 : “buy”, “sell”
+        double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
+        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
+        double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
+
+        double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
+        double sumCoinAmount = 0; //새로운 코인 전체 갯수
+
         // 매수/매도 null, 빈값 validation
         if(category == null || category.length()==0){
             throw new BaseException(BaseResponseStatus.EMPTY_CATEGORY);
         }
 
+        // 거래 내역 수정시 - 매수평단가, amount
+        // 거래 내역 수정시 - 현금자산, 총자산
+        // 원래 매수/매도 null, 빈값 validation
+        if(existCategory == null || existCategory.length()==0){
+            throw new BaseException(BaseResponseStatus.EMPTY_CATEGORY);
+        } else if(category.equals("buy")){
+            // 새로운 카테고리가 "buy" 매수라면 현금 자산에서 빼주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
+            newProperty = property - 2*(price * amount); // 새로운 현금 자산 계산
+            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+            // 매도했던 것을 매수로 바꾼것이므로 기존 매수평단가에서 수정.
+            sumCoinAmount = uc_amount + 2*amount;
+            priceAvg = (priceAvg * uc_amount + 2 * price * amount) / sumCoinAmount; //새로운 매수평단가
+        }else if(category.equals("sell")){
+            // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
+            newProperty = property + 2*(price * amount); // 새로운 현금 자산 계산
+            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+
+            sumCoinAmount = uc_amount - 2*amount;
+            if(sumCoinAmount < 0){
+                throw new BaseException(BaseResponseStatus.AMOUNT_RANGE_ERROR);
+            }
+            // 전량매도
+            if(sumCoinAmount == 0){
+                priceAvg = (priceAvg + price) / 2;
+                int delete = userCoinRepository.deleteByUserCoinIdx(userCoinIdx);
+            }
+            else{
+                priceAvg = (priceAvg * uc_amount - 2 * price * amount) / sumCoinAmount;
+                if(priceAvg < 0){
+                    throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
+                }
+            }
+
+        }
+
         int result = tradeRepository.updateCategory(patchCategoryReq);
+        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchCategoryReq.getTradeIdx());
+        int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
@@ -250,13 +412,56 @@ public class TradeService {
     // 거래내역 삭제 : status 수정
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void deleteTrade(TradeDto.PatchStatusReq patchStatusReq) throws BaseException{
+        int userCoinIdx = tradeRepository.getUserCoinIdxByTradeIdx(patchStatusReq.getTradeIdx());
+        List<TradeDto.GetTradeInfoRes> getTradeInfoRes = tradeRepository.getTradeInfo(patchStatusReq.getTradeIdx());
+        double price = getTradeInfoRes.get(0).getPrice(); // 코인 원래 가격
+        double amount = getTradeInfoRes.get(0).getAmount(); // 코인 원래 갯수
+        double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
+        String category = getTradeInfoRes.get(0).getCategory(); //매수 or 매도 : “buy”, “sell”
+        double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
+        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
+        double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
+
+        double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
+        double sumCoinAmount = 0; //새로운 코인 전체 갯수
+
         // 이미 삭제된 거래내역 validation
         String status = tradeRepository.getStatusByTradeIdx(patchStatusReq.getTradeIdx());
         if(status.equals("inactive")){
             throw new BaseException(BaseResponseStatus.ALREADY_DELETED_TRADE); //
         }
+
+        if(category.equals("buy")){
+            // "buy"매수라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 더해준 후 새로운 것 빼주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
+            newProperty = property + (price * amount) + (price * amount * fee); // 새로운 현금 자산 계산
+            // TODO 총자산 식 수정해야함.
+            totalProperty = totalProperty - property + newProperty - (price * amount); // 새로운 총 자산
+            sumCoinAmount = uc_amount - amount; // 새로운 총 코인 갯수
+            priceAvg = (priceAvg * uc_amount - price * amount) / sumCoinAmount; //새로운 매수평단가
+        }else if(category.equals("sell")){
+            // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
+            // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
+            newProperty = property - ((price * amount) + (price * amount * fee)); // 새로운 현금 자산 계산
+            totalProperty = totalProperty - property + newProperty + (price * amount); // 새로운 총 자산
+            //전량매도
+            if(uc_amount == 0){
+                sumCoinAmount = amount;
+                priceAvg = (priceAvg * 2 - price) / sumCoinAmount;
+                //throw new BaseException(COIN_AMOUNT_ZERO); //4056
+            }else{
+                sumCoinAmount = uc_amount + amount; // 새로운 총 코인 갯수
+                priceAvg = (priceAvg * uc_amount + price * amount) / sumCoinAmount; //새로운 매수평단가
+            }
+
+        }
+
         // 거래내역 삭제 요청
         int result = tradeRepository.deleteTrade(patchStatusReq);
+        int userCoinActive = tradeRepository.updateByUserCoinIdx(userCoinIdx);
+        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchStatusReq.getTradeIdx());
+        int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
