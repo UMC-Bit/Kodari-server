@@ -48,21 +48,33 @@ class PostSql {
         SELECT status FROM Post WHERE postIdx = :postIdx
         """
 
+    //postCommentIdx로 status 받아오기
+    public static final String GET_COMMENT_STATUS = """
+        SELECT status FROM PostComment WHERE postCommentIdx = :postCommentIdx
+        """
 
-    //postCommentIdx로 userIdx 받아오기
+    //postReplyIdx로 status 받아오기
+    public static final String GET_REPLY_STATUS = """
+        SELECT status FROM PostReply WHERE postReplyIdx = :postReplyIdx
+        """
+
+
+    //postIdx로 userIdx 받아오기
     public static final String GET_COMMENT_USER_IDX = """
-        SELECT userIdx FROM PostComment WHERE postCommentIdx = :postCommentIdx
+        SELECT userIdx FROM PostComment WHERE postIdx = :postIdx
         """
 
     //postReplyIdx로 userIdx 받아오기
     public static final String GET_REPLY_USER_IDX = """
-        SELECT userIdx FROM PostReply WHERE postReplyIdx = :postReplyIdx
+        SELECT r.userIdx FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx
+            join Post as p on c.postIdx = p.postIdx
+        WHERE p.postIdx = :postIdx
         """
 
 
     //토론장 게시글 수정
     public static final String UPDATE_POST = """
-         UPDATE Post SET  content = :content
+         UPDATE Post SET  coinIdx = :coinIdx, content = :content
          WHERE postIdx = :postIdx
     """
 
@@ -98,7 +110,13 @@ class PostSql {
 
     //토론장 게시글 조회
     public static final String LIST_POST = """
-        SELECT c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike'
+        SELECT p.postIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
+        case
+                when timestampdiff(hour, p.updateAt, current_timestamp()) < 24 then date_format(p.updateAt, '%m/%d %H:%i')
+                when timestampdiff(day, p.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, p.updateAt , NOW()), '일 전')
+                when timestampdiff(month, p.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, p.updateAt , NOW()), '달 전')
+                else CONCAT(TIMESTAMPDIFF(year, p.updateAt , NOW()), '년 전')
+                end as time
         FROM Post as p join Coin as c on p.coinIdx = c.coinIdx join User as u on p.userIdx = u.userIdx
         Left join PostLike as l on l.postIdx = p.postIdx
         WHERE p.status = 'active'
@@ -107,7 +125,7 @@ class PostSql {
 
     //토론장 유저 게시글 조회
     public static final String LIST_USER_POST = """
-         SELECT c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
+         SELECT p.postIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
          case
                 when timestampdiff(hour, p.updateAt, current_timestamp()) < 24 then date_format(p.updateAt, '%m/%d %H:%i')
                 when timestampdiff(day, p.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, p.updateAt , NOW()), '일 전')
@@ -115,64 +133,107 @@ class PostSql {
                 else CONCAT(TIMESTAMPDIFF(year, p.updateAt , NOW()), '년 전')
                 end as time
          FROM Post as p join Coin as c on p.coinIdx = c.coinIdx join User as u on p.userIdx = u.userIdx 
-         Left join PostLike as l on l.postIdx = p.postIdx
+            Left join PostLike as l on l.postIdx = p.postIdx
          WHERE p.userIdx = :userIdx and p.status = 'active'
          group by c.symbol, u.nickName, u.profileImgUrl, p.content
          """
 
+    //토론장 코인 게시글 조회
+    public static final String LIST_COIN_POST = """
+        SELECT p.postIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
+        case
+           when timestampdiff(hour, p.updateAt, current_timestamp()) < 24 then date_format(p.updateAt, '%m/%d %H:%i')
+           when timestampdiff(day, p.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, p.updateAt , NOW()), '일 전')
+           when timestampdiff(month, p.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, p.updateAt , NOW()), '달 전')
+           else CONCAT(TIMESTAMPDIFF(year, p.updateAt , NOW()), '년 전')
+           end as 'time'
+         FROM Post as p join Coin as c on p.coinIdx = c.coinIdx join User as u on p.userIdx = u.userIdx
+            Left join PostLike as l on l.postIdx = p.postIdx
+         WHERE c.coinName = :coinName and p.status = 'active'
+         group by c.symbol, u.nickName, u.profileImgUrl, p.content, c.coinName
+         """
+
+    //postIdx로 댓글 수 조회
+    public static final String GET_COMMENT_COUNT = """
+        SELECT COUNT(ifnull(c.postCommentIdx,0)) AS 'comment_count'
+        FROM PostComment as c join Post as p on c.postIdx = p.postIdx
+        WHERE p.postIdx = :postIdx and c.status = 'active'
+        """
+
     //토론장 게시글별 게시글 조회
     public static final String LIST_POSTS = """
-         SELECT c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
-         case
-                when timestampdiff(hour, p.updateAt, current_timestamp()) < 24 then date_format(p.updateAt, '%m/%d %H:%i')
-                when timestampdiff(day, p.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, p.updateAt , NOW()), '일 전')
-                when timestampdiff(month, p.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, p.updateAt , NOW()), '달 전')
-                else CONCAT(TIMESTAMPDIFF(year, p.updateAt , NOW()), '년 전')
-                end as time
-            FROM Post as p join Coin as c on p.coinIdx = c.coinIdx join User as u on p.userIdx = u.userIdx
-                Left join PostLike as l on l.postIdx = p.postIdx
-            WHERE p.postIdx = :postIdx and p.status = 'active'
-            group by c.symbol, u.nickName, u.profileImgUrl, p.content
+         SELECT p.postIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
+       case
+           when timestampdiff(hour, p.updateAt, current_timestamp()) < 24 then date_format(p.updateAt, '%m/%d %H:%i')
+           when timestampdiff(day, p.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, p.updateAt , NOW()), '일 전')
+           when timestampdiff(month, p.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, p.updateAt , NOW()), '달 전')
+           else CONCAT(TIMESTAMPDIFF(year, p.updateAt , NOW()), '년 전')
+           end as 'time'
+        FROM Post as p join Coin as c on p.coinIdx = c.coinIdx join User as u on p.userIdx = u.userIdx
+               Left join PostLike as l on l.postIdx = p.postIdx
+        WHERE p.postIdx = :postIdx and p.status = 'active'
+        group by c.symbol, u.nickName, u.profileImgUrl, p.content
          """
 
     //토론장 게시글별 댓글 조회
     public static final String LIST_COMMENT = """
-        SELECT c.postCommentIdx, u.profileImgUrl, u.nickName, c.content, count(case when cl.like = 1 then 1 end) as 'like',
+        SELECT c.userIdx, c.postCommentIdx, u.profileImgUrl, u.nickName, c.content, count(case when cl.like = 1 then 1 end) as 'like',
         case
                 when timestampdiff(hour, c.updateAt, current_timestamp()) < 24 then date_format(c.updateAt, '%m/%d %H:%i')
                 when timestampdiff(day, c.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, c.updateAt , NOW()), '일 전')
                 when timestampdiff(month, c.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, c.updateAt , NOW()), '달 전')
                 else CONCAT(TIMESTAMPDIFF(year, c.updateAt , NOW()), '년 전')
-                end as time
+                end as 'time'
         FROM PostComment as c join User as u on c.userIdx = u.userIdx join Post as p on c.postIdx = p.postIdx
             LEFT join CommentLike as cl on c.postCommentIdx = cl.postCommentIdx
         WHERE c.postIdx = :postIdx
-        GROUP BY u.profileImgUrl, u.nickName, c.content
+        GROUP BY c.userIdx, c.postCommentIdx, u.profileImgUrl, u.nickName, c.content
         """
 
-    //토론장 게시글별 댓글의 답글 조회
-    public static final String LIST_REPLY = """
-        SELECT u.profileImgUrl, u.nickName, r.content,
+    //게시글의 달린 댓글의 status 가져오기
+    public static final String GET_POST_COMMENT_STATUS = """
+    SELECT c.status AS 'comment_status'
+    FROM PostComment as c join Post as p on c.postIdx = p.postIdx
+    WHERE c.userIdx = :userIdx and p.postIdx = :postIdx
+    """
+
+
+    // 토론장 commentIdx로 답글 조회
+    public static final String LIST_REPLY_BY_COMMENT_ID = """
+        SELECT r.userIdx, r.postReplyIdx, u.profileImgUrl, u.nickName, r.content,
         case
                 when timestampdiff(hour, r.updateAt, current_timestamp()) < 24 then date_format(r.updateAt, '%m/%d %H:%i')
                 when timestampdiff(day, r.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, r.updateAt , NOW()), '일 전')
                 when timestampdiff(month, r.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, r.updateAt , NOW()), '달 전')
                 else CONCAT(TIMESTAMPDIFF(year, r.updateAt , NOW()), '년 전')
-                end as time
-        FROM PostReply as r join User as u on r.userIdx = u.userIdx
-                    join PostComment as c on r.postCommentIdx = c.postCommentIdx
-                    join Post as p on c.postIdx = p.postIdx
-        WHERE p.postIdx = :postIdx
-        """
-
-    // 토론장 commentIdx로 답글 조회
-    public static final String LIST_REPLY_BY_COMMENT_ID = """
-        SELECT u.profileImgUrl, u.nickName, r.content
+                end as 'time'
         FROM PostReply as r join User as u on r.userIdx = u.userIdx
                     join PostComment as c on r.postCommentIdx = c.postCommentIdx
                     join Post as p on c.postIdx = p.postIdx
         WHERE r.postCommentIdx = :postCommentIdx
     """
+
+    //게시글의 댓글에 달린 답글의 status 가져오기
+    public static final String GET_COMMENT_REPLY_STATUS = """
+    SELECT r.status as 'reply_status'
+    FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx
+    WHERE r.userIdx = :userIdx and c.postCommentIdx = :postCommentIdx
+    """
+
+//    //토론장 게시글별 댓글의 답글 조회
+//    public static final String LIST_REPLY = """
+//        SELECT u.profileImgUrl, u.nickName, r.content,
+//        case
+//                when timestampdiff(hour, r.updateAt, current_timestamp()) < 24 then date_format(r.updateAt, '%m/%d %H:%i')
+//                when timestampdiff(day, r.updateAt, current_timestamp()) < 30 then CONCAT(TIMESTAMPDIFF(day, r.updateAt , NOW()), '일 전')
+//                when timestampdiff(month, r.updateAt, current_timestamp()) < 12 then CONCAT(TIMESTAMPDIFF(month, r.updateAt , NOW()), '달 전')
+//                else CONCAT(TIMESTAMPDIFF(year, r.updateAt , NOW()), '년 전')
+//                end as 'time'
+//        FROM PostReply as r join User as u on r.userIdx = u.userIdx
+//                    join PostComment as c on r.postCommentIdx = c.postCommentIdx
+//                    join Post as p on c.postIdx = p.postIdx
+//        WHERE p.postIdx = :postIdx
+//        """
 
 
 

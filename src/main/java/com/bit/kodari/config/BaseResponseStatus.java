@@ -11,6 +11,10 @@ public enum BaseResponseStatus {
      * 1000 : 요청 성공
      */
     SUCCESS(true, 1000, "요청에 성공하였습니다."),
+    SUCCESS_POST_LIKE_DELETE(true, 1001, "게시글 좋아요/싫어요 삭제를 성공하였습니다."),
+    SUCCESS_POST_LIKE_REGISTER(true, 1002, "게시글 좋아요/싫어요 등록을 성공하였습니다."),
+    SUCCESS_COMMENT_LIKE_DELETE(true, 1003, "댓글 좋아요 삭제를 성공하였습니다."),
+    SUCCESS_COMMENT_LIKE_REGISTER(true, 1004, "댓글 좋아요 등록을 성공하였습니다."),
 
 
     /**

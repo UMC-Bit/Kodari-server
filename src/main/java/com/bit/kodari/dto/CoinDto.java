@@ -11,6 +11,7 @@ public class CoinDto {
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetCoinRes{
+        private int coinIdx;
         private String coinName; //코인 이름
         private String symbol; //코인 심볼
         private String coinImg;

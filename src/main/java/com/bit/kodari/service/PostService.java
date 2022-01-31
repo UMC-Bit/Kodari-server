@@ -48,16 +48,12 @@ public class PostService {
     //토론장 게시글 수정
     public void modifyPost(PatchPostReq post) throws BaseException{
         int postIdx = post.getPostIdx();
-        int userIdx = post.getUserIdx();
         String content = post.getContent();
         int user = postRepository.getUserIdxByPostIdx(postIdx);
         String status = postRepository.getStatusByPostIdx(postIdx);
         String tmp_content = content.replaceAll(" ", "");
         if(status.equals("inactive")) { //삭제된 글은 수정 불가
             throw new BaseException(IMPOSSIBLE_POST);
-        }
-        else if(userIdx != user) { //글쓴 유저가 아닌 경우 수정 불가
-            throw new BaseException(USER_NOT_EQUAL);
         }
         else if(content.isEmpty() || tmp_content.isEmpty()) { //게시글 내용 입력 없을 경우 validation 처리
             throw new BaseException(EMPTY_CONTENT);
@@ -83,16 +79,12 @@ public class PostService {
     //토론장 게시글 삭제
     public void modifyPostStatus(PatchDeleteReq post) throws BaseException{
         int postIdx = post.getPostIdx();
-        int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
-        int user = postRepository.getUserIdxByPostIdx(postIdx);
         List<PostDto.GetCommentDeleteRes> getCommentDeleteRes = postRepository.getPostCommentIdxByPostIdx(postIdx);
         List<PostDto.GetCommentLikeDeleteRes> getCommentLikeDeleteRes = postRepository.getCommentLikeIdxByPostIdx(postIdx);
         List<PostDto.GetLikeDeleteRes> getLikeDeleteRes = postRepository.getPostLikeIdxByPostIdx(postIdx);
         List<PostDto.GetReplyDeleteRes> getReplyDeleteRes = postRepository.getReplyIdxByPostIdx(postIdx);
-        if(userIdx != user) { //글쓴 유저가 아닌 경우 삭제 불가
-            throw new BaseException(USER_NOT_EQUAL); //4072
-        }
-        else{
+
+        try{
             int result = postRepository.modifyPostStatus(post);
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(DELETE_FAIL_POST); //407
@@ -122,10 +114,6 @@ public class PostService {
                     throw new BaseException(DELETE_FAIL_COMMENT_REPLY);
                 }
             }
-        }
-
-        try {
-
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
         }
@@ -147,6 +135,16 @@ public class PostService {
         try {
             List<GetPostRes> getPostsRes = postRepository.getPostsByUserIdx(userIdx);
             return getPostsRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // 특정 코인의 게시글 조회
+    public List<GetPostRes> getPostsByCoinName(String coinName) throws BaseException {
+        try {
+            List<GetPostRes> getCoinsRes = postRepository.getPostsByCoinName(coinName);
+            return getCoinsRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

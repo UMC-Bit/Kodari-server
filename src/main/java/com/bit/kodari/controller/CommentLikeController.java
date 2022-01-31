@@ -2,6 +2,7 @@ package com.bit.kodari.controller;
 
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponse;
+import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.CommentLikeDto;
 import com.bit.kodari.repository.commentlike.CommentLikeRepository;
 import com.bit.kodari.service.CommentLikeService;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static com.bit.kodari.config.BaseResponseStatus.INVALID_USER_JWT;
 
 @Slf4j
 @RestController
@@ -31,7 +34,7 @@ public class CommentLikeController {
     }
 
     /*
-        토론장 댓글 좋아요 선택 체크
+        토론장 댓글 좋아요 선택 체크 횟수 확인
       */
     @PostMapping(value="/choose")
     @ApiOperation(value = "좋아요 선택 체크", notes = "토론장 댓글 좋아요 등록, 취소 체크 함")
@@ -68,8 +71,7 @@ public class CommentLikeController {
         int commentLikeIdx = commentLikeRepository.getCommentLikeIdxByIdx(userIdx, postCommentIdx);
         try {
             CommentLikeDto.CommentLikeRes registerCommentLikeRes = commentLikeService.chooseCommentLike(registerCommentLikeReq);
-
-            return new BaseResponse<>(registerCommentLikeRes);
+            return new BaseResponse<>(registerCommentLikeRes, BaseResponseStatus.SUCCESS_COMMENT_LIKE_REGISTER);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -83,7 +85,7 @@ public class CommentLikeController {
     public BaseResponse<CommentLikeDto.CommentLikeRes> deleteCommentLike(@RequestBody CommentLikeDto.CommentLikeReq deleteLikeReq){
         try {
             CommentLikeDto.CommentLikeRes deleteLikeRes = commentLikeService.deleteLike(deleteLikeReq);
-            return new BaseResponse<>(deleteLikeRes);
+            return new BaseResponse<>(deleteLikeRes, BaseResponseStatus.SUCCESS_COMMENT_LIKE_DELETE);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
