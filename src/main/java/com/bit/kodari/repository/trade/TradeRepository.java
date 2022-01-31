@@ -260,6 +260,12 @@ public class TradeRepository {
         return namedParameterJdbcTemplate.update(TradeSql.DELETE_ALL, parameterSource);
     }
 
+    //소유 코인 삭제 복구
+    public int updateByUserCoinIdx(int userCoinIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userCoinIdx", userCoinIdx);
+        return namedParameterJdbcTemplate.update(TradeSql.STATUS_ACTIVE_UC, parameterSource);
+    }
+
     // tradeIdx로  가져오기 - 리스트
     public List<TradeDto.GetTradeInfoRes> getTradeInfo(int tradeIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx", tradeIdx);

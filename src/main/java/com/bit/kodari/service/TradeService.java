@@ -442,12 +442,21 @@ public class TradeService {
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
             newProperty = property - ((price * amount) + (price * amount * fee)); // 새로운 현금 자산 계산
             totalProperty = totalProperty - property + newProperty + (price * amount); // 새로운 총 자산
-            sumCoinAmount = uc_amount + amount; // 새로운 총 코인 갯수
-            priceAvg = (priceAvg * uc_amount + price * amount) / sumCoinAmount; //새로운 매수평단가
+            //전량매도
+            if(uc_amount == 0){
+                sumCoinAmount = amount;
+                priceAvg = (priceAvg * 2 - price) / sumCoinAmount;
+                //throw new BaseException(COIN_AMOUNT_ZERO); //4056
+            }else{
+                sumCoinAmount = uc_amount + amount; // 새로운 총 코인 갯수
+                priceAvg = (priceAvg * uc_amount + price * amount) / sumCoinAmount; //새로운 매수평단가
+            }
+
         }
 
         // 거래내역 삭제 요청
         int result = tradeRepository.deleteTrade(patchStatusReq);
+        int userCoinActive = tradeRepository.updateByUserCoinIdx(userCoinIdx);
         int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchStatusReq.getTradeIdx());
         int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.

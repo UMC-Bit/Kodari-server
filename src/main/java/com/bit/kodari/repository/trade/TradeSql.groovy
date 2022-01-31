@@ -105,6 +105,11 @@ class TradeSql {
 			UPDATE Trade SET status = "inactive" WHERE tradeIdx = :tradeIdx
 """
 
+    //소유 코인 삭제 복구
+    public static final String STATUS_ACTIVE_UC = """
+			UPDATE UserCoin SET status = 'active' WHERE userCoinIdx = :userCoinIdx
+    """
+
 
     // 거래내역 삭제 : 전체삭제
     public static final String DELETE_ALL = """
