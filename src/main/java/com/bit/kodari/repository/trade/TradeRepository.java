@@ -1,5 +1,6 @@
 package com.bit.kodari.repository.trade;
 
+import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.dto.TradeDto;
 import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.dto.UserDto;
@@ -162,8 +163,8 @@ public class TradeRepository {
 
 
     // 거래인덱스로 계좌인덱스 조회: tradeIdx로 accountIdx 조회
-    public int getAccountIdxByTradeIdx(int accountIdx){
-        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx",accountIdx);
+    public int getAccountIdxByTradeIdx(int tradeIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("tradeIdx",tradeIdx);
 
         return namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_ACCOUNTIDX_BY_TRADEIDX,parameterSource,int.class);
     }
@@ -308,6 +309,23 @@ public class TradeRepository {
 
             return userCoinIdx;
         });
+    }
+
+    // userIdx, accountIdx로 모든 coinIdx 가져오기 - List
+    public List<TradeDto.GetUserCoinInfoRes> getCoinIdxRes(int userIdx, int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
+                .addValue("accountIdx", accountIdx);
+        try {
+            List<TradeDto.GetUserCoinInfoRes> getUserCoinInfoRes =  namedParameterJdbcTemplate.query(TradeSql.GET_ALL_COIN_IDX, parameterSource,
+                    (rs, rowNum) -> new TradeDto.GetUserCoinInfoRes(
+                            rs.getInt("userCoinIdx"),
+                            rs.getInt("coinIdx"))
+            );
+            return getUserCoinInfoRes;
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
     }
 
 }

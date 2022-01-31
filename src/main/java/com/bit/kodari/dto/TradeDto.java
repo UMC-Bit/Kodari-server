@@ -164,4 +164,15 @@ public class TradeDto {
         private double uc_amount;
         //    private String jwt;
     }
+
+    //userIdx, accountIdx로 소유코인의 coinIdx 가져오기
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class GetUserCoinInfoRes{
+        private int userCoinIdx;
+        private int coinIdx;
+        //private int accountIdx;
+        //    private String jwt;
+    }
 }

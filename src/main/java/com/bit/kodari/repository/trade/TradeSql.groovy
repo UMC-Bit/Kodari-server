@@ -65,13 +65,14 @@ class TradeSql {
          WHERE accountIdx = :accountIdx AND coinIdx = :coinIdx AND status = 'active'
 
 """
-
+//WHERE accountIdx = :accountIdx AND coinIdx = :coinIdx AND status = 'active'
 
     // 거래인덱스로 계좌인덱스 조회: tradeIdx로 accountIdx 조회
     public static final String FIND_ACCOUNTIDX_BY_TRADEIDX = """
-		SELECT accountIdx 
-         FROM Trade
-         WHERE accountIdx = :accountIdx AND status = 'active'
+		SELECT P.accountIdx 
+         FROM Trade as T
+         join Portfolio as P on P.portIdx = T.portIdx
+         WHERE T.tradeIdx = :tradeIdx AND T.status = 'active'
 
 """
 
@@ -111,7 +112,7 @@ class TradeSql {
 
     // 거래내역 삭제 : status 수정
     public static final String DELETE = """
-			UPDATE Trade SET status = "inactive" WHERE tradeIdx = :tradeIdx
+			UPDATE Trade SET status = 'inactive' WHERE tradeIdx = :tradeIdx
 """
 
     //소유 코인 삭제 복구
@@ -161,4 +162,8 @@ class TradeSql {
 			SET A.property = :property, A.totalProperty = :totalProperty WHERE T.tradeIdx = :tradeIdx
     """
 
+    // userIdx, accountIdx로 coinIdx 가져오기
+    public static final String GET_ALL_COIN_IDX = """
+            SELECT userCoinIdx, coinIdx from UserCoin where userIdx = :userIdx and accountIdx = :accountIdx
+    """
 }

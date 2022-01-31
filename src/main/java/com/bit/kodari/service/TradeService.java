@@ -4,6 +4,7 @@ import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.ProfitDto;
 import com.bit.kodari.dto.TradeDto;
+import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.dto.UserDto;
 import com.bit.kodari.repository.account.AccountRepository;
 import com.bit.kodari.repository.coin.CoinRepository;
@@ -29,12 +30,13 @@ public class TradeService {
     private final AccountRepository accountRepository;
     private final UserCoinRepository userCoinRepository;
     private final ProfitService profitService;
+    private final UserCoinService userCoinService;
 
 
 
     @Autowired //readme 참고
     public TradeService(TradeRepository tradeRepository, JwtService jwtService, AccountService accountService, PortfolioRepository portfolioRepository, AccountRepository accountRepository
-    ,UserCoinRepository userCoinRepository ,ProfitService profitService) {
+    ,UserCoinRepository userCoinRepository ,ProfitService profitService, UserCoinService userCoinService) {
         this.tradeRepository = tradeRepository;
         this.jwtService = jwtService; // JWT부분
         this.accountService = accountService;
@@ -42,6 +44,7 @@ public class TradeService {
         this.accountRepository = accountRepository;
         this.userCoinRepository = userCoinRepository;
         this.profitService = profitService;
+        this.userCoinService = userCoinService;
     }
 
     // 거래내역 생성(POST)
@@ -55,7 +58,9 @@ public class TradeService {
         double maxFee = 100L;
         String category = postTradeReq.getCategory();
         String date = postTradeReq.getDate();
-
+        int accountIdx = portfolioRepository.getAccountIdx(portIdx);
+        int userIdx = portfolioRepository.getAccountUserIdx(accountIdx);
+        List<TradeDto.GetUserCoinInfoRes> getUserCoinInfoRes = tradeRepository.getCoinIdxRes(userIdx, accountIdx);
 
         // portIdx 범위 validation
         if(portIdx<=0){
@@ -86,16 +91,11 @@ public class TradeService {
             throw new BaseException(BaseResponseStatus.EMPTY_DATE);
         }
 
-        // userIdx,cionIdx,accountIdx로 유저 코인 있는지 검사 Validation
-
-
-
         // 매수를 진행할 때 사용자의 계좌의 돈이 부족한 경우 Validation
         if(category.equals("buy")){
             // 계좌의 현금 - (매수하는 코인 평단가 * 갯수) - 수수료 < 0
             // Trade에서 portIdx를 통해 Portfolio(accountIdx) 구하기
             // Account에서 property 구하기
-            int accountIdx = portfolioRepository.getAccountIdx(portIdx);
             double cashProperty = accountRepository.getPropertyByAccount(accountIdx);
             if((cashProperty - price*amount - price*amount*fee)<0){
                 throw new BaseException(BaseResponseStatus.LACK_OF_PROPERTY);
@@ -104,7 +104,6 @@ public class TradeService {
 
         // 매도를 진행할 때 매도량이 사용자의 소유코인 개수보다 더 많을경우 Validation
         else if(category.equals("sell")){
-            int accountIdx = portfolioRepository.getAccountIdx(portIdx);
             // coinIdx, accountIdx로 UserCoin.amount 조회
             //  소유코인갯수 - 매도량  < 0 면 소유코인 갯수 부족 에러
             double userCoinAmount = tradeRepository.getUserCoinAmountByAccountIdxCoinIdx(accountIdx,coinIdx);
@@ -113,6 +112,19 @@ public class TradeService {
             }
         }
 
+        // userIdx,cionIdx,accountIdx로 유저 코인 있는지 검사 Validation
+        int sum=0;
+        int idx = 0;
+        for(int i=0; i < getUserCoinInfoRes.size(); i++){
+            if(getUserCoinInfoRes.get(i).getCoinIdx() == coinIdx){
+                idx = i;
+                sum++;
+                break;
+            }
+        }
+
+
+
         // 입력값 검증되면 생성 요청
         try {
             // 거래내역 생성 요청
@@ -120,6 +132,31 @@ public class TradeService {
 
             // 매수,매도 거래내역 등록 완료 시 Account 보유현금, 총 자산 자동 업데이트
             accountService.updateTradeProperty(postTradeRes.getTradeIdx());
+            // 소유코인이 존재하지 않을때
+            if(sum == 0){
+                if(category.equals("buy")){
+                    // 소유코인을 새로 생성하고
+                    UserCoinDto.PostUserCoinReq postUserCoinReq = new UserCoinDto.PostUserCoinReq(userIdx, coinIdx, accountIdx, price, amount);
+                    userCoinService.registerUserCoin(postUserCoinReq);
+                }
+                else if(category.equals("sell")){
+                    // 소유코인이 없을때 매도는 오류처리
+                   throw new BaseException(BaseResponseStatus.NO_USER_COIN); //4057
+                }
+            }
+            else if(sum != 0){
+                //소유코인이 있을때
+                //기존의 해당 userCoinIdx 조회
+                int userCoinIdx = getUserCoinInfoRes.get(idx).getUserCoinIdx();
+                //기존 코인 갯수
+                double existAmount = userCoinRepository.getAmountByUserCoinIdx(userCoinIdx);
+                //기존 매수평단가
+                double priceAvg = userCoinRepository.getPriceAvg(userCoinIdx);
+                // 매수평단가, amount 수정
+                UserCoinDto.PatchBuySellReq patchBuySellReq = new UserCoinDto.PatchBuySellReq(userCoinIdx, priceAvg, existAmount);
+                userCoinService.updatePriceAvg(patchBuySellReq);
+            }
+
             return postTradeRes;// 거래내역 반환
 
 //  *********** 해당 부분은 7주차 수업 후 주석해제하서 대체해서 사용해주세요! ***********
