@@ -518,7 +518,8 @@ public class TradeService {
         // profit테이블 안의 accountIdx로 profitIdx 불러오기
         ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
         List<ProfitDto.GetProfitRes> getProfitRes = profitService.getProfitByAccountIdx(getProfitReq);
-        int profitIdx = getProfitRes.get(0).getProfitIdx();
+        int len = getProfitRes.size();
+        int profitIdx = getProfitRes.get(len).getProfitIdx();
         // Profit 내역 삭제요청
         ProfitDto.PatchStatusReq patchProfitStatusReq = new ProfitDto.PatchStatusReq(profitIdx);
         profitService.deleteProfit(patchProfitStatusReq);
