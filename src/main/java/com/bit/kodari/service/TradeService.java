@@ -86,6 +86,10 @@ public class TradeService {
             throw new BaseException(BaseResponseStatus.EMPTY_DATE);
         }
 
+        // userIdx,cionIdx,accountIdx로 유저 코인 있는지 검사 Validation
+
+
+
         // 매수를 진행할 때 사용자의 계좌의 돈이 부족한 경우 Validation
         if(category.equals("buy")){
             // 계좌의 현금 - (매수하는 코인 평단가 * 갯수) - 수수료 < 0
@@ -422,6 +426,8 @@ public class TradeService {
         double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
         double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
         double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
+        //  tradeIdx로 accountIdx 불러오고
+        int accountIdx = tradeRepository.getAccountIdxByTradeIdx(patchStatusReq.getTradeIdx());
 
         double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
         double sumCoinAmount = 0; //새로운 코인 전체 갯수
@@ -458,10 +464,10 @@ public class TradeService {
         }
 
         // 거래내역 삭제 요청
-        int result = tradeRepository.deleteTrade(patchStatusReq);
-        int userCoinActive = tradeRepository.updateByUserCoinIdx(userCoinIdx);
-        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchStatusReq.getTradeIdx());
-        int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
+        int result = tradeRepository.deleteTrade(patchStatusReq); //
+        if(uc_amount == 0) {int userCoinActive = tradeRepository.updateByUserCoinIdx(userCoinIdx);} //전량 매도였을시 inactive -> active
+        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchStatusReq.getTradeIdx()); //계좌 수정
+        int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount); // 유저코인 수정
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
@@ -471,7 +477,7 @@ public class TradeService {
 
         // Profit 최근 수익내역 삭제
         //  tradeIdx로 accountIdx 불러오고
-        int accountIdx = tradeRepository.getAccountIdxByTradeIdx(patchStatusReq.getTradeIdx());
+        //int accountIdx = tradeRepository.getAccountIdxByTradeIdx(patchStatusReq.getTradeIdx());
         // profit테이블 안의 accountIdx로 profitIdx 불러오기
         ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
         List<ProfitDto.GetProfitRes> getProfitRes = profitService.getProfitByAccountIdx(getProfitReq);
@@ -479,11 +485,6 @@ public class TradeService {
         // Profit 내역 삭제요청
         ProfitDto.PatchStatusReq patchProfitStatusReq = new ProfitDto.PatchStatusReq(profitIdx);
         profitService.deleteProfit(patchProfitStatusReq);
-
-        // 유저코인 데이터 업데이트
-
-        // account 관련 데이터 업네이트
-
 
 
     }
