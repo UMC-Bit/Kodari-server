@@ -1,11 +1,13 @@
 package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
+import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.repository.portfolio.PortfolioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -115,6 +117,18 @@ public class PortfolioService {
             }
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
+    // 계좌 삭제: 전체삭제
+    @Transactional
+    public void deleteAllPortfolioByUserIdx(int userIdx) throws BaseException{
+
+        // 포트폴리오 삭제 요청
+        int result = portfolioRepository.deleteAllPortfolioByUserIdx(userIdx);
+        if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
     }
 

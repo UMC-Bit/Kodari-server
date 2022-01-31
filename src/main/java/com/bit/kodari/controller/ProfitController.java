@@ -93,7 +93,7 @@ public class ProfitController {
     /**
      * [GET]
      */
-    // Profit 수익내역 조회: 특정 계좌의 총 손익급, 총 수익률 조회
+    // Profit 수익내역 조회: 특정 계좌의 총 손익급, 총 수익률 전체조회
     @ResponseBody
     @GetMapping("get/{accountIdx}")
     @ApiOperation(value = "특정 계좌의 수익(손익금,수익률)내역", notes = "Profit 수익내역 조회: 특정 계좌의 수익(손익금,수익률)내역 조회")
@@ -110,6 +110,86 @@ public class ProfitController {
 
             ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
             List<ProfitDto.GetProfitRes> getProfitRes = profitService.getProfitByAccountIdx(getProfitReq);
+            return new BaseResponse<>(getProfitRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     * [GET]
+     */
+    // Profit 수익내역 일별 조회: 특정 계좌의 총 손익급, 총 수익률 전체조회
+    @ResponseBody
+    @GetMapping("get/daily/{accountIdx}")
+    @ApiOperation(value = "특정 계좌의 일별 수익(손익금,수익률)내역", notes = "Profit 일별 수익내역 조회: 특정 계좌의 수익(손익금,수익률)내역 조회")
+    public BaseResponse<List<ProfitDto.GetProfitRes>> getDailyProfitByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
+
+//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        try {
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+//            }
+
+            ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
+            List<ProfitDto.GetProfitRes> getProfitRes = profitService.getDailyProfitByAccountIdx(getProfitReq);
+            return new BaseResponse<>(getProfitRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
+    /**
+     * [GET]
+     */
+    // Profit 수익내역 주 별 조회: 특정 계좌의 총 손익급, 총 수익률 전체조회
+    @ResponseBody
+    @GetMapping("get/weekly/{accountIdx}")
+    @ApiOperation(value = "특정 계좌의 주 별 수익(손익금,수익률)내역", notes = "Profit 주별 수익내역 조회: 특정 계좌의 수익(손익금,수익률)내역 조회")
+    public BaseResponse<List<ProfitDto.GetProfitRes>> getWeeklyProfitByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
+
+//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        try {
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+//            }
+
+            ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
+            List<ProfitDto.GetProfitRes> getProfitRes = profitService.getWeeklyProfitByAccountIdx(getProfitReq);
+            return new BaseResponse<>(getProfitRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+
+    /**
+     * [GET]
+     */
+    // Profit 수익내역 월 별 조회: 특정 계좌의 총 손익급, 총 수익률 전체조회
+    @ResponseBody
+    @GetMapping("get/monthly/{accountIdx}")
+    @ApiOperation(value = "특정 계좌의 월 별 수익(손익금,수익률)내역", notes = "Profit 월 별 수익내역 조회: 특정 계좌의 수익(손익금,수익률)내역 조회")
+    public BaseResponse<List<ProfitDto.GetProfitRes>> getMonthlyProfitByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
+
+//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        try {
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+//            }
+
+            ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
+            List<ProfitDto.GetProfitRes> getProfitRes = profitService.getMonthlyProfitByAccountIdx(getProfitReq);
             return new BaseResponse<>(getProfitRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

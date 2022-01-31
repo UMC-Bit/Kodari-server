@@ -54,6 +54,12 @@ class PortfolioSql {
 			DELETE FROM Represent WHERE portIdx = :portIdx
     """
 
+    // 포트폴리오 삭제: 전체삭제
+    public static final String DELETE_ALL = """
+			DELETE FROM Portfolio
+            WHERE userIdx = :userIdx;
+"""
+
     //accountIdx로 계좌 status 가져오기
     public static final String GET_ACCOUNT_STATUS ="""
         SELECT status from Account where accountIdx = :accountIdx

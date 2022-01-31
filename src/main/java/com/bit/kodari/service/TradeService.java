@@ -2,6 +2,7 @@ package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponseStatus;
+import com.bit.kodari.dto.ProfitDto;
 import com.bit.kodari.dto.TradeDto;
 import com.bit.kodari.dto.UserDto;
 import com.bit.kodari.repository.account.AccountRepository;
@@ -27,18 +28,20 @@ public class TradeService {
     private final PortfolioRepository portfolioRepository;
     private final AccountRepository accountRepository;
     private final UserCoinRepository userCoinRepository;
+    private final ProfitService profitService;
 
 
 
     @Autowired //readme 참고
     public TradeService(TradeRepository tradeRepository, JwtService jwtService, AccountService accountService, PortfolioRepository portfolioRepository, AccountRepository accountRepository
-    ,UserCoinRepository userCoinRepository) {
+    ,UserCoinRepository userCoinRepository ,ProfitService profitService) {
         this.tradeRepository = tradeRepository;
         this.jwtService = jwtService; // JWT부분
         this.accountService = accountService;
         this.portfolioRepository = portfolioRepository;
         this.accountRepository = accountRepository;
         this.userCoinRepository = userCoinRepository;
+        this.profitService = profitService;
     }
 
     // 거래내역 생성(POST)
@@ -82,6 +85,10 @@ public class TradeService {
         if(date == null || date.length()==0){
             throw new BaseException(BaseResponseStatus.EMPTY_DATE);
         }
+
+        // userIdx,cionIdx,accountIdx로 유저 코인 있는지 검사 Validation
+
+
 
         // 매수를 진행할 때 사용자의 계좌의 돈이 부족한 경우 Validation
         if(category.equals("buy")){
@@ -419,6 +426,8 @@ public class TradeService {
         double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
         double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
         double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
+        //  tradeIdx로 accountIdx 불러오고
+        int accountIdx = tradeRepository.getAccountIdxByTradeIdx(patchStatusReq.getTradeIdx());
 
         double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
         double sumCoinAmount = 0; //새로운 코인 전체 갯수
@@ -455,23 +464,35 @@ public class TradeService {
         }
 
         // 거래내역 삭제 요청
-        int result = tradeRepository.deleteTrade(patchStatusReq);
-        int userCoinActive = tradeRepository.updateByUserCoinIdx(userCoinIdx); //inactive -> active로 변경
-        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchStatusReq.getTradeIdx());
-        int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
+        int result = tradeRepository.deleteTrade(patchStatusReq); //
+        if(uc_amount == 0) {int userCoinActive = tradeRepository.updateByUserCoinIdx(userCoinIdx);} //전량 매도였을시 inactive -> active
+        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchStatusReq.getTradeIdx()); //계좌 수정
+        int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount); // 유저코인 수정
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
+
+        // 거래내역 삭제 완료되면 관련 데이터 업데이트
+        // 주의: 업데이트 순서 지켜야 함
+
+        // Profit 최근 수익내역 삭제
+        //  tradeIdx로 accountIdx 불러오고
+        //int accountIdx = tradeRepository.getAccountIdxByTradeIdx(patchStatusReq.getTradeIdx());
+        // profit테이블 안의 accountIdx로 profitIdx 불러오기
+        ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
+        List<ProfitDto.GetProfitRes> getProfitRes = profitService.getProfitByAccountIdx(getProfitReq);
+        int profitIdx = getProfitRes.get(0).getProfitIdx();
+        // Profit 내역 삭제요청
+        ProfitDto.PatchStatusReq patchProfitStatusReq = new ProfitDto.PatchStatusReq(profitIdx);
+        profitService.deleteProfit(patchProfitStatusReq);
+
+
     }
 
     // 거래내역 삭제 : 전체삭제
     @Transactional
     public void deleteAllTradeByUserIdx(int userIdx) throws BaseException{
-        // 이미 삭제된 거래내역 validation
-        /*String status = tradeRepository.getStatusByTradeIdx(patchStatusReq.getTradeIdx());
-        if(status.equals("inactive")){
-            throw new BaseException(BaseResponseStatus.ALREADY_DELETED_TRADE); //
-        }*/
+
         // 거래내역 삭제 요청
         int result = tradeRepository.deleteAllTradeByUserIdx(userIdx);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.

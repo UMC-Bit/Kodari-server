@@ -6,6 +6,7 @@ import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.repository.account.AccountSql;
 import com.bit.kodari.repository.portfolio.PortfolioSql;
+import com.bit.kodari.repository.trade.TradeSql;
 import com.bit.kodari.repository.usercoin.UserCoinSql;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -138,6 +139,14 @@ public class AccountRepository {
     public int deleteTwo(AccountDto.PatchAccountDelReq patchAccountDelReq) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", patchAccountDelReq.getAccountIdx());
         return namedParameterJdbcTemplate.update(AccountSql.DELETE_TWO, parameterSource);
+    }
+
+
+    // 거래내역 삭제 : 전체 거래내역 삭제
+    public int deleteAllAccountByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(AccountSql.DELETE_ALL, parameterSource);
     }
 
     // accountIdx로 userIdx 가져오기

@@ -4,6 +4,7 @@ import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.RepresentDto;
 import com.bit.kodari.repository.account.AccountSql;
 import com.bit.kodari.repository.portfolio.PortfolioSql;
+import com.bit.kodari.repository.profit.ProfitSql;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -69,6 +70,15 @@ public class RepresentRepository {
 
             return userIdx;
         });
+    }
+
+
+
+    // 대표 코인 삭제 : 전체삭제
+    public int deleteAllReprsentByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(RepresentSql.DELETE_ALL, parameterSource);
     }
 
     // representIdx로 portIdx 가져오기

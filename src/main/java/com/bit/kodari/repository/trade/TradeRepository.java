@@ -161,6 +161,15 @@ public class TradeRepository {
 
 
 
+    // 거래인덱스로 계좌인덱스 조회: tradeIdx로 accountIdx 조회
+    public int getAccountIdxByTradeIdx(int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx",accountIdx);
+
+        return namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_ACCOUNTIDX_BY_TRADEIDX,parameterSource,int.class);
+    }
+
+
+
 
     // 거래내역 수정 : 코인 가격 수정(Patch)
     public int updatePrice(TradeDto.PatchPriceReq patchPriceReq){

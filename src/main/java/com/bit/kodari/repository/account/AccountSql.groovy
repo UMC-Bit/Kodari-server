@@ -60,6 +60,12 @@ class AccountSql {
 			AND a.accountIdx = :accountIdx
     """
 
+    // 계좌 삭제: 전체삭제
+    public static final String DELETE_ALL = """
+			DELETE FROM Account
+            WHERE userIdx = :userIdx;
+"""
+
     //accountIdx로 userIdx 가져오기
     public static final String GET_USER_IDX ="""
         SELECT userIdx from Account where accountIdx = :accountIdx
