@@ -456,7 +456,7 @@ public class TradeService {
 
         // 거래내역 삭제 요청
         int result = tradeRepository.deleteTrade(patchStatusReq);
-        int userCoinActive = tradeRepository.updateByUserCoinIdx(userCoinIdx);
+        int userCoinActive = tradeRepository.updateByUserCoinIdx(userCoinIdx); //inactive -> active로 변경
         int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchStatusReq.getTradeIdx());
         int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
