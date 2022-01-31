@@ -19,7 +19,7 @@ class TradeSql {
     public static final String FIND_BY_PORTIDX_COINIDX = """
          SELECT t.tradeIdx, c.coinName, t.price, t.amount, t.fee, t.category, t.memo, t.date, t.status 
          FROM Trade as t join Portfolio as p on t.portIdx = p.portIdx join Coin as c on t.coinIdx = c.coinIdx 
-         WHERE t.portIdx = :portIdx AND t.coinIdx = :coinIdx AND t.status = "active"
+         WHERE t.portIdx = :portIdx AND t.coinIdx = :coinIdx AND t.status = 'active'
          ORDER BY t.date desc,t.tradeIdx desc
          """
 
@@ -67,6 +67,15 @@ class TradeSql {
 """
 
 
+    // 거래인덱스로 계좌인덱스 조회: tradeIdx로 accountIdx 조회
+    public static final String FIND_ACCOUNTIDX_BY_TRADEIDX = """
+		SELECT accountIdx 
+         FROM Trade
+         WHERE accountIdx = :accountIdx AND status = 'active'
+
+"""
+
+
 
 
     // 거래내역 수정 : 코인 가격 수정(Patch)
@@ -105,12 +114,51 @@ class TradeSql {
 			UPDATE Trade SET status = "inactive" WHERE tradeIdx = :tradeIdx
 """
 
+    //소유 코인 삭제 복구
+    public static final String STATUS_ACTIVE_UC = """
+			UPDATE UserCoin SET status = 'active' WHERE userCoinIdx = :userCoinIdx
+    """
+
 
     // 거래내역 삭제 : 전체삭제
     public static final String DELETE_ALL = """
-			DELETE FROM Trade as T join Port as P on T.portIdx = P.portIdx
-			WHERE userIdx = :userIdx;
+			DELETE T from Trade as T right join Portfolio as P ON T.portIdx = P.portIdx
+            WHERE P.userIdx = :userIdx;
 """
 
+    // tradeIdx로 기존의 price, amount, property, totalProperty 구하기
+    public static final String PATCH_TRADE = """
+            SELECT T.price, T.amount, T.fee, T.category, A.property, A.totalProperty , UC.priceAvg, UC.amount as UC_amount
+            FROM Trade as T 
+            join Portfolio as P on P.portIdx = T.portIdx 
+            join Account as A on A.accountIdx = P.accountIdx
+            join UserCoin as UC on UC.accountIdx = P.accountIdx AND UC.coinIdx = T.coinIdx
+            WHERE T.tradeIdx = :tradeIdx
+    """
+
+    // tradeIdx로 userCoinIdx 가져오기
+    public static final String GET_USER_COIN_IDX = """
+            SELECT UC.userCoinIdx From Trade as T Join Portfolio as P on P.portIdx = T.portIdx
+            Join UserCoin as UC on UC.accountIdx = P.accountIdx
+            WHERE T.tradeIdx = :tradeIdx AND UC.coinIdx = T.coinIdx
+    """
+
+    // 매수평단가 수정
+    public static final String PRICE_AVERAGE = """
+			UPDATE UserCoin SET priceAvg = :priceAvg WHERE userCoinIdx = :userCoinIdx
+    """
+
+    // 매수평단가, 코인 갯수 수정
+    public static final String AVG_AMOUNT = """
+			UPDATE UserCoin SET priceAvg = :priceAvg, amount = :amount WHERE userCoinIdx = :userCoinIdx
+    """
+
+    // 현금 자산, 총자산 수정
+    public static final String UPDATE_PROPERTY = """
+			UPDATE Account as A
+			INNER JOIN Portfolio as P on P.accountIdx = A.accountIdx
+			INNER JOIN Trade as T on T.portIdx = P.portIdx
+			SET A.property = :property, A.totalProperty = :totalProperty WHERE T.tradeIdx = :tradeIdx
+    """
 
 }

@@ -27,8 +27,9 @@ class PortfolioSql {
 
     //소유코인 가져오기
     public static final String GET_USER_COIN = """
-        select userCoinIdx, userIdx, coinIdx, accountIdx, priceAvg, amount, status from UserCoin
-        where accountIdx = :accountIdx and status = 'active'
+        select u.userCoinIdx, u.userIdx, u.coinIdx, c.coinName, c.symbol, c.coinImg, u.accountIdx, u.priceAvg, u.amount, u.status from UserCoin as u
+        join (select coinIdx, coinName, coinImg, symbol from Coin) as c on c.coinIdx = u.coinIdx
+        where u.accountIdx = :accountIdx and u.status = 'active'
     """
 
     //포트폴리오 삭제 - 소유코인, 계좌 다 삭제되도록 (모두 있을 때)
@@ -52,6 +53,12 @@ class PortfolioSql {
     public static final String DELETE_REPRESENT = """
 			DELETE FROM Represent WHERE portIdx = :portIdx
     """
+
+    // 포트폴리오 삭제: 전체삭제
+    public static final String DELETE_ALL = """
+			DELETE FROM Portfolio
+            WHERE userIdx = :userIdx;
+"""
 
     //accountIdx로 계좌 status 가져오기
     public static final String GET_ACCOUNT_STATUS ="""
@@ -82,4 +89,9 @@ class PortfolioSql {
     public  static final String GET_USER_COIN_IDX = """
         SELECT userCoinIdx from UserCoin where accountIdx = :accountIdx and status = 'active'
     """
+
+    //accountIdx로 계좌 userIdx 가져오기
+    public static final String GET_ACCOUNT_USER ="""
+        SELECT userIdx from Account where accountIdx = :accountIdx
+    """;
 }

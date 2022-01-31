@@ -9,7 +9,7 @@ class UserCoinSql {
 
     //특정 소유 코인 조회
     public static final String FIND_USER_COIN_IDX = """
-			SELECT c.coinName, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userCoinIdx = :userCoinIdx AND u.status = 'active'
+			SELECT c.coinName, c.symbol, c.coinImg, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName, symbol, coinImg from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userCoinIdx = :userCoinIdx AND u.status = 'active'
 			"""
 
     //소유 코인 조회
@@ -18,7 +18,11 @@ class UserCoinSql {
     //concat(format(u.priceAvg, 0), '원') as priceAvg
     //format(u.priceAvg, 0) as priceAvg
     public static final String FIND_USER_COIN = """
-			SELECT c.coinName, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userIdx = :userIdx AND u.status = 'active'
+			SELECT p.portIdx, c.coinName, c.symbol, c.coinImg, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u 
+			join (select coinIdx, coinName, symbol, coinImg from Coin) as c on c.coinIdx = u.coinIdx 
+			join Account as a on a.accountIdx = u.accountIdx
+			join Portfolio as p on p.accountIdx = a.accountIdx
+			WHERE p.portIdx = :portIdx AND u.status = 'active'
 			"""
 
     //소유 코인 수정
@@ -35,6 +39,12 @@ class UserCoinSql {
     public static final String ALL_DELETE = """
 			UPDATE UserCoin SET status = 'inactive' WHERE userIdx = :userIdx
     """
+
+    // 소유 코인 삭제: 전체삭제
+    public static final String DELETE_ALL = """
+			DELETE FROM UserCoin
+            WHERE userIdx = :userIdx;
+"""
 
     // Trade - 매수, 매도 계산(매수평단가), 수수료 0.05%
     public static final String PRICE_AVERAGE = """
@@ -54,6 +64,11 @@ class UserCoinSql {
     //accountIdx로 계좌 status 가져오기
     public static final String GET_ACCOUNT_STATUS ="""
         SELECT status from Account where accountIdx = :accountIdx
+    """;
+
+    //portIdx로 userIdx 가져오기
+    public static final String GET_USER_IDX_BY_PORT ="""
+        SELECT userIdx from Portfolio where portIdx = :portIdx and status = 'active'
     """;
 
     /**
@@ -112,6 +127,11 @@ class UserCoinSql {
     //accountIdx로 Account의 property 가져오기
     public static final String GET_PROPERTY ="""
         SELECT property from Account where accountIdx = :accountIdx
+    """;
+
+    //accountIdx로 계좌 userIdx 가져오기
+    public static final String GET_ACCOUNT_USER ="""
+        SELECT userIdx from Account where accountIdx = :accountIdx
     """;
 
 }

@@ -2,12 +2,14 @@ package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponse;
+import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.repository.account.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.groovy.parser.antlr4.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -65,6 +67,7 @@ public class AccountService {
     }
 
     //총자산 수정
+    //소유 코인 없으면 총자산 수정X
     public void updateTotal(PatchTotalReq account) throws BaseException {
         int accountIdx = account.getAccountIdx();
         String accountName = accountRepository.getAccountNameByAccountIdx(accountIdx);
@@ -76,10 +79,14 @@ public class AccountService {
 
         List<AccountDto.GetUserCoinRes> getUserCoinRes = accountRepository.getUserCoinByIdx(userIdx, accountIdx);
 
-        for(int i=0; i< getUserCoinRes.size(); i++){
-            priceAvg = getUserCoinRes.get(i).getPriceAvg();
-            amount = getUserCoinRes.get(i).getAmount();
-            totalProperty = totalProperty + (priceAvg * amount);
+        if(getUserCoinRes.size() <=0) {
+            throw new BaseException(NO_USER_COIN); //4057
+        }else{
+            for(int i=0; i< getUserCoinRes.size(); i++){
+                priceAvg = getUserCoinRes.get(i).getPriceAvg();
+                amount = getUserCoinRes.get(i).getAmount();
+                totalProperty = totalProperty + (priceAvg * amount);
+            }
         }
 
         try {
@@ -213,6 +220,17 @@ public class AccountService {
             }
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // 계좌 삭제: 전체삭제
+    @Transactional
+    public void deleteAllAccountByUserIdx(int userIdx) throws BaseException{
+
+        // 거래내역 삭제 요청
+        int result = accountRepository.deleteAllAccountByUserIdx(userIdx);
+        if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
     }
 

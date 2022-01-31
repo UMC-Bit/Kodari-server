@@ -65,7 +65,7 @@ public class UserController {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_LENGTH_NICKNAME);
         }
         // 닉네임 특수문자 포함 예외
-        if (isRegexNickNameSpecial(postUserReq.getNickName())) {
+        if (!isRegexNickNameSpecial(postUserReq.getNickName())) {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
         }
 
@@ -250,7 +250,7 @@ public class UserController {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_LENGTH_NICKNAME);
             }
             // 닉네임 특수문자 포함 예외
-            if (isRegexNickNameSpecial(nickName)) {
+            if (!isRegexNickNameSpecial(nickName)) {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
             }
 
@@ -272,11 +272,11 @@ public class UserController {
 
     /**
      * 유저 정보 업데이트: 유저 비밀번호 변경 API
-     * [PATCH] /users/update/password/:userIdx?password
+     * [PATCH] /users/update/password/:userIdx
      */
     @PatchMapping("/update/password/{userIdx}")
     @ApiOperation(value = "유저 패스워드", notes = "유저 패스워드 변경")
-    public BaseResponse<String> updatePassword (@PathVariable("userIdx") int userIdx,@RequestParam String password) {
+    public BaseResponse<String> updatePassword (@PathVariable("userIdx") int userIdx, @RequestBody UserDto.UpdatePasswordReq updatePasswordReq) {
         try {
 
             // jwt 부분
@@ -289,6 +289,7 @@ public class UserController {
 
  //**************************************************************************
             // 비밀번호 Validation
+            String password = updatePasswordReq.getPassword();
             String passwordVal = password.replaceAll(" ","");
             // 회원가입 validation :  password null값 예외
             if (passwordVal == null || passwordVal.length()==0) {
@@ -304,7 +305,8 @@ public class UserController {
             }
 
             //같다면 유저 패스워드 변경
-            UserDto.UpdatePasswordReq updatePasswordReq = new UserDto.UpdatePasswordReq(userIdx,password);
+            updatePasswordReq.setUserIdx(userIdx);
+            //UserDto.UpdatePasswordReq updatePasswordReq = new UserDto.UpdatePasswordReq(userIdx,password);
             userService.updatePassword(updatePasswordReq);
 
             String result = "회원 비밀번호가 변경되었습니다.";

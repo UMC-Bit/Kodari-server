@@ -1,11 +1,13 @@
 package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
+import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.repository.portfolio.PortfolioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,10 +22,18 @@ public class PortfolioService {
 
     //포트폴리오 등록
     //비티코인, 이더리움, 솔라나 로 자동 넣어주기
+    //해당 계좌의 유저가 맞는지 확인
     public PortfolioDto.PostPortfolioRes registerPortfolio(PortfolioDto.PostPortfolioReq postPortfolioReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postPortfolioReq.getAccountIdx();
         String status = portfolioRepository.getAccountStatus(accountIdx);
+        // accountIdx로 불러온 userIdx
+        int accountUser = portfolioRepository.getAccountUserIdx(accountIdx);
+
+        //해당 유저의 계좌인지 확인
+        if(accountUser != postPortfolioReq.getUserIdx()){
+            throw new BaseException(NO_MATCH_USER_ACCOUNT); //2042
+        }
 
         List<PortfolioDto.GetAllPortfolioRes> getAllPortfolioRes = portfolioRepository.getAllPortfolio();
         // userIdx로 모든 portIdx 가져오기
@@ -107,6 +117,18 @@ public class PortfolioService {
             }
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
+    // 계좌 삭제: 전체삭제
+    @Transactional
+    public void deleteAllPortfolioByUserIdx(int userIdx) throws BaseException{
+
+        // 포트폴리오 삭제 요청
+        int result = portfolioRepository.deleteAllPortfolioByUserIdx(userIdx);
+        if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
     }
 

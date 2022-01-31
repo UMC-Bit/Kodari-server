@@ -103,9 +103,9 @@ public class UserCoinController {
     // 소유 코인 조회 API
     // Path-variable
     @ResponseBody
-    @GetMapping("/{userIdx}")
-    public BaseResponse<List<UserCoinDto.GetUserCoinRes>> getUserCoin(@PathVariable("userIdx") int userIdx) {
-
+    @GetMapping("/{portIdx}")
+    public BaseResponse<List<UserCoinDto.GetUserCoinRes>> getUserCoin(@PathVariable("portIdx") int portIdx) {
+        int userIdx = userCoinRepository.getUserIdxByPortIdx(portIdx);
         try {
             //jwt에서 idx 추출.
             //int userIdxByJwt = jwtService.getUserIdx();
@@ -113,7 +113,7 @@ public class UserCoinController {
             //if(userIdx != userIdxByJwt){
                 //return new BaseResponse<>(INVALID_USER_JWT);
             //}
-            List<UserCoinDto.GetUserCoinRes> getUserCoinRes = userCoinService.getUserCoin(userIdx);
+            List<UserCoinDto.GetUserCoinRes> getUserCoinRes = userCoinService.getUserCoin(portIdx);
             return new BaseResponse<>(getUserCoinRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

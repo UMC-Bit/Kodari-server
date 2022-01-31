@@ -14,6 +14,9 @@ public class UserCoinDto {
         private int userCoinIdx;
         private int userIdx;
         private int coinIdx;
+        private String coinName;
+        private String symbol;
+        private String coinImg;
         private int accountIdx;
         private double priceAvg;
         private double amount;
@@ -72,6 +75,8 @@ public class UserCoinDto {
     @NoArgsConstructor
     public static class GetUserCoinIdxRes{
         private String coinName;
+        private String symbol;
+        private String coinImg;
         private int userIdx;
         private double priceAvg;
         private double amount;
@@ -85,7 +90,10 @@ public class UserCoinDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class GetUserCoinRes{
+        private int portIdx;
         private String coinName;
+        private String symbol;
+        private String coinImg;
         private int userIdx;
         private double priceAvg;
         private double amount;

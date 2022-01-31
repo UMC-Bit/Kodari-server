@@ -1,12 +1,14 @@
 package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
+import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.repository.usercoin.UserCoinRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +22,8 @@ public class UserCoinService {
     private UserCoinRepository userCoinRepository;
 
     //소유 코인 등록
+    //이미 등록되어 있는 코인은 등록할 수 없음.
+    //해당 유저의 계좌인지 확인.
     public UserCoinDto.PostUserCoinRes registerUserCoin(UserCoinDto.PostUserCoinReq postUserCoinReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postUserCoinReq.getAccountIdx();
@@ -29,6 +33,14 @@ public class UserCoinService {
         double amount = postUserCoinReq.getAmount();
         double max = 100000000000L;
 
+        // accountIdx로 불러온 userIdx
+        int accountUser = userCoinRepository.getAccountUserIdx(accountIdx);
+
+        //해당 유저의 계좌인지 확인
+        if(accountUser != postUserCoinReq.getUserIdx()){
+            throw new BaseException(NO_MATCH_USER_ACCOUNT); //2042
+        }
+
         //매수평단가, amount 0, 음수는 안됨, max 초과 안됨.
         if(priceAvg <= 0 || priceAvg > max){
             throw new BaseException(PRICE_AVG_RANGE_ERROR); //4052
@@ -36,6 +48,7 @@ public class UserCoinService {
             throw new BaseException(AMOUNT_RANGE_ERROR); //4053
         }
 
+        //계좌 활성 상태 확인
         if(status.equals("inactive")){
             throw new BaseException(FAILED_TO_PROPERTY_RES); //3040
         }
@@ -77,9 +90,9 @@ public class UserCoinService {
     }
 
     //소유 코인 조회
-    public List<UserCoinDto.GetUserCoinRes> getUserCoin(int userIdx) throws BaseException {
+    public List<UserCoinDto.GetUserCoinRes> getUserCoin(int portIdx) throws BaseException {
         try {
-            List<UserCoinDto.GetUserCoinRes> getUserCoinRes = userCoinRepository.getUserCoinByUserIdx(userIdx);
+            List<UserCoinDto.GetUserCoinRes> getUserCoinRes = userCoinRepository.getUserCoinByPortIdx(portIdx);
             return getUserCoinRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
@@ -113,6 +126,18 @@ public class UserCoinService {
         }
     }
 
+
+    // 소유코인 삭제: 전체삭제
+    @Transactional
+    public void deleteAllUserCoinByUserIdx(int userIdx) throws BaseException{
+
+        // 소유코인 삭제 요청
+        int result = userCoinRepository.deleteAllUserCoinByUserIdx(userIdx);
+        if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+        }
+    }
+
     // Trade - 매수, 매도 계산(매수 평단가), 수수료 0.05%
     public void updatePriceAvg(UserCoinDto.PatchBuySellReq patchBuySellReq) throws BaseException{
         int userCoinIdx = patchBuySellReq.getUserCoinIdx();
@@ -140,7 +165,8 @@ public class UserCoinService {
         //매수일때
         if(category.equals("buy")){
             //매수평단가 새로 계산해서 업데이트
-            sumCoinAmount = existCoinAmount + newCoinAmount;
+            sumCoinAmount = existCoinAmount + newCoinAmount; //새로운 코인 갯수
+            //새로운 매수평단가
             total = (priceAvg * existCoinAmount + price * newCoinAmount) / sumCoinAmount;
         }else if(category.equals("sell")) {
             sumCoinAmount = existCoinAmount - newCoinAmount;
@@ -155,6 +181,7 @@ public class UserCoinService {
                 //throw new BaseException(COIN_AMOUNT_ZERO); //4056
             }
             else{
+                //새로운 매수평단가
                 total = (priceAvg * existCoinAmount - price * newCoinAmount) / sumCoinAmount;
                 if(total < 0){
                     throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
