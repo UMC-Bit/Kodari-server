@@ -97,5 +97,12 @@ public class PostLikeDto {
         private int likeType;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetUserIdx {
+        private int userIdx;
+    }
+
 
 }

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.bit.kodari.config.BaseResponseStatus.INVALID_USER_JWT;
+
 @RestController
 @RequestMapping("/reply")
 public class PostReplyController {
@@ -38,13 +40,12 @@ public class PostReplyController {
     public BaseResponse<PostReplyDto.RegisterReplyRes> createReply(@RequestBody PostReplyDto.RegisterReplyReq registerReplyReq){
         int userIdx = registerReplyReq.getUserIdx();
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-            //같다면 유저네임 변경
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PostReplyDto.RegisterReplyRes registerReplyRes = postReplyService.insertCommentReply(registerReplyReq);
             return new BaseResponse<>(registerReplyRes);
         } catch (BaseException exception) {
@@ -61,13 +62,12 @@ public class PostReplyController {
         int userIdx = postReplyRepository.getUserIdxByPostReplyIdx(postReplyIdx);
         int postCommentIdx = postReplyRepository.getPostCommentIdxByPostReplyIdx(postReplyIdx);
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-            //같다면 유저네임 변경
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PostReplyDto.PatchReplyReq patchReplyReq = new PostReplyDto.PatchReplyReq(postReplyIdx, userIdx, postCommentIdx, post.getContent());
             postReplyService.modifyReply(patchReplyReq);
             String result = "답글이 수정되었습니다.";
@@ -86,14 +86,12 @@ public class PostReplyController {
         int userIdx = postReplyRepository.getUserIdxByPostReplyIdx(postReplyIdx);
         int postCommentIdx = postReplyRepository.getPostCommentIdxByPostReplyIdx(postReplyIdx);
         try {
-            /*
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
-            }*/
-            //같다면 유저네임 변경
+            }
             PostReplyDto.PatchReplyDeleteReq patchReplyDeleteReq = new PostReplyDto.PatchReplyDeleteReq(postReplyIdx, userIdx, postCommentIdx);
             postReplyService.modifyReplyStatus(patchReplyDeleteReq);
             String result = "답글이 삭제되었습니다.";

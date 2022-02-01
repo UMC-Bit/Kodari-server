@@ -58,6 +58,19 @@ public class PostLikeRepository {
         });
     }
 
+    //postLikeIdx로 게시글의 userIdx 가져오기
+    public int getUserIdxByPostLikeIdx(int postLikeIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postLikeIdx", postLikeIdx);
+        return namedParameterJdbcTemplate.query(postLikeSql.GET_USERIDX, parameterSource, rs -> {
+            int userIdx = 0;
+            if (rs.next()) {
+                userIdx = rs.getInt("userIdx");
+            }
+
+            return userIdx;
+        });
+    }
+
 
     //userIdx와 postIdx로 postLikeIdx가져오기
     public int getPostLikeIdxByIdx(int userIdx, int postIdx, int likeType) {

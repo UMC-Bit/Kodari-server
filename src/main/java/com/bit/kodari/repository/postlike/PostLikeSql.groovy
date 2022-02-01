@@ -15,6 +15,13 @@ class PostLikeSql {
         """
 
 
+    //postLikeIdx로 게시글의 userIdx 받아오기
+    public static final String GET_USERIDX = """
+        SELECT userIdx 
+        FROM PostLike
+        WHERE postLikeIdx = :postLikeIdx
+        """
+
     //userIdx와 postIdx로 postLikeIdx 받아오기
     public static final String GET_POST_LIKE_IDX = """
         SELECT postLikeIdx

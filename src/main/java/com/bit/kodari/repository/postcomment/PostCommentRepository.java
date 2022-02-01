@@ -73,20 +73,6 @@ public class PostCommentRepository {
 
     }
 
-//    //postIdx로 댓글 쓴 userIdx 가져오기
-//    public List<PostCommentDto.GetCommentUserRes> getUserIdxByPostIdx(int postIdx) {
-//        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
-//        try {
-//            List<PostCommentDto.GetCommentUserRes> getCommentUserRes = namedParameterJdbcTemplate.query(PostCommentSql.GET_COMMENT_USER_IDX, parameterSource,
-//                    (rs, rowNum) -> new PostCommentDto.GetCommentUserRes(
-//                            rs.getInt("userIdx"))
-//            );
-//            return getCommentUserRes;
-//
-//        } catch (EmptyResultDataAccessException e) {
-//            return null;
-//        }
-//    }
 
 
 
@@ -217,6 +203,20 @@ public class PostCommentRepository {
 //    }
 
 
+//    //postIdx로 댓글 쓴 userIdx 가져오기
+//    public List<PostCommentDto.GetCommentUserRes> getUserIdxByPostIdx(int postIdx) {
+//        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", postIdx);
+//        try {
+//            List<PostCommentDto.GetCommentUserRes> getCommentUserRes = namedParameterJdbcTemplate.query(PostCommentSql.GET_COMMENT_USER_IDX, parameterSource,
+//                    (rs, rowNum) -> new PostCommentDto.GetCommentUserRes(
+//                            rs.getInt("userIdx"))
+//            );
+//            return getCommentUserRes;
+//
+//        } catch (EmptyResultDataAccessException e) {
+//            return null;
+//        }
+//    }
 
 
 

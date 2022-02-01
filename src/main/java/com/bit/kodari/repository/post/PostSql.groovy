@@ -48,28 +48,6 @@ class PostSql {
         SELECT status FROM Post WHERE postIdx = :postIdx
         """
 
-    //postCommentIdx로 status 받아오기
-    public static final String GET_COMMENT_STATUS = """
-        SELECT status FROM PostComment WHERE postCommentIdx = :postCommentIdx
-        """
-
-    //postReplyIdx로 status 받아오기
-    public static final String GET_REPLY_STATUS = """
-        SELECT status FROM PostReply WHERE postReplyIdx = :postReplyIdx
-        """
-
-
-    //postIdx로 userIdx 받아오기
-    public static final String GET_COMMENT_USER_IDX = """
-        SELECT userIdx FROM PostComment WHERE postIdx = :postIdx
-        """
-
-    //postReplyIdx로 userIdx 받아오기
-    public static final String GET_REPLY_USER_IDX = """
-        SELECT r.userIdx FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx
-            join Post as p on c.postIdx = p.postIdx
-        WHERE p.postIdx = :postIdx
-        """
 
 
     //토론장 게시글 수정
@@ -232,6 +210,28 @@ class PostSql {
 //        FROM PostReply as r join User as u on r.userIdx = u.userIdx
 //                    join PostComment as c on r.postCommentIdx = c.postCommentIdx
 //                    join Post as p on c.postIdx = p.postIdx
+//        WHERE p.postIdx = :postIdx
+//        """
+//    //postCommentIdx로 status 받아오기
+//    public static final String GET_COMMENT_STATUS = """
+//        SELECT status FROM PostComment WHERE postCommentIdx = :postCommentIdx
+//        """
+//
+//    //postReplyIdx로 status 받아오기
+//    public static final String GET_REPLY_STATUS = """
+//        SELECT status FROM PostReply WHERE postReplyIdx = :postReplyIdx
+//        """
+//
+//
+//    //postIdx로 userIdx 받아오기
+//    public static final String GET_COMMENT_USER_IDX = """
+//        SELECT userIdx FROM PostComment WHERE postIdx = :postIdx
+//        """
+//
+//    //postReplyIdx로 userIdx 받아오기
+//    public static final String GET_REPLY_USER_IDX = """
+//        SELECT r.userIdx FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx
+//            join Post as p on c.postIdx = p.postIdx
 //        WHERE p.postIdx = :postIdx
 //        """
 

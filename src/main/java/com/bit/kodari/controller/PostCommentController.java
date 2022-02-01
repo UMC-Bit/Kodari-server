@@ -39,13 +39,12 @@ public class PostCommentController {
     public BaseResponse<PostCommentDto.RegisterCommentRes> createPostComment(@RequestBody PostCommentDto.RegisterCommentReq registerCommentReq){
         int userIdx = registerCommentReq.getUserIdx();
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-            //같다면 유저네임 변경
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PostCommentDto.RegisterCommentRes registerCommentRes = postCommentService.insertPostComment(registerCommentReq);
             return new BaseResponse<>(registerCommentRes);
         } catch (BaseException exception) {
@@ -62,13 +61,12 @@ public class PostCommentController {
         int userIdx = postCommentRepository.getUserIdxByPostCommentIdx(postCommentIdx);
         int postIdx = postCommentRepository.getPostIdxByPostCommentIdx(postCommentIdx);
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-            //같다면 유저네임 변경
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PostCommentDto.PatchCommentReq patchCommentReq = new PostCommentDto.PatchCommentReq(postCommentIdx, userIdx, postIdx, post.getContent());
             postCommentService.modifyComment(patchCommentReq);
             String result = "댓글이 수정되었습니다.";
@@ -87,14 +85,12 @@ public class PostCommentController {
         int userIdx = postCommentRepository.getUserIdxByPostCommentIdx(postCommentIdx);
         int postIdx = postCommentRepository.getPostIdxByPostCommentIdx(postCommentIdx);
         try {
-            /*
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
-            }*/
-            //같다면 유저네임 변경
+            }
             PostCommentDto.PatchDeleteReq patchDeleteReq = new PostCommentDto.PatchDeleteReq(postCommentIdx, userIdx, postIdx);
             postCommentService.modifyCommentStatus(patchDeleteReq);
             String result = "댓글이 삭제되었습니다.";
