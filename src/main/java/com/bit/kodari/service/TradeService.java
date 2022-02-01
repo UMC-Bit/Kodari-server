@@ -199,7 +199,7 @@ public class TradeService {
         double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
         String category = getTradeInfoRes.get(0).getCategory(); //매수 or 매도 : “buy”, “sell”
         double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
-        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        //double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
         double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
         double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
 
@@ -219,21 +219,21 @@ public class TradeService {
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
 
             newProperty = property + ((price * amount) + (price * amount * fee)) - ((newPrice * amount) - (newPrice * amount * fee)); // 새로운 현금 자산 계산
-            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+            //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
             priceAvg = (priceAvg * uc_amount - price * amount + newPrice * amount) / uc_amount; //새로운 매수평단가
         }else if(category.equals("sell")){
             // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
             newProperty = property - (price * amount) - (price * amount * fee) + (newPrice * amount) + (newPrice * amount * fee); // 새로운 현금 자산 계산
-            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+            //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
         }
 
         int result = tradeRepository.updatePrice(patchPriceReq);
         if(category.equals("buy")){
-            int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchPriceReq.getTradeIdx());
+            int propertyResult = tradeRepository.modifyProperty(newProperty, patchPriceReq.getTradeIdx());
             int priceAvgResult = tradeRepository.updatePriceAvg(userCoinIdx, priceAvg);
         }else if(category.equals("sell")){
-            int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchPriceReq.getTradeIdx());
+            int propertyResult = tradeRepository.modifyProperty(newProperty, patchPriceReq.getTradeIdx());
         }
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
@@ -253,7 +253,7 @@ public class TradeService {
         double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
         String category = getTradeInfoRes.get(0).getCategory(); //매수 or 매도 : “buy”, “sell”
         double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
-        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        //double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
         double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
         double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
 
@@ -278,7 +278,7 @@ public class TradeService {
             }
             else{
                 newProperty = property + (price * existAmount) + (price * existAmount * fee) - (price * amount) - (price * amount * fee); // 새로운 현금 자산 계산
-                totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+                //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
                 priceAvg = (priceAvg * uc_amount - price * existAmount + price * amount) / sumCoinAmount; //새로운 매수평단가
             }
 
@@ -291,12 +291,12 @@ public class TradeService {
             }
             else{
                 newProperty = property - (price * existAmount) - (price * existAmount * fee) + (price * amount) + (price * amount * fee); // 새로운 현금 자산 계산
-                totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+                //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
             }
         }
 
         int result = tradeRepository.updateAmount(patchAmountReq);
-        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchAmountReq.getTradeIdx());
+        int propertyResult = tradeRepository.modifyProperty(newProperty, patchAmountReq.getTradeIdx());
         int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
@@ -317,7 +317,7 @@ public class TradeService {
         double existFee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
         String category = getTradeInfoRes.get(0).getCategory(); //매수 or 매도 : “buy”, “sell”
         double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
-        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        //double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
 
         double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
 
@@ -334,16 +334,16 @@ public class TradeService {
             // "buy"매수라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 더해준 후 새로운 것 빼주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
             newProperty = property + (price * amount * existFee) - (price * amount * fee); // 새로운 현금 자산 계산
-            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+            //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
         }else if(category.equals("sell")){
             // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
             newProperty = property- (price * amount * existFee)+ (price * amount * fee); // 새로운 현금 자산 계산
-            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+            //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
         }
 
         int result = tradeRepository.updateFee(patchFeeReq);
-        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchFeeReq.getTradeIdx());
+        int propertyResult = tradeRepository.modifyProperty(newProperty, patchFeeReq.getTradeIdx());
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
@@ -362,7 +362,7 @@ public class TradeService {
         double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
         String existCategory = getTradeInfoRes.get(0).getCategory(); // 원래 매수 or 매도 : “buy”, “sell”
         double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
-        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        //double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
         double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
         double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
 
@@ -383,7 +383,7 @@ public class TradeService {
             // 새로운 카테고리가 "buy" 매수라면 현금 자산에서 빼주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
             newProperty = property - 2*(price * amount); // 새로운 현금 자산 계산
-            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+            //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
             // 매도했던 것을 매수로 바꾼것이므로 기존 매수평단가에서 수정.
             sumCoinAmount = uc_amount + 2*amount;
             priceAvg = (priceAvg * uc_amount + 2 * price * amount) / sumCoinAmount; //새로운 매수평단가
@@ -391,7 +391,7 @@ public class TradeService {
             // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
             newProperty = property + 2*(price * amount); // 새로운 현금 자산 계산
-            totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
+            //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
 
             sumCoinAmount = uc_amount - 2*amount;
             if(sumCoinAmount < 0){
@@ -412,7 +412,7 @@ public class TradeService {
         }
 
         int result = tradeRepository.updateCategory(patchCategoryReq);
-        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchCategoryReq.getTradeIdx());
+        int propertyResult = tradeRepository.modifyProperty(newProperty, patchCategoryReq.getTradeIdx());
         int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
@@ -460,7 +460,7 @@ public class TradeService {
         double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
         String category = getTradeInfoRes.get(0).getCategory(); //매수 or 매도 : “buy”, “sell”
         double property = getTradeInfoRes.get(0).getProperty(); //원래 현금 자산
-        double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
+        //double totalProperty = getTradeInfoRes.get(0).getTotalProperty(); // 원래 총자산
         double priceAvg = getTradeInfoRes.get(0).getPriceAvg(); //매수 평단가
         double uc_amount = getTradeInfoRes.get(0).getUc_amount(); //소유 코인 테이블의 코인 갯수
         //  tradeIdx로 accountIdx 불러오고
@@ -480,14 +480,14 @@ public class TradeService {
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
             newProperty = property + (price * amount) + (price * amount * fee); // 새로운 현금 자산 계산
             // TODO 총자산 식 수정해야함.
-            totalProperty = totalProperty - property + newProperty - (price * amount); // 새로운 총 자산
+            //totalProperty = totalProperty - property + newProperty - (price * amount); // 새로운 총 자산
             sumCoinAmount = uc_amount - amount; // 새로운 총 코인 갯수
             priceAvg = (priceAvg * uc_amount - price * amount) / sumCoinAmount; //새로운 매수평단가
         }else if(category.equals("sell")){
             // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
             newProperty = property - ((price * amount) + (price * amount * fee)); // 새로운 현금 자산 계산
-            totalProperty = totalProperty - property + newProperty + (price * amount); // 새로운 총 자산
+            //totalProperty = totalProperty - property + newProperty + (price * amount); // 새로운 총 자산
             //전량매도
             if(uc_amount == 0){
                 sumCoinAmount = amount;
@@ -503,7 +503,7 @@ public class TradeService {
         // 거래내역 삭제 요청
         int result = tradeRepository.deleteTrade(patchStatusReq); //
         if(uc_amount == 0) {int userCoinActive = tradeRepository.updateByUserCoinIdx(userCoinIdx);} //전량 매도였을시 inactive -> active
-        int propertyResult = tradeRepository.modifyProperty(newProperty, totalProperty, patchStatusReq.getTradeIdx()); //계좌 수정
+        int propertyResult = tradeRepository.modifyProperty(newProperty, patchStatusReq.getTradeIdx()); //계좌 수정
         int userCoinResult = tradeRepository.updateUserCoinInfo(userCoinIdx, priceAvg, sumCoinAmount); // 유저코인 수정
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);

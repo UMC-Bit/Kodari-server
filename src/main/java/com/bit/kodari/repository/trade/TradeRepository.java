@@ -245,11 +245,10 @@ public class TradeRepository {
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
-    // 거래내역 수정 : 현금 자산, 총자산 수정
-    public int modifyProperty(double property, double totalProperty, int tradeIdx) {
+    // 거래내역 수정 : 현금 자산 수정
+    public int modifyProperty(double property, int tradeIdx) {
         String qry = TradeSql.UPDATE_PROPERTY;
         SqlParameterSource parameterSource = new MapSqlParameterSource("property", property)
-                .addValue("totalProperty", totalProperty)
                 .addValue("tradeIdx", tradeIdx);
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }

@@ -4,9 +4,11 @@ import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponse;
 import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.AccountDto;
+import com.bit.kodari.dto.ProfitDto;
 import com.bit.kodari.repository.account.AccountRepository;
 import com.bit.kodari.service.AccountService;
 import com.bit.kodari.utils.JwtService;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -245,6 +247,28 @@ public class AccountController {
         }
     }
 
+    // Account 총자산 조회: 현재 코인 시세에 따른 총 자산 조회
+    @ResponseBody
+    @GetMapping("get/curCoinTotalProperty/{accountIdx}")
+    @ApiOperation(value = "현재 총자산 업데이트", notes = "Account 총자산 조회: 현재 코인 시세에 따른 총 자산 조회")
+    public BaseResponse<ProfitDto.GetCurCoinTotalPropertyRes> getCurCoinTotalPropertyByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
+
+//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        try {
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+//            }
+
+            ProfitDto.GetCurCoinTotalPropertyReq getCurCoinTotalPropertyReq = new ProfitDto.GetCurCoinTotalPropertyReq(accountIdx);
+            ProfitDto.GetCurCoinTotalPropertyRes getCurCoinTotalPropertyRes = accountService.getCurCoinTotalPropertyByAccountIdx(getCurCoinTotalPropertyReq);
+            return new BaseResponse<>(getCurCoinTotalPropertyRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 
 }

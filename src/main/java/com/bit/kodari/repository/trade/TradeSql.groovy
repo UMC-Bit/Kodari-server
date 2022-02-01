@@ -154,12 +154,12 @@ class TradeSql {
 			UPDATE UserCoin SET priceAvg = :priceAvg, amount = :amount WHERE userCoinIdx = :userCoinIdx
     """
 
-    // 현금 자산, 총자산 수정
+    // 현금 자산 수정
     public static final String UPDATE_PROPERTY = """
 			UPDATE Account as A
 			INNER JOIN Portfolio as P on P.accountIdx = A.accountIdx
 			INNER JOIN Trade as T on T.portIdx = P.portIdx
-			SET A.property = :property, A.totalProperty = :totalProperty WHERE T.tradeIdx = :tradeIdx
+			SET A.property = :property WHERE T.tradeIdx = :tradeIdx
     """
 
     // userIdx, accountIdx로 coinIdx 가져오기

@@ -4,9 +4,15 @@ import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponse;
 import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.AccountDto;
+import com.bit.kodari.dto.ProfitDto;
 import com.bit.kodari.repository.account.AccountRepository;
+import com.bit.kodari.repository.profit.ProfitRepository;
+import com.bit.kodari.utils.JwtService;
+import com.bit.kodari.utils.UpbitApi;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Response;
 import org.apache.groovy.parser.antlr4.util.StringUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +25,17 @@ import static com.bit.kodari.dto.AccountDto.*;
 @Slf4j
 @Service
 public class AccountService {
-    @Autowired
-    private AccountRepository accountRepository;
+
+    private final AccountRepository accountRepository;
+    private final ProfitRepository profitRepository;
+    private final JwtService jwtService;
+
+    @Autowired //readme 참고
+    public AccountService(AccountRepository accountRepository, ProfitRepository profitRepository, JwtService jwtService) {
+        this.accountRepository = accountRepository;
+        this.profitRepository = profitRepository;
+        this.jwtService = jwtService; // JWT부분
+    }
 
     //계좌 등록
     public PostAccountRes registerAccount(PostAccountReq postAccountReq) throws BaseException {
@@ -66,7 +81,7 @@ public class AccountService {
 
     }
 
-    //총자산 수정
+    //처음 총자산 수정
     //소유 코인 없으면 총자산 수정X
     public void updateTotal(PatchTotalReq account) throws BaseException {
         int accountIdx = account.getAccountIdx();
@@ -168,7 +183,7 @@ public class AccountService {
         double price = accountRepository.getPrice(tradeIdx);
         double amount = accountRepository.getAmount(tradeIdx); //새로 산 코인 갯수
         double fee = accountRepository.getFee(tradeIdx);
-        double totalProperty = accountRepository.getTotalPropertyByAccount(accountIdx); //총자산
+        //double totalProperty = accountRepository.getTotalPropertyByAccount(accountIdx); //총자산
 
         double newProperty = 0;
 
@@ -179,7 +194,7 @@ public class AccountService {
             //현금 자산 새로 계산해서 업데이트
             //총자산 새로 업데이트
             newProperty = property - (price * amount) - (price * amount * fee);
-            totalProperty = totalProperty - property + newProperty + (price * amount);
+            //totalProperty = totalProperty - property + newProperty + (price * amount);
             if(newProperty < 0 || newProperty > max){
                 throw new BaseException(PROPERTY_RANGE_ERROR); //4044
             }
@@ -187,13 +202,13 @@ public class AccountService {
             //매도일때
             //현금 자산 새로 계산해서 업데이트
             newProperty = property + (price * amount) - (price * amount * fee);
-            totalProperty = totalProperty - property + newProperty - (price * amount);
+            //totalProperty = totalProperty - property + newProperty - (price * amount);
         }else{
             throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
         }
 
         try {
-            int result = accountRepository.modifyTradeProperty(newProperty, totalProperty, accountIdx);
+            int result = accountRepository.modifyTradeProperty(newProperty, accountIdx);
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(MODIFY_FAIL_PROPERTY); //4041
             }
@@ -268,6 +283,60 @@ public class AccountService {
             return getPropertyRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // 총자산 업데이트 버튼 누를때마다 수정되도록 업비트 API로 현재시세로 계산
+    // Profit 수익내역 조회: 특정 계좌의 현재 코인 평가 자산 조회
+    @Transactional
+    public ProfitDto.GetCurCoinTotalPropertyRes getCurCoinTotalPropertyByAccountIdx(ProfitDto.GetCurCoinTotalPropertyReq getCurCoinTotalPropertyReq) throws BaseException {
+        // 특정 포트폴리오의 모든 코인 심볼 조회
+        int accountIdx = getCurCoinTotalPropertyReq.getAccountIdx();
+        double property = accountRepository.getPropertyByAccount(accountIdx); //현재 현금 자산
+        // accountIdx 범위 validation
+        if(accountIdx<=0){
+            throw new BaseException(BaseResponseStatus.ACCONTIDX_RANGE_ERROR);
+        }
+
+        List<ProfitDto.GetCoinSymbolRes> getCoinSymbolRes = profitRepository.getSymbolByAccountIdx(accountIdx);
+        // 수익내역 없는 경우 validation
+        if (getCoinSymbolRes.size() == 0) {
+            throw new BaseException(BaseResponseStatus.GET_SYMBOLS_NOT_EXISTS);
+        }
+
+        try {
+            // 모든 코인 리스트 탐색하며 api로 현재 시세 불러와서 현재 코인 평가 자산 계산
+            double sumCurProperty=0;
+            for (int i = 0; i < getCoinSymbolRes.size(); i++) {
+                String coinSymbol = getCoinSymbolRes.get(i).getSymbol(); // 코인 심볼 하나 추출
+                // 코인심볼로 업비트 api에서 현재 시세 조회
+                Response response = UpbitApi.getCurrentPrice(coinSymbol);
+                String resultString = response.body().string(); // json을 문자열로 추출
+                int len = resultString.length();
+                resultString = resultString.substring(1, len - 1); // json앞 뒤 [] 문자 빼기
+
+                JSONObject rjson = new JSONObject(resultString); // json객체로 변환
+                double trade_price = rjson.getDouble("trade_price"); // 코인 현재 시세 평단가
+
+                // 캌 코인의 현재 평가 자산 = 현재시세 * 코인 갯수
+                double amount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
+                double curProperty = trade_price*amount;
+                // 현재 총 자산에 더하기
+                sumCurProperty += curProperty;
+            }
+            // 각 코인 값이 다 더해진 것에 현금자산을 더하면 총자산.
+            sumCurProperty += property;
+
+            // 총자산 수정
+            int result = accountRepository.updateTotalProperty(getCurCoinTotalPropertyReq.getAccountIdx(), sumCurProperty);
+            if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+                throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+            }
+            // 현재 총 코인자산 포함한 Res 생성 및 반환
+            ProfitDto.GetCurCoinTotalPropertyRes getCurCoinTotalPropertyRes = new ProfitDto.GetCurCoinTotalPropertyRes(getCurCoinTotalPropertyReq.getAccountIdx(), sumCurProperty);
+            return getCurCoinTotalPropertyRes;
+        } catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }
     }
 

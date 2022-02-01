@@ -34,7 +34,12 @@ class AccountSql {
 
     //Trade - 현금 자산 수정
     public static final String UPDATE_TRADE_PROPERTY = """
-			UPDATE Account SET property = :property, totalProperty = :totalProperty WHERE accountIdx = :accountIdx
+			UPDATE Account SET property = :property WHERE accountIdx = :accountIdx
+    """
+
+    // 총 자산 수정 - 업데이트 버튼 누를때마다
+    public static final String UPDATE_TOTAL_PROPERTY_BUTTON = """
+			UPDATE Account SET totalProperty = :totalProperty WHERE accountIdx = :accountIdx
     """
 
     //현금 자산 조회
