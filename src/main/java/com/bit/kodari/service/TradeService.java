@@ -157,6 +157,12 @@ public class TradeService {
                 userCoinService.updatePriceAvg(patchBuySellReq);
             }
 
+
+            // 수익내역 생성 요청
+            ProfitDto.PostProfitReq postProfitReq = new ProfitDto.PostProfitReq();
+            postProfitReq.setAccountIdx(accountIdx);// 수익내역 요청 dto 의 accountIdx 저장
+            profitService.createProfit(postProfitReq);
+
             return postTradeRes;// 거래내역 반환
 
 //  *********** 해당 부분은 7주차 수업 후 주석해제하서 대체해서 사용해주세요! ***********
@@ -519,7 +525,7 @@ public class TradeService {
         ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
         List<ProfitDto.GetProfitRes> getProfitRes = profitService.getProfitByAccountIdx(getProfitReq);
         int len = getProfitRes.size();
-        int profitIdx = getProfitRes.get(len).getProfitIdx();
+        int profitIdx = getProfitRes.get(len-1).getProfitIdx(); // 가장 최근 수익내역 인덱스 조회
         // Profit 내역 삭제요청
         ProfitDto.PatchStatusReq patchProfitStatusReq = new ProfitDto.PatchStatusReq(profitIdx);
         profitService.deleteProfit(patchProfitStatusReq);
