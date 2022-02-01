@@ -44,13 +44,13 @@ public class PostController {
     public BaseResponse<PostDto.RegisterRes> createPost(@RequestBody PostDto.RegisterReq registerReq){
         int userIdx = registerReq.getUserIdx();
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-//            //같다면 유저네임 변경
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //같다면 유저네임 변경
             PostDto.RegisterRes registerRes = postService.insertPost(registerReq);
             return new BaseResponse<>(registerRes);
         } catch (BaseException exception) {
@@ -66,12 +66,12 @@ public class PostController {
     public BaseResponse<String> UpdatePost(@PathVariable("postIdx") int postIdx, @RequestBody PostDto.PatchPostReq post){
         int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PostDto.PatchPostReq patchPostReq = new PostDto.PatchPostReq(postIdx, post.getCoinIdx(), post.getContent());
             postService.modifyPost(patchPostReq);
             String result = "토론장 게시글이 수정되었습니다.";
@@ -88,12 +88,12 @@ public class PostController {
     public BaseResponse<String> modifyPostStatus(@PathVariable("postIdx") int postIdx) {
         int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             //같다면 유저네임 변경
             PostDto.PatchDeleteReq patchDeleteReq = new PostDto.PatchDeleteReq(postIdx);
             postService.modifyPostStatus(patchDeleteReq);
@@ -149,12 +149,7 @@ public class PostController {
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
-            // jwt validation check
-            //userIdx와 접근한 유저가 같은지 확인
 
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
             List<PostDto.GetCommentRes> commentRes = postRepository.getCommentByPostIdx(postIdx);
 
             PostDto.GetUserPostRes getUserPostRes = postService.getPostsByPostIdx(postIdx);

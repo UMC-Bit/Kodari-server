@@ -65,16 +65,4 @@ public class CommentLikeService {
     }
 
 
-    // 중복된 유저가 댓글 좋아요 누를 시 삭제로 리다이렉트 하는 메서드
-    public void checkUserLike(String exist_user, int commentLikeIdx, HttpServletResponse response) throws BaseException {
-        try {
-            if(exist_user.equals("true"))
-            {
-                response.sendRedirect("/comment/likes/delete");
-            }
-            //response.
-        }catch(IOException e){
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
 }

@@ -29,19 +29,6 @@ class PostCommentSql {
         WHERE c.postIdx = :postIdx
         """
 
-    //postIdx로 userIdx 받아오기
-    public static final String GET_COMMENT_USER_IDX = """
-        SELECT userIdx
-        FROM PostComment
-        WHERE postIdx = :postIdx
-        """
-
-    //userIdx로 postCommentIdx 받아오기
-    public static final String GET_POST_COMMENT_IDX = """
-        SELECT postCommentIdx
-        FROM PostComment
-        WHERE userIdx = :userIdx
-        """
 
     //postCommentIdx로 commentLikeIdx 받아오기
     public static final String GET_COMMENT_LIKE_IDX = """
@@ -123,6 +110,21 @@ class PostCommentSql {
 //            join Post as p on c.postIdx = p.postIdx
 //         WHERE c.postIdx = :postIdx and p.status = 'active' and c.status = 'active'
 //         """
+
+//    //postIdx로 userIdx 받아오기
+//    public static final String GET_COMMENT_USER_IDX = """
+//        SELECT userIdx
+//        FROM PostComment
+//        WHERE postIdx = :postIdx
+//        """
+//
+//    //userIdx로 postCommentIdx 받아오기
+//    public static final String GET_POST_COMMENT_IDX = """
+//        SELECT postCommentIdx
+//        FROM PostComment
+//        WHERE userIdx = :userIdx
+//        """
+
 
 
 }

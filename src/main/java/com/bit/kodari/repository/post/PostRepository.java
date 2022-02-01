@@ -109,38 +109,6 @@ public class PostRepository {
     }
 
 
-    //postCommentIdx로 status 가져오기
-    public List<PostDto.GetStatusRes> getStatusByPostCommentIdx(int postCommentIdx){
-        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
-        try {
-            List<PostDto.GetStatusRes> getStatusRes =  namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_STATUS, parameterSource,
-                    (rs, rowNum) -> new PostDto.GetStatusRes(
-                            rs.getString("status"))
-            );
-            return getStatusRes;
-
-        }catch(EmptyResultDataAccessException e){
-            return null;
-        }
-    }
-
-
-    //postReplyIdx로 status 가져오기
-    public List<PostDto.GetStatusRes> getStatusByPostReplyIdx(int postReplyIdx){
-        SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
-        try {
-            List<PostDto.GetStatusRes> getStatusRes =  namedParameterJdbcTemplate.query(PostSql.GET_REPLY_STATUS, parameterSource,
-                    (rs, rowNum) -> new PostDto.GetStatusRes(
-                            rs.getString("status"))
-            );
-            return getStatusRes;
-
-        }catch(EmptyResultDataAccessException e){
-            return null;
-        }
-    }
-
-
 
     //postIdx로 Status 가져오기
     public String getStatusByPostIdx(int postIdx) {
@@ -416,5 +384,38 @@ public class PostRepository {
 //            return null;
 //        }
 //    }
+
+//    //postCommentIdx로 status 가져오기
+//    public List<PostDto.GetStatusRes> getStatusByPostCommentIdx(int postCommentIdx){
+//        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
+//        try {
+//            List<PostDto.GetStatusRes> getStatusRes =  namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_STATUS, parameterSource,
+//                    (rs, rowNum) -> new PostDto.GetStatusRes(
+//                            rs.getString("status"))
+//            );
+//            return getStatusRes;
+//
+//        }catch(EmptyResultDataAccessException e){
+//            return null;
+//        }
+//    }
+//
+//
+//    //postReplyIdx로 status 가져오기
+//    public List<PostDto.GetStatusRes> getStatusByPostReplyIdx(int postReplyIdx){
+//        SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
+//        try {
+//            List<PostDto.GetStatusRes> getStatusRes =  namedParameterJdbcTemplate.query(PostSql.GET_REPLY_STATUS, parameterSource,
+//                    (rs, rowNum) -> new PostDto.GetStatusRes(
+//                            rs.getString("status"))
+//            );
+//            return getStatusRes;
+//
+//        }catch(EmptyResultDataAccessException e){
+//            return null;
+//        }
+//    }
+
+
 
 }

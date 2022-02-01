@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.bit.kodari.config.BaseResponseStatus.INVALID_USER_JWT;
+
 @Slf4j
 @RestController
 @RequestMapping("/likes")
@@ -41,13 +43,13 @@ public class PostLikeController {
         int likeType = registerLikeReq.getLikeType();
         String exist_user = postLikeRepository.getUser(userIdx, postIdx);
         int equal_likeType = postLikeRepository.getLikeType(userIdx, postIdx);
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
+            //jwt에서 idx 추출.
+//        int userIdxByJwt = jwtService.getUserIdx();
 //            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-        if (exist_user.equals("true")) {
+//        if(userIdx != userIdxByJwt){
+//            return new BaseResponse<>(INVALID_USER_JWT);
+//        }
+        if(exist_user.equals("true")) {
             if(equal_likeType == likeType) {
                 int postLikeIdx = postLikeRepository.getPostLikeIdxByIdx(userIdx, postIdx, equal_likeType);
                 PostLikeDto.PostLikeReq deleteLikeReq = new PostLikeDto.PostLikeReq(userIdx, postLikeIdx);
@@ -78,12 +80,12 @@ public class PostLikeController {
         int likeType = registerLikeReq.getLikeType();
         int postLikeIdx = postLikeRepository.getPostLikeIdxByIdx(userIdx, postIdx, likeType);
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             //같다면 유저네임 변경
             PostLikeDto.PostLikeRes registerLikeRes = postLikeService.chooseLike(registerLikeReq);
             return new BaseResponse<>(registerLikeRes, BaseResponseStatus.SUCCESS_POST_LIKE_REGISTER);
@@ -98,14 +100,14 @@ public class PostLikeController {
     @DeleteMapping("/delete")
     @ApiOperation(value = "좋아요/싫어요 삭제", notes = "토론장 게시글의 좋아요/싫어요 삭제함.")
     public BaseResponse<PostLikeDto.PostLikeRes> deletePostLike(@RequestBody PostLikeDto.PostLikeReq deleteLikeReq){
+        int userIdx = postLikeRepository.getUserIdxByPostLikeIdx(deleteLikeReq.getPostLikeIdx());
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
-            //같다면 유저네임 변경
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PostLikeDto.PostLikeRes deleteLikeRes = postLikeService.deleteLike(deleteLikeReq);
             return new BaseResponse<>(deleteLikeRes, BaseResponseStatus.SUCCESS_POST_LIKE_DELETE);
         } catch (BaseException exception) {

@@ -42,12 +42,7 @@ public class CommentLikeController {
         int userIdx = registerCommentLikeReq.getUserIdx();
         int postCommentIdx = registerCommentLikeReq.getPostCommentIdx();
         String exist_user = commentLikeRepository.getUser(userIdx, postCommentIdx);
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(INVALID_USER_JWT);
-//            }
+
             //유저가 존재하면 좋아요 취소
             if(exist_user.equals("true")) {
                 int commentLikeIdx = commentLikeRepository.getCommentLikeIdxByIdx(userIdx, postCommentIdx);
@@ -70,6 +65,12 @@ public class CommentLikeController {
         int postCommentIdx = registerCommentLikeReq.getPostCommentIdx();
         int commentLikeIdx = commentLikeRepository.getCommentLikeIdxByIdx(userIdx, postCommentIdx);
         try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             CommentLikeDto.CommentLikeRes registerCommentLikeRes = commentLikeService.chooseCommentLike(registerCommentLikeReq);
             return new BaseResponse<>(registerCommentLikeRes, BaseResponseStatus.SUCCESS_COMMENT_LIKE_REGISTER);
         } catch (BaseException exception) {
@@ -83,7 +84,14 @@ public class CommentLikeController {
     @PostMapping(value="/delete")
     @ApiOperation(value = "좋아요 취소 선택", notes = "토론장 댓글 좋아요를 선택함.")
     public BaseResponse<CommentLikeDto.CommentLikeRes> deleteCommentLike(@RequestBody CommentLikeDto.CommentLikeReq deleteLikeReq){
+        int userIdx = deleteLikeReq.getUserIdx();
         try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             CommentLikeDto.CommentLikeRes deleteLikeRes = commentLikeService.deleteLike(deleteLikeReq);
             return new BaseResponse<>(deleteLikeRes, BaseResponseStatus.SUCCESS_COMMENT_LIKE_DELETE);
         } catch (BaseException exception) {
