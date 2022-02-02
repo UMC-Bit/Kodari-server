@@ -294,6 +294,35 @@ public class UserService {
     }
 
 
+    // 회원 비밀번호 정보 맞는지 확인 api
+    @Transactional
+    public void getCheckPassword(UserDto.GetCheckPasswordReq getCheckPasswordReq) throws BaseException{
+        String userIdx = Integer.toString(getCheckPasswordReq.getUserIdx());
+
+        // 현재 유저 인덱스로 유저 불러오기
+        // 현재 유저 인덱스의 패스워드 복호화
+        // 입력된 패스워드와 비교
+        List<UserDto.GetUserRes> getUserRes;
+        getUserRes = this.getUserByUserIdx(userIdx);
+
+        // 복호화 validation: 복호롸 하는도중 에러
+        String password;
+        // 리파지토리의 암호화된 password 복호화  안되면 에러
+        try {
+            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(getUserRes.get(0).getPassword()); // 복호화
+            // 회원가입할 때 비밀번호가 암호화되어 저장되었기 떄문에 복호화된 값끼리 비교를 해야합니다.
+        } catch (Exception ignored) {
+            throw new BaseException(BaseResponseStatus.PASSWORD_DECRYPTION_ERROR);
+        }
+
+        // 입력된 패스워드 틀림 validation  : password 비교
+        if (!getCheckPasswordReq.getPassword().equals(password)) { //비말번호가 일치한다면 userIdx를 가져온다.
+            throw new BaseException(BaseResponseStatus.FAILED_TO_CHECKPASSWORD);
+        }
+
+    }
+
+
 
 
 

@@ -7,6 +7,7 @@ import com.bit.kodari.dto.UserDto;
 import com.bit.kodari.service.UserService;
 import com.bit.kodari.utils.JwtService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,9 +83,9 @@ public class UserController {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
         }
         // 비밀번호 특수문자 확인 예외
-        if(!isRegexPasswordSpecial(postUserReq.getPassword())){
-            return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
-        }
+//        if(!isRegexPasswordSpecial(postUserReq.getPassword())){
+//            return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
+//        }
 
 
 
@@ -300,9 +301,9 @@ public class UserController {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
             }
             // 비밀번호 특수문자 확인 예외
-            if(!isRegexPasswordSpecial(password)){
-                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
-            }
+//            if(!isRegexPasswordSpecial(password)){
+//                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
+//            }
 
             //같다면 유저 패스워드 변경
             updatePasswordReq.setUserIdx(userIdx);
@@ -349,6 +350,41 @@ public class UserController {
             return new BaseResponse<>(result);
 
         } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+    // 유저 패스워드 변경 시, 현재 비밀번호 일치 확인
+    @ResponseBody
+    @GetMapping("/get/checkPassword/{userIdx}")
+    @ApiOperation(value = "유저 현재 비밀번호", notes = "유저 비밀번호 변경 시 현재 패스워드 확인")
+    public BaseResponse<String> getCheckPassword(@PathVariable("userIdx") int userIdx, @RequestBody UserDto.GetCheckPasswordReq getCheckPasswordReq){
+        try{
+            // jwt 부분
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
+
+            // 비밀번호 Validation
+            String password = getCheckPasswordReq.getPassword();
+            String passwordVal = password.replaceAll(" ","");
+            // 회원가입 validation :  password null값 예외
+            if (passwordVal == null || passwordVal.length()==0) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_PASSWORD);
+            }
+            //**************************************************************************
+            //같다면 유저 현재 비밀번호 맞는지 확인
+            getCheckPasswordReq.setUserIdx(userIdx);
+            userService.getCheckPassword(getCheckPasswordReq);
+
+            String result = "현재 비밀번호가 맞습니다.";
+            return new BaseResponse<>(result);
+
+        }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }

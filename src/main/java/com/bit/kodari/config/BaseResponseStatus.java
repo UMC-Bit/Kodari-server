@@ -38,7 +38,7 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PASSWORD(false, 2019, "비밀번호를 입력해주세요."),
     POST_USERS_EXISTS_NICKNAME(false,2020,"중복된 닉네임입니다."),
     POST_USERS_LENGTH_NICKNAME(false,2029,"닉네임 길이는 최소 1자 최대 15자입니다."),
-    POST_USERS_INVALID_PASSWORD(false,2030,"비밀번호는 영문과 특수문자 숫자를 포함하며 8자 이상이고 특수문자는 !@#$%^*+=-만 사용 가능합니다."),
+    POST_USERS_INVALID_PASSWORD(false,2030,"특수 문자를 포함하여 8자 이상 입력해주세요."),
     POST_USERS_INVALID_NICKNAME(false,2031,"닉네임은 영어,한글,숫자만 입력해주세요."),
 
     // [Patch] /trades
@@ -59,6 +59,7 @@ public enum BaseResponseStatus {
     NO_MATCH_USER_ACCOUNT(false, 2042, "유저의 계좌가 아닙니다."),
 
 
+
     /**
      * 3000 : Response 오류
      */
@@ -70,11 +71,12 @@ public enum BaseResponseStatus {
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
 
 
+
     // [GET] /users
     GET_USERS_NOT_EXISTS(false,3015,"등록된 유저가 없습니다."),
     GET_USERS_NOT_EXISTS_NICKNAME(false,3016,"없는 닉네임 입니다."),
     GET_USERS_NOT_EXISTS_EMAIL(false,3017,"없는 이메일 입니다."),
-    GET_USERS_NOT_EXISTS_USERIDX(false,3021,"없는 유저인덱스 입니다."),
+    GET_USERS_NOT_EXISTS_USERIDX(false,3024,"없는 유저인덱스 입니다."),
 
     GET_TRADES_NOT_EXISTS(false,3018,"없는 포트폴리오 및 코인 입니다."),
 
@@ -86,10 +88,13 @@ public enum BaseResponseStatus {
 
     ALREADY_DELETED_TRADE(false,3023,"이미 삭제된 거래내역입니다."),
 
+    FAILED_TO_CHECKPASSWORD(false, 3025, "비밀번호가 틀렸습니다."),
 
     FAILED_TO_PROPERTY_RES(false,3040,"없는 계좌입니다."),
     OVER_PORT_THREE(false, 3041, "등록할 수 있는 포트폴리오 갯수를 초과하였습니다."),
     OVER_ACCOUNT_THREE(false, 3042, "등록할 수 있는 계좌 갯수를 초과하였습니다."),
+
+
 
 
 

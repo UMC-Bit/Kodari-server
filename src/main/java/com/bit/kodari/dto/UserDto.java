@@ -109,6 +109,16 @@ public class UserDto {
     }
 
 
+    // 유저 현재 패스워드 맞는지 확인 REQUEST DTO
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class GetCheckPasswordReq {
+        private int userIdx;
+        private String password;
+    }
+
+
 
 
 }

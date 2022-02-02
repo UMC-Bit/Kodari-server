@@ -37,7 +37,7 @@ public class ValidationRegex {
 
 
     // 비밀번호 특수문자 확인
-    public static boolean isRegexPasswordSpecial(String pwd) {
+    /*public static boolean isRegexPasswordSpecial(String pwd) {
 
         Pattern passPattern3 = Pattern.compile("\\W");
         Pattern passPattern4 = Pattern.compile("[!@#$%^*+=-]");
@@ -65,7 +65,7 @@ public class ValidationRegex {
             //return passMatcher4.find();
         }
         return ok;
-    }
+    }*/
 
 
 
