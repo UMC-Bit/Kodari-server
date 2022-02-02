@@ -6,6 +6,7 @@ import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.ProfitDto;
 import com.bit.kodari.repository.account.AccountRepository;
+import com.bit.kodari.repository.profit.ProfitRepository;
 import com.bit.kodari.service.AccountService;
 import com.bit.kodari.utils.JwtService;
 import io.swagger.annotations.ApiOperation;
@@ -28,10 +29,13 @@ public class AccountController {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
+    private final ProfitRepository profitRepository;
+    @Autowired
     private final JwtService jwtService;
 
-    public AccountController(AccountService accountService, JwtService jwtService) {
+    public AccountController(AccountService accountService, ProfitRepository profitRepository, JwtService jwtService) {
         this.accountService = accountService;
+        this.profitRepository = profitRepository;
         this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
     }
 
@@ -46,11 +50,11 @@ public class AccountController {
         int userIdx = postAccountReq.getUserIdx();
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             AccountDto.PostAccountRes postAccountRes = accountService.registerAccount(postAccountReq);
             return new BaseResponse<>(postAccountRes);
         } catch (BaseException exception) {
@@ -71,11 +75,11 @@ public class AccountController {
 
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<AccountDto.GetAccountRes> getAccountRes = accountService.getAccountByUserIdx(userIdx);
             return new BaseResponse<>(getAccountRes);
         } catch (BaseException exception) {
@@ -92,11 +96,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-            //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<AccountDto.GetAccountByAccountIdxRes> getAccountByAccountIdxRes = accountService.getAccountByAccountIdx(accountIdx);
             return new BaseResponse<>(getAccountByAccountIdxRes);
         } catch (BaseException exception) {
@@ -114,11 +118,11 @@ public class AccountController {
         try {
             // 해당 accountIdx를 만족하는 계좌의 현금 자산 정보를 불러온다.
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<AccountDto.GetPropertyRes> getPropertyRes = accountService.getProperty(accountIdx);
             return new BaseResponse<>(getPropertyRes);
         } catch (BaseException exception) {
@@ -137,11 +141,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
                 AccountDto.PatchAccountNameReq patchAccountNameReq = new AccountDto.PatchAccountNameReq(account.getAccountName(), accountIdx);
                 accountService.updateAccountName(patchAccountNameReq);
 
@@ -160,11 +164,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-            //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             AccountDto.PatchTotalReq patchTotalReq = new AccountDto.PatchTotalReq(accountIdx);
             accountService.updateTotal(patchTotalReq);
 
@@ -182,11 +186,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             AccountDto.PatchPropertyReq patchPropertyReq = new AccountDto.PatchPropertyReq(accountIdx, account.getProperty());
             accountService.updateProperty(patchPropertyReq);
 
@@ -210,11 +214,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByPort(accountIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             //AccountDto.PatchTradePropertyReq patchTradePropertyReq = new AccountDto.PatchTradePropertyReq(tradeIdx, accountIdx);
             accountService.updateTradeProperty(tradeIdx);
 
@@ -232,11 +236,11 @@ public class AccountController {
         int userIdx = accountRepository.getUserIdxByAccountIdx(accountIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             AccountDto.PatchAccountDelReq patchAccountDelReq = new AccountDto.PatchAccountDelReq(accountIdx);
             accountService.deleteByIdx(patchAccountDelReq);
 
@@ -253,14 +257,14 @@ public class AccountController {
     @ApiOperation(value = "현재 총자산 업데이트", notes = "Account 총자산 조회: 현재 코인 시세에 따른 총 자산 조회")
     public BaseResponse<ProfitDto.GetCurCoinTotalPropertyRes> getCurCoinTotalPropertyByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
 
-//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+           int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             ProfitDto.GetCurCoinTotalPropertyReq getCurCoinTotalPropertyReq = new ProfitDto.GetCurCoinTotalPropertyReq(accountIdx);
             ProfitDto.GetCurCoinTotalPropertyRes getCurCoinTotalPropertyRes = accountService.getCurCoinTotalPropertyByAccountIdx(getCurCoinTotalPropertyReq);

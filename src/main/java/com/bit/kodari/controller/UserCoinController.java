@@ -63,11 +63,11 @@ public class UserCoinController {
         int userIdx = postUserCoinReq.getUserIdx();
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             UserCoinDto.PostUserCoinRes userCoinRes = userCoinService.registerUserCoin(postUserCoinReq);
             return new BaseResponse<>(userCoinRes);
         } catch (BaseException exception) {
@@ -86,12 +86,12 @@ public class UserCoinController {
     public BaseResponse<List<UserCoinDto.GetUserCoinIdxRes>> getUserCoinIdx(@PathVariable("userCoinIdx") int userCoinIdx) {
         int userIdx = userCoinRepository.getUserIdxByUserCoinIdx(userCoinIdx);
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//            return new BaseResponse<>(INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinService.getUserCoinIdx(userCoinIdx);
             return new BaseResponse<>(getUserCoinIdxRes);
         } catch (BaseException exception) {
@@ -108,11 +108,11 @@ public class UserCoinController {
         int userIdx = userCoinRepository.getUserIdxByPortIdx(portIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<UserCoinDto.GetUserCoinRes> getUserCoinRes = userCoinService.getUserCoin(portIdx);
             return new BaseResponse<>(getUserCoinRes);
         } catch (BaseException exception) {
@@ -131,11 +131,11 @@ public class UserCoinController {
         int userIdx = userCoinRepository.getUserIdxByUserCoinIdx(userCoinIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             UserCoinDto.PatchUserCoinReq patchUserCoinReq = new UserCoinDto.PatchUserCoinReq(userCoinIdx, userCoin.getPriceAvg(), userCoin.getAmount());
             userCoinService.updateUserCoin(patchUserCoinReq);
 
@@ -154,11 +154,11 @@ public class UserCoinController {
         int userIdx = userCoinRepository.getUserIdxByUserCoinIdx(userCoinIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
 
             UserCoinDto.PatchUserCoinDelReq patchUserCoinDelReq = new UserCoinDto.PatchUserCoinDelReq(userCoinIdx);
             userCoinService.deleteByUserCoinIdx(patchUserCoinDelReq);
@@ -178,11 +178,11 @@ public class UserCoinController {
 
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
 
             UserCoinDto.PatchDelByUserIdxReq patchDelByUserIdxReq = new UserCoinDto.PatchDelByUserIdxReq(userIdx);
             userCoinService.deleteByUserIdx(patchDelByUserIdxReq);
@@ -205,11 +205,11 @@ public class UserCoinController {
         double priceAvg = userCoinRepository.getPriceAvg(userCoinIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             UserCoinDto.PatchBuySellReq patchBuySellReq = new UserCoinDto.PatchBuySellReq(userCoinIdx, priceAvg, amount);
             userCoinService.updatePriceAvg(patchBuySellReq);
 

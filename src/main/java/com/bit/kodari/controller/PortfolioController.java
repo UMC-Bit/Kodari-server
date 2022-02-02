@@ -44,14 +44,14 @@ public class PortfolioController {
     @ResponseBody
     @PostMapping("/post")
     public BaseResponse registerPortfolio(@RequestBody PortfolioDto.PostPortfolioReq postPortfolioReq) {
-        //int userIdx = postPortfolioReq.getUserIdx();
+        int userIdx = postPortfolioReq.getUserIdx();
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PortfolioDto.PostPortfolioRes postPortfolioRes = portfolioService.registerPortfolio(postPortfolioReq);
             return new BaseResponse<>(postPortfolioRes);
         } catch (BaseException exception) {
@@ -68,15 +68,15 @@ public class PortfolioController {
     @ResponseBody
     @GetMapping("/all/{portIdx}")
     public BaseResponse<PortfolioDto.GetPortfolioRes> getPortfolio(@PathVariable("portIdx") int portIdx) {
-
+        int userIdx = portfolioRepository.getUserIdxByPortIdx(portIdx);
         try {
             // 해당 accountIdx를 만족하는 계좌의 현금 자산 정보를 불러온다.
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PortfolioDto.GetPortfolioRes getPortfolioRes = portfolioService.getPortfolio(portIdx);
             return new BaseResponse<>(getPortfolioRes);
         } catch (BaseException exception) {
@@ -93,11 +93,11 @@ public class PortfolioController {
         try {
             // 해당 accountIdx를 만족하는 계좌의 현금 자산 정보를 불러온다.
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-            //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<PortfolioDto.GetAllPortIdxRes> getAllPortByUserRes = portfolioService.getPortListByUserIdx(userIdx);
             return new BaseResponse<>(getAllPortByUserRes);
         } catch (BaseException exception) {
@@ -113,14 +113,14 @@ public class PortfolioController {
     @ResponseBody
     @PatchMapping("/delPortfolio/{portIdx}")
     public BaseResponse<String> deleteByPortIdx(@PathVariable("portIdx") int portIdx) {
-        //int userIdx = portfolioRepository.getUserIdxByPortIdx(portIdx);
+        int userIdx = portfolioRepository.getUserIdxByPortIdx(portIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-                //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq = new PortfolioDto.PatchPortfolioDelReq(portIdx);
             portfolioService.deleteByPortIdx(patchPortfolioDelReq);
 
