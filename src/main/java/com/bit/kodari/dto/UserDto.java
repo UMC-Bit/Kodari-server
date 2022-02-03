@@ -119,6 +119,32 @@ public class UserDto {
     }
 
 
+    // 유저 이메일 validation REQUEST DTO
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class GetCheckEmailReq {
+        private String email;
+    }
+
+
+    // 유저 패스워드 validation REQUEST DTO
+//    @Data // @Getter @Setter 포함
+//    @AllArgsConstructor // 인자 포함한 생성자 생성
+//    @NoArgsConstructor // 인자 없는 생성자 생성
+//    public static class GetCheckPasswordReq {
+//        private String password;
+//    }
+
+
+    // 유저 닉네임 validation REQUEST DTO
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class GetCheckNickNameReq {
+        private String nickName;
+    }
+
 
 
 }
