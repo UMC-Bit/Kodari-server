@@ -128,7 +128,6 @@ public class PostRepository {
     public int modifyPost(PostDto.PatchPostReq patchPostReq) {
         String qry = PostSql.UPDATE_POST;
         SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx", patchPostReq.getPostIdx())
-                .addValue("coinIdx", patchPostReq.getCoinIdx())
                 .addValue("content", patchPostReq.getContent());
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
