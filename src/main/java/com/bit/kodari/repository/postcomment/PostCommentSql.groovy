@@ -61,6 +61,7 @@ class PostCommentSql {
          FROM PostComment as c join Post as p on c.postIdx = p.postIdx
                       join User as u on u.userIdx = c.userIdx
          WHERE c.userIdx = :userIdx and c.status = 'active'
+         ORDER BY c.postCommentIdx DESC
          """
 
     //토론장 유저별 게시글 조회
