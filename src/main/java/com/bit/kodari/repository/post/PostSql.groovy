@@ -52,7 +52,7 @@ class PostSql {
 
     //토론장 게시글 수정
     public static final String UPDATE_POST = """
-         UPDATE Post SET  coinIdx = :coinIdx, content = :content
+         UPDATE Post SET content = :content
          WHERE postIdx = :postIdx
     """
 

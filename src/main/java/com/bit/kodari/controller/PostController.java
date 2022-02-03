@@ -72,7 +72,7 @@ public class PostController {
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            PostDto.PatchPostReq patchPostReq = new PostDto.PatchPostReq(postIdx, post.getCoinIdx(), post.getContent());
+            PostDto.PatchPostReq patchPostReq = new PostDto.PatchPostReq(postIdx, post.getContent());
             postService.modifyPost(patchPostReq);
             String result = "토론장 게시글이 수정되었습니다.";
             return new BaseResponse<>(result);

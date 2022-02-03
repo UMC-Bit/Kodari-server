@@ -43,7 +43,6 @@ public class PostDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
     public static class PatchPostReq{
         private int postIdx;
-        private int coinIdx;
         private String content;
     }
 
