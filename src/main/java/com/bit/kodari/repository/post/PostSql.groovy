@@ -99,6 +99,7 @@ class PostSql {
         Left join PostLike as l on l.postIdx = p.postIdx
         WHERE p.status = 'active'
         group by c.symbol, u.nickName, u.profileImgUrl, p.content
+        ORDER BY p.postIdx DESC
          """
 
     //토론장 유저 게시글 조회
@@ -114,6 +115,7 @@ class PostSql {
             Left join PostLike as l on l.postIdx = p.postIdx
          WHERE p.userIdx = :userIdx and p.status = 'active'
          group by c.symbol, u.nickName, u.profileImgUrl, p.content
+         ORDER BY p.postIdx DESC
          """
 
     //토론장 코인 게시글 조회
@@ -129,6 +131,7 @@ class PostSql {
             Left join PostLike as l on l.postIdx = p.postIdx
          WHERE c.coinName = :coinName and p.status = 'active'
          group by c.symbol, u.nickName, u.profileImgUrl, p.content, c.coinName
+         ORDER BY p.postIdx DESC
          """
 
     //postIdx로 댓글 수 조회
