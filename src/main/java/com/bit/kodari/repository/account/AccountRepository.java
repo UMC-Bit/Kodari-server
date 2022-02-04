@@ -121,10 +121,9 @@ public class AccountRepository {
     }
 
     // Trade - 현금 자산 수정
-    public int modifyTradeProperty(double property, double totalProperty, int accountIdx) {
+    public int modifyTradeProperty(double property, int accountIdx) {
         String qry = AccountSql.UPDATE_TRADE_PROPERTY;
         SqlParameterSource parameterSource = new MapSqlParameterSource("property", property)
-                .addValue("totalProperty", totalProperty)
                 .addValue("accountIdx", accountIdx);
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
@@ -139,6 +138,14 @@ public class AccountRepository {
     public int deleteTwo(AccountDto.PatchAccountDelReq patchAccountDelReq) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", patchAccountDelReq.getAccountIdx());
         return namedParameterJdbcTemplate.update(AccountSql.DELETE_TWO, parameterSource);
+    }
+
+    // 총 자산 수정 - 업데이트 버튼 누를때마다
+    public int updateTotalProperty(int accountIdx, double totalProperty) {
+        String qry = AccountSql.UPDATE_TOTAL_PROPERTY_BUTTON;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx)
+                .addValue("totalProperty", totalProperty);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
 
 
