@@ -210,8 +210,8 @@ public class AccountController {
     @PatchMapping("/modify/property/{tradeIdx}")
     public BaseResponse<String> modifyTradeProperty(@PathVariable("tradeIdx") int tradeIdx) {
         int portIdx = accountRepository.getPortIdx(tradeIdx);
-        int accountIdx = accountRepository.getAccountIdx(portIdx);
-        int userIdx = accountRepository.getUserIdxByPort(accountIdx);
+        //int accountIdx = accountRepository.getAccountIdx(portIdx);
+        int userIdx = accountRepository.getUserIdxByPort(portIdx);
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
