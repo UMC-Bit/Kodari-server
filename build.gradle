@@ -37,6 +37,9 @@ dependencies {
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'// 업비트 api관련 OkHttpClient 클래스 관련 추가
     implementation group: 'org.json', name: 'json', version: '20160810' // JSONOBJECT, JSONArray 클래스 추가
+
+    // 이메일 인증
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 test {
