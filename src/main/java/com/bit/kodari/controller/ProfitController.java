@@ -45,14 +45,14 @@ public class ProfitController {
     @ApiOperation(value = "수익 생성할 포트폴리오,계좌", notes = "수익을 새로 등록함.")
     public BaseResponse<ProfitDto.PostProfitRes> createProfit(@RequestBody ProfitDto.PostProfitReq postProfitReq) throws IOException{
 
-//        int userIdx = profitRepository.getUserIdxByAccountIdx(postProfitReq.getAccountIdx()); // 계좌 인덱스로 유저인덱스 조회
+        int userIdx = profitRepository.getUserIdxByAccountIdx(postProfitReq.getAccountIdx()); // 계좌 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             // 수익 생성 요청
             ProfitDto.PostProfitRes postProfitRes = profitService.createProfit(postProfitReq);
@@ -72,14 +72,14 @@ public class ProfitController {
     @ApiOperation(value = "특정 포트폴리오 수익내역", notes = "Profit 수익내역 조회: 특정 포트폴리오의  특정 포트폴리오 전체 수익내역 조회")
     public BaseResponse<ProfitDto.GetCurCoinTotalPropertyRes> getCurCoinTotalPropertyByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
 
-//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             ProfitDto.GetCurCoinTotalPropertyReq getCurCoinTotalPropertyReq = new ProfitDto.GetCurCoinTotalPropertyReq(accountIdx);
             ProfitDto.GetCurCoinTotalPropertyRes getCurCoinTotalPropertyRes = profitService.getCurCoinTotalPropertyByAccountIdx(getCurCoinTotalPropertyReq);
@@ -99,14 +99,14 @@ public class ProfitController {
     @ApiOperation(value = "특정 계좌의 수익(손익금,수익률)내역", notes = "Profit 수익내역 조회: 특정 계좌의 수익(손익금,수익률)내역 조회")
     public BaseResponse<List<ProfitDto.GetProfitRes>> getProfitByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
 
-//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
             List<ProfitDto.GetProfitRes> getProfitRes = profitService.getProfitByAccountIdx(getProfitReq);
@@ -125,14 +125,14 @@ public class ProfitController {
     @ApiOperation(value = "특정 계좌의 일별 수익(손익금,수익률)내역", notes = "Profit 일별 수익내역 조회: 특정 계좌의 수익(손익금,수익률)내역 조회")
     public BaseResponse<List<ProfitDto.GetProfitRes>> getDailyProfitByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
 
-//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
             List<ProfitDto.GetProfitRes> getProfitRes = profitService.getDailyProfitByAccountIdx(getProfitReq);
@@ -152,14 +152,14 @@ public class ProfitController {
     @ApiOperation(value = "특정 계좌의 주 별 수익(손익금,수익률)내역", notes = "Profit 주별 수익내역 조회: 특정 계좌의 수익(손익금,수익률)내역 조회")
     public BaseResponse<List<ProfitDto.GetProfitRes>> getWeeklyProfitByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
 
-//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
             List<ProfitDto.GetProfitRes> getProfitRes = profitService.getWeeklyProfitByAccountIdx(getProfitReq);
@@ -179,14 +179,14 @@ public class ProfitController {
     @ApiOperation(value = "특정 계좌의 월 별 수익(손익금,수익률)내역", notes = "Profit 월 별 수익내역 조회: 특정 계좌의 수익(손익금,수익률)내역 조회")
     public BaseResponse<List<ProfitDto.GetProfitRes>> getMonthlyProfitByAccountIdx(@PathVariable("accountIdx") int accountIdx) {
 
-//        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
+        int userIdx = profitRepository.getUserIdxByAccountIdx(accountIdx); // 계좌 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
             List<ProfitDto.GetProfitRes> getProfitRes = profitService.getMonthlyProfitByAccountIdx(getProfitReq);
@@ -207,14 +207,14 @@ public class ProfitController {
     @ApiOperation(value = "수익내역", notes = "수익내역 삭제,status를 inactive로 수정")
     public BaseResponse<String> deleteProfit(@PathVariable("profitIdx") int profitIdx) {
 
-//        int userIdx = profitRepository.getUserIdxByProfitIdx(profitIdx); // 계좌 인덱스로 유저인덱스 조회
+        int userIdx = profitRepository.getUserIdxByProfitIdx(profitIdx); // 계좌 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             //**************************************************************************
             //같다면 수익내역 삭제
