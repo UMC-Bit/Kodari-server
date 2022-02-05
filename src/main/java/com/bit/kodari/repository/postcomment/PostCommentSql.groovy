@@ -37,15 +37,15 @@ class PostCommentSql {
         WHERE c.postCommentIdx = :postCommentIdx
         """
 
-    //토론장 게시글 수정
+    //토론장 게시글 댓글 수정
     public static final String UPDATE_COMMENT = """
          UPDATE PostComment SET content = :content
          WHERE postCommentIdx = :postCommentIdx
     """
 
-    //토론장 게시글 삭제
+    //토론장 게시글 댓글 삭제
     public static final String DELETE_COMMENT = """
-         UPDATE PostComment SET status = 'inactive' WHERE postCommentIdx = :postCommentIdx
+         UPDATE PostComment SET status = 'inactive', content = '삭제된 댓글입니다.' WHERE postCommentIdx = :postCommentIdx
     """
 
     //삭제된 댓글과 관련된 댓글 좋아요 삭제

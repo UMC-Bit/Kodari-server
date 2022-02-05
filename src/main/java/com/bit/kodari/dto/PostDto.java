@@ -155,6 +155,7 @@ public class PostDto {
         private int like;
         private boolean checkCommentWriter; // 댓글 유저 확인
         private String comment_status; // 댓글 삭제 여부 확인
+        private boolean checkCommentLike; //댓글 좋아요 유저 확인
         private List<GetReplyRes> replyList; //답글 리스트
     }
 

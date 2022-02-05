@@ -149,17 +149,19 @@ public class PostController {
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
-
             List<PostDto.GetCommentRes> commentRes = postRepository.getCommentByPostIdx(postIdx);
-
             PostDto.GetUserPostRes getUserPostRes = postService.getPostsByPostIdx(postIdx);
 
             if(userIdx == userIdxByJwt){
                 getUserPostRes.setCheckWriter(true); //접근한 유저가 게시글 글쓴 유저인지 확인
             }
             for(int i = 0; i < commentRes.size(); i++){
+                boolean checkLike = postRepository.getCommentLike(userIdxByJwt, commentRes.get(i).getPostCommentIdx());
                 if(commentRes.get(i).getUserIdx() == userIdxByJwt){
                     commentRes.get(i).setCheckCommentWriter(true);
+                }
+                if(checkLike) {
+                    commentRes.get(i).setCheckCommentLike(true);
                 }
                 List<PostDto.GetReplyRes> replyRes = postRepository.getReplyByCommentIdx(commentRes.get(i).getPostCommentIdx());
                 for(int j = 0; j < replyRes.size(); j++){

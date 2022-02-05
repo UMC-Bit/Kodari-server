@@ -281,7 +281,7 @@ public class PostRepository {
                         rs.getString("content"),
                         rs.getString("time"),
                         rs.getInt("like"), false, getCommentStatus(rs.getInt("userIdx"), postIdx),
-                        getReplyByCommentIdx(rs.getInt("postCommentIdx"))
+                        false, getReplyByCommentIdx(rs.getInt("postCommentIdx"))
                 ));
         // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받
             return getCommentRes;
@@ -301,6 +301,20 @@ public class PostRepository {
             }
 
             return comment_status;
+        });
+    }
+
+    //userIdx, postCommentIdx로 댓글 좋아요 유저 확인
+    public boolean getCommentLike(int userIdx, int postCommentIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx",userIdx)
+                .addValue("postCommentIdx", postCommentIdx);
+        return namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_LIKE, parameterSource, rs -> {
+            boolean commentLike = false;
+            if (rs.next()) {
+                commentLike = rs.getBoolean("commentLike");
+            }
+
+            return commentLike;
         });
     }
 
