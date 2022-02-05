@@ -106,4 +106,16 @@ public class RepresentRepository {
             return status;
         });
     }
+
+    // 대표 코인 조회 - userIdx
+    public List<RepresentDto.GetRepresentIdxRes> getRepresentIdxRes(int portIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        List<RepresentDto.GetRepresentIdxRes> getRepresentIdxRes = namedParameterJdbcTemplate.query(RepresentSql.FIND_ALL_REPRESENT_BY_PORT, parameterSource,
+                (rs, rowNum) -> new RepresentDto.GetRepresentIdxRes(
+                        rs.getInt("representIdx"),
+                        rs.getInt("portIdx"),
+                        rs.getInt("coinIdx")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        );
+        return getRepresentIdxRes;
+    }
 }

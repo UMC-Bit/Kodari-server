@@ -39,4 +39,9 @@ class RepresentSql {
         SELECT status from Portfolio where portIdx = :portIdx
     """;
 
+    public static final String FIND_ALL_REPRESENT_BY_PORT = """
+			SELECT r.representIdx, r.portIdx, r.coinIdx FROM Represent r 
+			JOIN Coin c on c.coinIdx = r.coinIdx WHERE portIdx = :portIdx AND r.status = 'active'
+	"""
+
 }
