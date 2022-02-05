@@ -35,6 +35,7 @@ public class PostLikeRepository {
     }
 
 
+
     //게시글 좋아요/싫어요 삭제
     public PostLikeDto.PostLikeRes deleteLike(PostLikeDto.PostLikeReq deleteLikeReq) {
         String qry = PostLikeSql.DELETE_POST_LIKE;

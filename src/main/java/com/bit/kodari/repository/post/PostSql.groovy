@@ -178,6 +178,14 @@ class PostSql {
     WHERE c.userIdx = :userIdx and p.postIdx = :postIdx
     """
 
+    //댓글 좋아요 유저 존재 여부 가져오기
+    public static final String GET_COMMENT_LIKE = """
+    SELECT case when COUNT(ifnull(commentLikeIdx,0)) = 1 then true when COUNT(ifnull(commentLikeIdx,0)) = 0 then false end as 'commentLike'
+    FROM CommentLike
+    WHERE userIdx = :userIdx and postCommentIdx = :postCommentIdx
+    """
+
+
 
     // 토론장 commentIdx로 답글 조회
     public static final String LIST_REPLY_BY_COMMENT_ID = """

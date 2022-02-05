@@ -7,6 +7,12 @@ class PostLikeSql {
         values (:userIdx, :postIdx, :likeType)
         """
 
+//    public static final String GET_LIKE_CNT = """
+//    SELECT COUNT(case when likeType = 1 then 1 end) as 'like', COUNT(case when likeType = 0 then 0 end) as 'dislike'
+//    FROM PostLike
+//    WHERE postIdx = :postIdx
+//    """
+
 
     //postIdx로 게시글의 status 받아오기
     public static final String GET_POST_STATUS = """
