@@ -23,11 +23,18 @@ public class RepresentService {
 
     // 대표 코인 등록
     public RepresentDto.PostRepresentRes registerRepresent(RepresentDto.PostRepresentReq postRepresentReq) throws BaseException {
+        List<RepresentDto.GetRepresentIdxRes> getRepresentIdxRes = representRepository.getRepresentIdxRes(postRepresentReq.getPortIdx());
         // 포트폴리오 활성 상태 확인
         String status = representRepository.getStatusByPortIdx(postRepresentReq.getPortIdx());
         if(status.equals("inactive")){
             throw new BaseException(INACTIVE_PORTFOLIO); //2041
         }
+        for(int i=0; i < getRepresentIdxRes.size(); i++){
+            if(getRepresentIdxRes.get(i).getCoinIdx() == postRepresentReq.getCoinIdx()){
+                throw new BaseException(ALREADY_REPRESENT); //4058
+            }
+        }
+
         try {
             RepresentDto.PostRepresentRes postRepresentRes = representRepository.insert(postRepresentReq);
             return postRepresentRes;

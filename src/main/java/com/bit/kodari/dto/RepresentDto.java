@@ -72,5 +72,16 @@ public class RepresentDto {
         //    private String jwt;
     }
 
+    // 대표 코인 조회 RESPONSE DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetRepresentIdxRes{
+        private int representIdx;
+        private int portIdx;
+        private int coinIdx;
+        //    private String jwt;
+    }
+
 
 }

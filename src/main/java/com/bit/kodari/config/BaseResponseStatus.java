@@ -130,6 +130,7 @@ public enum BaseResponseStatus {
     DELETE_FAIL_REPRESENT(false, 4055, "대표 코인 삭제에 실패하였습니다."),
     COIN_AMOUNT_ZERO(false, 4056, "코인이 전부 매도되었습니다."),
     NO_USER_COIN(false, 4057, "해당 계좌의 코인이 존재하지 않습니다."),
+    ALREADY_REPRESENT(false, 4058, "해당 코인은 이미 대표코인으로 등록되어 있습니다."),
 
     //수정 실패
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
