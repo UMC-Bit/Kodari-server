@@ -153,20 +153,8 @@ public class PostService {
     // 특정 게시글 조회
     public GetUserPostRes getPostsByPostIdx(int postIdx) throws BaseException {
         String status = postRepository.getStatusByPostIdx(postIdx);
-        List<PostDto.GetCommentDeleteRes> postCommentIdx = postRepository.getPostCommentIdxByPostIdx(postIdx);
-        List<PostDto.GetReplyDeleteRes> postReplyIdx = postRepository.getReplyIdxByPostIdx(postIdx);
-        List<PostDto.GetCommentRes> commentRes = postRepository.getCommentByPostIdx(postIdx);
-//        List<PostDto.GetStatusRes> comment_status = postRepository.getCommentStatus(userIdx, postIdx);
-        if(status.equals("inactive")) { //삭제된 게시글이면 조회 불가
+        if (status.equals("inactive")) { //삭제된 게시글이면 조회 불가
             throw new BaseException(IMPOSSIBLE_POST);
-        }
-        else {
-            for(int i=0; i < commentRes.size(); i++) {
-                List<PostDto.GetReplyRes> replyRes = postRepository.getReplyByCommentIdx(commentRes.get(i).getPostCommentIdx());
-                if(commentRes.get(i).getComment_status().equals("inactive") && replyRes.size() == 0) {
-
-                }
-            }
         }
 
         try {

@@ -38,7 +38,8 @@ class PostReplySql {
 
     //토론장 게시글 답글 삭제
     public static final String DELETE_REPLY = """
-         UPDATE PostReply SET status = 'inactive' WHERE postReplyIdx = :postReplyIdx and status = 'active'
+         UPDATE PostReply SET status = 'inactive' , content = '삭제된 답글입니다.' 
+         WHERE postReplyIdx = :postReplyIdx and status = 'active'
     """
 
     //토론장 게시글 댓글별 답글조회

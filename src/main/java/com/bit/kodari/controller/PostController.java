@@ -149,10 +149,7 @@ public class PostController {
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
-
-
             List<PostDto.GetCommentRes> commentRes = postRepository.getCommentByPostIdx(postIdx);
-
             PostDto.GetUserPostRes getUserPostRes = postService.getPostsByPostIdx(postIdx);
 
             if(userIdx == userIdxByJwt){
