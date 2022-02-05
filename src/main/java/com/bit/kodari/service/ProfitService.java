@@ -9,6 +9,7 @@ import com.bit.kodari.repository.trade.TradeRepository;
 import com.bit.kodari.utils.JwtService;
 import com.bit.kodari.utils.UpbitApi;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -347,6 +348,18 @@ public class ProfitService {
         // 수익내역 삭제 요청
         int result = profitRepository.deleteAllProfitByUserIdx(userIdx);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
+        }
+    }
+
+
+    // Trade연동 수익내역 삭제
+    @Transactional
+    public void deleteProfitByUserCoinIdxDate(int userCoinIdx,String date) throws BaseException{
+
+        // 원하는 시점 이후 수익내역 삭제 요청
+        int result = profitRepository.deleteProfitByUserCoinIdx(userCoinIdx,date);
+        if(result == 0){// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
     }

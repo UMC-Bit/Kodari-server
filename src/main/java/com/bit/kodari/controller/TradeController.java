@@ -16,6 +16,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -290,7 +292,7 @@ public class TradeController {
      */
     @PatchMapping("/delete/{tradeIdx}")
     @ApiOperation(value = "거래내역", notes = "거래내역 삭제,status를 inactive로 수정")
-    public BaseResponse<String> deleteTrade (@PathVariable("tradeIdx") int tradeIdx) {
+    public BaseResponse<String> deleteTrade (@PathVariable("tradeIdx") int tradeIdx) throws ParseException , IOException {
         int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
         try {
 

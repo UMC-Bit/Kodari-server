@@ -13,10 +13,17 @@ import com.bit.kodari.repository.trade.TradeRepository;
 import com.bit.kodari.repository.user.UserRepository;
 import com.bit.kodari.repository.usercoin.UserCoinRepository;
 import com.bit.kodari.utils.JwtService;
+import com.bit.kodari.utils.UpbitApi;
+import okhttp3.Response;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.bit.kodari.config.BaseResponseStatus.MODIFY_FAIL_PRICE_AVG;
@@ -184,6 +191,23 @@ public class TradeService {
         List<TradeDto.GetTradeRes> getTradeRes = tradeRepository.getTradeByPortIdxCoinIdx(getTradeReq);
         // 거래내역 없는 경우 validation
         if(getTradeRes.size() == 0) {
+            throw new BaseException(BaseResponseStatus.GET_TRADES_NOT_EXISTS);
+        }
+        try {
+            return getTradeRes;
+        } catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+
+
+    // Trade 거래내역 조회: tradeIdx로 특정 거래내역 조회
+    @Transactional
+    public TradeDto.Trade getTradeByTradeIdx(int tradeIdx) throws BaseException {
+        TradeDto.Trade getTradeRes = tradeRepository.getTradeByTradeIdx(tradeIdx);
+        // 거래내역 없는 경우 validation
+        if(getTradeRes == null) {
             throw new BaseException(BaseResponseStatus.GET_TRADES_NOT_EXISTS);
         }
         try {
@@ -458,7 +482,7 @@ public class TradeService {
 
     // 거래내역 삭제 : status 수정
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
-    public void deleteTrade(TradeDto.PatchStatusReq patchStatusReq) throws BaseException{
+    public void deleteTrade(TradeDto.PatchStatusReq patchStatusReq) throws BaseException, ParseException , IOException {
         int userCoinIdx = tradeRepository.getUserCoinIdxByTradeIdx(patchStatusReq.getTradeIdx());
         List<TradeDto.GetTradeInfoRes> getTradeInfoRes = tradeRepository.getTradeInfo(patchStatusReq.getTradeIdx());
         double price = getTradeInfoRes.get(0).getPrice(); // 코인 원래 가격
@@ -521,14 +545,55 @@ public class TradeService {
         // Profit 최근 수익내역 삭제
         //  tradeIdx로 accountIdx 불러오고
         //int accountIdx = tradeRepository.getAccountIdxByTradeIdx(patchStatusReq.getTradeIdx());
+
         // profit테이블 안의 accountIdx로 profitIdx 불러오기
-        ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
-        List<ProfitDto.GetProfitRes> getProfitRes = profitService.getProfitByAccountIdx(getProfitReq);
-        int len = getProfitRes.size();
-        int profitIdx = getProfitRes.get(len-1).getProfitIdx(); // 가장 최근 수익내역 인덱스 조회
-        // Profit 내역 삭제요청
-        ProfitDto.PatchStatusReq patchProfitStatusReq = new ProfitDto.PatchStatusReq(profitIdx);
-        profitService.deleteProfit(patchProfitStatusReq);
+//        ProfitDto.GetProfitReq getProfitReq = new ProfitDto.GetProfitReq(accountIdx);
+//        List<ProfitDto.GetProfitRes> getProfitRes = profitService.getProfitByAccountIdx(getProfitReq);
+//        int len = getProfitRes.size();
+//        int profitIdx = getProfitRes.get(len-1).getProfitIdx(); // 가장 최근 수익내역 인덱스 조회
+//        // Profit 내역 삭제요청
+//        ProfitDto.PatchStatusReq patchProfitStatusReq = new ProfitDto.PatchStatusReq(profitIdx);
+//        profitService.deleteProfit(patchProfitStatusReq)
+
+        // 삭제하려는 거래내역의 과거 거래시각 조회
+        TradeDto.Trade getTradeRes = this.getTradeByTradeIdx(patchStatusReq.getTradeIdx());
+        String prevTradeDate = getTradeRes.getDate();
+        //String from = "2013-04-08 10:10:10";
+        // 현재 시각 구하기
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date prev = transFormat.parse(prevTradeDate);
+        Date date = new Date();
+        long diffDay = (date.getTime()- prev.getTime()) / (24*60*60*1000)+1; // 현재-과거시간 으로 날짜 차이 구하기
+        //int dayCnt = date.toString().substring()
+        // 해당 코인 심볼 조회
+        List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinService.getUserCoinIdx(userCoinIdx);
+        String symbol = getUserCoinIdxRes.get(0).getSymbol();
+        // 해당 코인의 과거 거래일시~어제까지의 수익내역 삭제
+        profitService.deleteProfitByUserCoinIdxDate(userCoinIdx,prevTradeDate);
+
+        // API 요청해서 해당 코인의 과거 거래일시~어제까지 일별 종가 시세 받아오기
+        Response response = UpbitApi.getPrevClosingPrice(symbol,date.toString(),Long.toString(diffDay));
+        String resultString = response.body().string();
+        // 업비트 api 응답이 에러코드일 Validation
+        if(resultString.charAt(0)=='{'){
+            //double trade_price = rjson.get("error"); // 코인 현재 시세 평단가
+            throw new BaseException(BaseResponseStatus.GET_UPBITAPI_ERROR);
+        }
+        // 응답 받아온 json 문자열에서 jsonObject 생성
+//        int len = resultString.length();
+//        resultString = resultString.substring(1,len-1);// json앞 뒤 [] 문자 빼기
+        // [] 포함해서 JSONArray 로 해보기
+
+
+        JSONObject rjson = new JSONObject(resultString);
+        rjson.getJSONObject("{");
+
+
+
+        // 반복문으로 일별 종가시세를 이용해서 과거 거래일시~어제까지 수익내역 새로 생성 ( createAt을 스 날 시각으로 설정)
+
+
+
 
 
     }

@@ -245,6 +245,16 @@ public class ProfitRepository {
 
 
 
+    // Trade연동 수익내역 삭제 및 새로 생성
+    public int deleteProfitByUserCoinIdx(int userCoinIdx,String date){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userCoinIdx",userCoinIdx)
+                .addValue("date",date);
+
+        return namedParameterJdbcTemplate.update(ProfitSql.DELETE_BY_USERCOINIDX_DATE,parameterSource);
+    }
+
+
+
 
 
 
