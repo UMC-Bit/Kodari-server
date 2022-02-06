@@ -175,9 +175,9 @@ class PostSql {
 
     //게시글의 달린 댓글의 status 가져오기
     public static final String GET_POST_COMMENT_STATUS = """
-    SELECT c.status AS 'comment_status'
-    FROM PostComment as c join Post as p on c.postIdx = p.postIdx
-    WHERE c.userIdx = :userIdx and p.postIdx = :postIdx
+    SELECT status AS 'comment_status'
+    FROM PostComment
+    WHERE postCommentIdx = :postCommentIdx
     """
 
     //댓글 좋아요 유저 존재 여부 가져오기
@@ -201,14 +201,14 @@ class PostSql {
         FROM PostReply as r join User as u on r.userIdx = u.userIdx
                     join PostComment as c on r.postCommentIdx = c.postCommentIdx
                     join Post as p on c.postIdx = p.postIdx
-        WHERE r.postCommentIdx = :postCommentIdx
+        WHERE r.postCommentIdx = :postCommentIdx 
     """
 
     //게시글의 댓글에 달린 답글의 status 가져오기
     public static final String GET_COMMENT_REPLY_STATUS = """
-    SELECT r.status as 'reply_status'
-    FROM PostReply as r join PostComment as c on r.postCommentIdx = c.postCommentIdx
-    WHERE r.userIdx = :userIdx and c.postCommentIdx = :postCommentIdx
+    SELECT status as 'reply_status'
+    FROM PostReply
+    WHERE postReplyIdx = :postReplyIdx
     """
 
 //    //토론장 게시글별 댓글의 답글 조회

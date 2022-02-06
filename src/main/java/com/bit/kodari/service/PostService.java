@@ -7,6 +7,7 @@ import com.bit.kodari.utils.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class PostService {
 
 
     // 토론장 게시글 등록(POST)
+    @Transactional
     public RegisterRes insertPost(RegisterReq registerReq) throws BaseException {
         String content = registerReq.getContent();
         String tmp_content = content.replaceAll(" ", "");
@@ -46,6 +48,7 @@ public class PostService {
     }
 
     //토론장 게시글 수정
+    @Transactional
     public void modifyPost(PatchPostReq post) throws BaseException{
         int postIdx = post.getPostIdx();
         String content = post.getContent();
@@ -77,6 +80,7 @@ public class PostService {
     }
 
     //토론장 게시글 삭제
+    @Transactional
     public void modifyPostStatus(PatchDeleteReq post) throws BaseException{
         int postIdx = post.getPostIdx();
         List<PostDto.GetCommentDeleteRes> getCommentDeleteRes = postRepository.getPostCommentIdxByPostIdx(postIdx);
@@ -121,6 +125,7 @@ public class PostService {
 
 
     // 토론장 게시글 목록 조회
+    @Transactional
     public List<GetPostRes> getPosts() throws BaseException {
         try {
             List<GetPostRes> getPostRes = postRepository.getPosts();
@@ -131,6 +136,7 @@ public class PostService {
     }
 
     // 특정 유저의 게시글 조회
+    @Transactional
     public List<GetPostRes> getPostsByUserIdx(int userIdx) throws BaseException {
         try {
             List<GetPostRes> getPostsRes = postRepository.getPostsByUserIdx(userIdx);
@@ -141,6 +147,7 @@ public class PostService {
     }
 
     // 특정 코인의 게시글 조회
+    @Transactional
     public List<GetPostRes> getPostsByCoinName(String coinName) throws BaseException {
         try {
             List<GetPostRes> getCoinsRes = postRepository.getPostsByCoinName(coinName);
@@ -151,6 +158,7 @@ public class PostService {
     }
 
     // 특정 게시글 조회
+    @Transactional
     public GetUserPostRes getPostsByPostIdx(int postIdx) throws BaseException {
         String status = postRepository.getStatusByPostIdx(postIdx);
         if (status.equals("inactive")) { //삭제된 게시글이면 조회 불가

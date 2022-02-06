@@ -8,6 +8,7 @@ import com.google.common.io.LittleEndianDataOutputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class PostCommentService {
 
 
     // 토론장 게시글 댓글 등록 (POST)
+    @Transactional
     public PostCommentDto.RegisterCommentRes insertPostComment(PostCommentDto.RegisterCommentReq registerCommentReq) throws BaseException {
         int postIdx = registerCommentReq.getPostIdx();
         String post_status = postCommentRepository.getStatusByPostIdx(postIdx);
@@ -52,6 +54,7 @@ public class PostCommentService {
     }
 
     //토론장 게시글 댓글 수정
+    @Transactional
     public void modifyComment(PostCommentDto.PatchCommentReq post) throws BaseException{
         int postCommentIdx = post.getPostCommentIdx();
         int userIdx = post.getUserIdx();
@@ -91,6 +94,7 @@ public class PostCommentService {
     }
 
     //토론장 게시글 댓글 삭제
+    @Transactional
     public void modifyCommentStatus(PostCommentDto.PatchDeleteReq post) throws BaseException{
         int postCommentIdx = post.getPostCommentIdx();
         int userIdx = post.getUserIdx();
@@ -122,6 +126,7 @@ public class PostCommentService {
     }
 
         // 특정 유저의 댓글 조회
+        @Transactional
     public List<PostCommentDto.GetCommentsRes> getCommentsByUserIdx(int userIdx) throws BaseException {
         //PostCommentsql에 삭제된 게시글 댓글 조회 불가능 하도록 처리함
         try {

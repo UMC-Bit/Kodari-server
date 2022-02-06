@@ -8,6 +8,7 @@ import com.bit.kodari.utils.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class PostLikeService {
 
 
     // 토론장 게시글 좋아요/싫어요 선택(POST)
+    @Transactional
     public PostLikeDto.PostLikeRes chooseLike(PostLikeDto.RegisterLikeReq registerLikeReq) throws BaseException {
         int postIdx = registerLikeReq.getPostIdx();
         int userIdx = registerLikeReq.getUserIdx();
@@ -46,6 +48,7 @@ public class PostLikeService {
 
 
     //토론장 게시글 좋아요/싫어요 삭제
+    @Transactional
     public PostLikeDto.PostLikeRes deleteLike(PostLikeDto.PostLikeReq delete) throws BaseException {
         try {
             PostLikeDto.PostLikeRes deleteLikeRes = postLikeRepository.deleteLike(delete);
