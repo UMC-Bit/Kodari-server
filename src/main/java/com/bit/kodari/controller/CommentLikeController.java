@@ -68,9 +68,9 @@ public class CommentLikeController {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
             CommentLikeDto.CommentLikeRes registerCommentLikeRes = commentLikeService.chooseCommentLike(registerCommentLikeReq);
             return new BaseResponse<>(registerCommentLikeRes, BaseResponseStatus.SUCCESS_COMMENT_LIKE_REGISTER);
         } catch (BaseException exception) {
@@ -89,9 +89,9 @@ public class CommentLikeController {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
             CommentLikeDto.CommentLikeRes deleteLikeRes = commentLikeService.deleteLike(deleteLikeReq);
             return new BaseResponse<>(deleteLikeRes, BaseResponseStatus.SUCCESS_COMMENT_LIKE_DELETE);
         } catch (BaseException exception) {

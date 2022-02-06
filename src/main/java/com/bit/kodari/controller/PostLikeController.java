@@ -43,12 +43,6 @@ public class PostLikeController {
         int likeType = registerLikeReq.getLikeType();
         String exist_user = postLikeRepository.getUser(userIdx, postIdx);
         int equal_likeType = postLikeRepository.getLikeType(userIdx, postIdx);
-            //jwt에서 idx 추출.
-//        int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//        if(userIdx != userIdxByJwt){
-//            return new BaseResponse<>(INVALID_USER_JWT);
-//        }
         if(exist_user.equals("true")) {
             if(equal_likeType == likeType) {
                 int postLikeIdx = postLikeRepository.getPostLikeIdxByIdx(userIdx, postIdx, equal_likeType);
@@ -83,9 +77,9 @@ public class PostLikeController {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
             //같다면 유저네임 변경
             PostLikeDto.PostLikeRes registerLikeRes = postLikeService.chooseLike(registerLikeReq);
             return new BaseResponse<>(registerLikeRes, BaseResponseStatus.SUCCESS_POST_LIKE_REGISTER);
@@ -105,9 +99,9 @@ public class PostLikeController {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
-                return new BaseResponse<>(INVALID_USER_JWT);
-            }
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
             PostLikeDto.PostLikeRes deleteLikeRes = postLikeService.deleteLike(deleteLikeReq);
             return new BaseResponse<>(deleteLikeRes, BaseResponseStatus.SUCCESS_POST_LIKE_DELETE);
         } catch (BaseException exception) {
