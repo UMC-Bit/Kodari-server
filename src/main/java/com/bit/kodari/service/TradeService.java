@@ -15,6 +15,7 @@ import com.bit.kodari.repository.usercoin.UserCoinRepository;
 import com.bit.kodari.utils.JwtService;
 import com.bit.kodari.utils.UpbitApi;
 import okhttp3.Response;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -583,10 +584,21 @@ public class TradeService {
 //        int len = resultString.length();
 //        resultString = resultString.substring(1,len-1);// json앞 뒤 [] 문자 빼기
         // [] 포함해서 JSONArray 로 해보기
-
-
+        resultString = "{ prices:"+resultString+"}";
         JSONObject rjson = new JSONObject(resultString);
-        rjson.getJSONObject("{");
+        JSONArray rjsonArray = rjson.getJSONArray("prices");
+
+        for(int i=0;i<rjsonArray.length();i++){
+            JSONObject obj = rjsonArray.getJSONObject(i);
+            Double prevPrice = obj.getDouble("trade_price");
+            System.out.println(prevPrice);
+
+        }
+
+
+
+
+
 
 
 
