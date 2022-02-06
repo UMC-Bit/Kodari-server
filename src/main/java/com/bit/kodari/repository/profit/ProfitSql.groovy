@@ -113,6 +113,15 @@ WHERE P.status = 'active';
             WHERE A.userIdx = :userIdx;
 """
 
+    //Profit 수익내역 삭제:  Trade연동 수익내역 삭제 및 새로 생성
+    public static final String DELETE_BY_USERCOINIDX_DATE="""
+        # Profit 수익내역 삭제:  Trade연동 수익내역 삭제 
+        UPDATE Profit as P
+        INNER JOIN UserCoin as UC on P.accountIdx=UC.accountIdx
+        SET P.status='inactive'
+        WHERE UC.userCoinIdx = :userCoinIdx AND P.status = 'active' AND P.createAt > :date;
+"""
+
 
 
 
