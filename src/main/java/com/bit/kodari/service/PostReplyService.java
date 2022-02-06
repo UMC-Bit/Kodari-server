@@ -8,6 +8,7 @@ import com.bit.kodari.utils.JwtService;
 import groovy.util.logging.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class PostReplyService {
     }
 
     //토론장 게시글 답글 등록
+    @Transactional
     public PostReplyDto.RegisterReplyRes insertCommentReply(PostReplyDto.RegisterReplyReq registerReplyReq) throws BaseException {
         int postCommentIdx = registerReplyReq.getPostCommentIdx();
         String content = registerReplyReq.getContent();
@@ -55,6 +57,7 @@ public class PostReplyService {
     }
 
     //토론장 게시글 답글 수정
+    @Transactional
     public void modifyReply(PostReplyDto.PatchReplyReq post) throws BaseException{
         int postReplyIdx = post.getPostReplyIdx();
         int userIdx = post.getUserIdx();
@@ -94,6 +97,7 @@ public class PostReplyService {
     }
 
     //토론장 게시글 답글 삭제
+    @Transactional
     public void modifyReplyStatus(PostReplyDto.PatchReplyDeleteReq post) throws BaseException{
         int postReplyIdx = post.getPostReplyIdx();
         int userIdx = post.getUserIdx();
@@ -115,6 +119,7 @@ public class PostReplyService {
     }
 
     // 특정 댓글별 답글 조회
+    @Transactional
     public List<PostReplyDto.GetReplyRes> getReplyByPostCommentIdx(int postCommentIdx) throws BaseException {
         try {
             List<PostReplyDto.GetReplyRes> getReplyRes = postReplyRepository.getReplyByPostCommentIdx(postCommentIdx);
@@ -126,6 +131,7 @@ public class PostReplyService {
 
 
     // 특정 유저의 답글 조회
+    @Transactional
     public List<PostReplyDto.GetReplyRes> getReplyByUserIdx(int userIdx) throws BaseException {
         try {
             List<PostReplyDto.GetReplyRes> getReplysRes = postReplyRepository.getReplyByUserIdx(userIdx);
@@ -136,11 +142,8 @@ public class PostReplyService {
     }
 
     // 특정 댓글별 답글 수 조회
+    @Transactional
     public List<PostReplyDto.GetReplyCntRes> getReplyCntByPostCommentIdx(int postCommentIdx) throws BaseException {
-//        String status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
-//        if(status.equals("inactive")) { //삭제된 댓글은 답글 수 조회 불가
-//            throw new BaseException(IMPOSSIBLE_POST_COMMENT); // 댓글이 존재하지 않음.
-//        }
         try {
             List<PostReplyDto.GetReplyCntRes> getReplyCntRes = postReplyRepository.getReplyCntByPostCommentIdx(postCommentIdx);
             return getReplyCntRes;

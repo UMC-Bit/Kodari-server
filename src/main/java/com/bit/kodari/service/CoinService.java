@@ -8,6 +8,7 @@ import com.bit.kodari.repository.coin.CoinRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,7 +20,9 @@ public class CoinService {
     @Autowired
     CoinRepository coinRepository;
 
+
     // 토론장 전체 카테고리 조회
+    @Transactional
     public List<CoinDto.GetCoinRes> getCoins() throws BaseException {
         try {
             List<CoinDto.GetCoinRes> getCoinRes = coinRepository.getCoins();
@@ -31,6 +34,7 @@ public class CoinService {
 
 
     // 토론장 코인이름 조회
+    @Transactional
     public List<CoinDto.GetCoinRes> getCoinsByCoinName(String coinName) throws BaseException {
         try {
             List<CoinDto.GetCoinRes> getCoinsRes = coinRepository.getCoinsByCoinName(coinName);

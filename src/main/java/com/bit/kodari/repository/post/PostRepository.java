@@ -280,7 +280,7 @@ public class PostRepository {
                         rs.getString("nickName"),
                         rs.getString("content"),
                         rs.getString("time"),
-                        rs.getInt("like"), false, getCommentStatus(rs.getInt("userIdx"), postIdx),
+                        rs.getInt("like"), false, getCommentStatus(rs.getInt("postCommentIdx")),
                         false, getReplyByCommentIdx(rs.getInt("postCommentIdx"))
                 ));
         // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받
@@ -291,9 +291,8 @@ public class PostRepository {
     }
 
     //postIdx로 댓글 status 가져오기
-    public String getCommentStatus(int userIdx, int postIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx",userIdx)
-                .addValue("postIdx", postIdx);
+    public String getCommentStatus(int postCommentIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx",postCommentIdx);
         return namedParameterJdbcTemplate.query(PostSql.GET_POST_COMMENT_STATUS, parameterSource, rs -> {
             String comment_status = " ";
             if (rs.next()) {
@@ -329,7 +328,7 @@ public class PostRepository {
                         rs.getString("profileImgUrl"),
                         rs.getString("nickName"),
                         rs.getString("content"),
-                        rs.getString("time"), false,getReplyStatus(rs.getInt("userIdx"), postCommentIdx)
+                        rs.getString("time"), false,getReplyStatus(rs.getInt("postReplyIdx"))
                         // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                 ));
         return getReplyRes;
@@ -338,9 +337,8 @@ public class PostRepository {
     }
 
     //postCommentIdx로 답글 status 가져오기
-    public String getReplyStatus(int userIdx, int postCommentIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
-                .addValue("postCommentIdx", postCommentIdx);
+    public String getReplyStatus(int postReplyIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postReplyIdx", postReplyIdx);
         return namedParameterJdbcTemplate.query(PostSql.GET_COMMENT_REPLY_STATUS, parameterSource, rs -> {
             String reply_status = " ";
             if (rs.next()) {
