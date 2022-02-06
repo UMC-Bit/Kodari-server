@@ -22,6 +22,7 @@ public class RepresentService {
     private RepresentRepository representRepository;
 
     // 대표 코인 등록
+    @Transactional
     public RepresentDto.PostRepresentRes registerRepresent(RepresentDto.PostRepresentReq postRepresentReq) throws BaseException {
         List<RepresentDto.GetRepresentIdxRes> getRepresentIdxRes = representRepository.getRepresentIdxRes(postRepresentReq.getPortIdx());
         // 포트폴리오 활성 상태 확인
@@ -45,6 +46,7 @@ public class RepresentService {
 
     // 대표 코인 조회
     // 코인이름, 코인 심볼, 코인 이미지 추가하기
+    @Transactional
     public List<RepresentDto.GetRepresentRes> getRepresent(int portIdx) throws BaseException {
         try {
             List<RepresentDto.GetRepresentRes> getRepresentRes = representRepository.getRepresent(portIdx);
@@ -58,6 +60,7 @@ public class RepresentService {
 
 
     // 대표 코인 삭제
+    @Transactional
     public void delete(RepresentDto.DeleteRepresentReq deleteRepresentReq) throws BaseException{
 
         try {

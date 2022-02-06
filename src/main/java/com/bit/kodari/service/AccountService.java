@@ -38,6 +38,7 @@ public class AccountService {
     }
 
     //계좌 등록
+    @Transactional
     public PostAccountRes registerAccount(PostAccountReq postAccountReq) throws BaseException {
         //같은 이름은 안되게 validation 추가
         //같은 유저의 같은 거래소에는 같은 이름을 가진 계좌가 있으면 안됨.
@@ -83,6 +84,7 @@ public class AccountService {
 
     //처음 총자산 수정
     //소유 코인 없으면 총자산 수정X
+    @Transactional
     public void updateTotal(PatchTotalReq account) throws BaseException {
         int accountIdx = account.getAccountIdx();
         String accountName = accountRepository.getAccountNameByAccountIdx(accountIdx);
@@ -117,6 +119,7 @@ public class AccountService {
 
     //계좌 이름 수정
     //스페이스바 validation 추가
+    @Transactional
     public void updateAccountName(PatchAccountNameReq account) throws BaseException{
         //같은 이름은 안되게 validation 추가
         //같은 유저의 같은 거래소에는 같은 이름을 가진 계좌가 있으면 안됨.
@@ -151,6 +154,7 @@ public class AccountService {
     }
 
     //현금 자산 수정
+    @Transactional
     public void updateProperty(PatchPropertyReq account) throws BaseException{
         //음수, 너무 큰 수 안되게
         //계좌 활성 상태 확인
@@ -175,6 +179,7 @@ public class AccountService {
 
     // Trade - 현금 자산 수정
     // tradeIdx만 받는걸로 수정함.
+    @Transactional
     public void updateTradeProperty(int tradeIdx) throws BaseException{
         int portIdx = accountRepository.getPortIdx(tradeIdx);
         int accountIdx = accountRepository.getAccountIdx(portIdx);
@@ -218,6 +223,7 @@ public class AccountService {
     }
 
     //계좌 삭제
+    @Transactional
     public void deleteByIdx(PatchAccountDelReq patchAccountDelReq) throws BaseException{
         List<AccountDto.GetUserCoinIdxRes> getUserCoinIdxRes = accountRepository.getUserCoinIdx(patchAccountDelReq.getAccountIdx());
         try {
@@ -250,6 +256,7 @@ public class AccountService {
     }
 
     // 해당 userIdx를 갖는 User의 계좌 조회
+    @Transactional
     public List<GetAccountRes> getAccountByUserIdx(int userIdx) throws BaseException {
         try {
             List<GetAccountRes> getAccountRes = accountRepository.getAccountByUserIdx(userIdx);
@@ -260,6 +267,7 @@ public class AccountService {
     }
 
     // accountIdx로 계좌 단일 조회
+    @Transactional
     public List<GetAccountByAccountIdxRes> getAccountByAccountIdx(int accountIdx) throws BaseException {
         try {
             List<GetAccountByAccountIdxRes> getAccountByAccountIdxRes = accountRepository.getAccountByAccountIdx(accountIdx);
@@ -270,8 +278,8 @@ public class AccountService {
     }
 
 
-
     // 해당 accountIdx를 갖는 계좌의 현금 자산 조회
+    @Transactional
     public  List<GetPropertyRes> getProperty(int accountIdx) throws BaseException {
         //status가 inactive인 account는 오류 메시지
         String status = accountRepository.getStatusByAccountIdx(accountIdx);

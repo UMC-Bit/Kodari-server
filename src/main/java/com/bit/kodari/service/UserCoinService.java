@@ -24,6 +24,7 @@ public class UserCoinService {
     //소유 코인 등록
     //이미 등록되어 있는 코인은 등록할 수 없음.
     //해당 유저의 계좌인지 확인.
+    @Transactional
     public UserCoinDto.PostUserCoinRes registerUserCoin(UserCoinDto.PostUserCoinReq postUserCoinReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postUserCoinReq.getAccountIdx();
@@ -62,6 +63,7 @@ public class UserCoinService {
     }
 
     //소유 코인 수정
+    @Transactional
     public void updateUserCoin(UserCoinDto.PatchUserCoinReq userCoin) throws BaseException{
         //같은 유저의 같은 계좌인지 확인
         int accountIdx = userCoinRepository.getAccountIdxByUserCoinIdx(userCoin.getUserCoinIdx());
@@ -80,6 +82,7 @@ public class UserCoinService {
     //특정 코인 조회
     //매수평단가, 코인 이름, 갯수
     //소유 코인 조회
+    @Transactional
     public List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdx(int userCoinIdx) throws BaseException {
         try {
             List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinRepository.getUserCoinByUserCoinIdx(userCoinIdx);
@@ -90,6 +93,7 @@ public class UserCoinService {
     }
 
     //소유 코인 조회
+    @Transactional
     public List<UserCoinDto.GetUserCoinRes> getUserCoin(int portIdx) throws BaseException {
         try {
             List<UserCoinDto.GetUserCoinRes> getUserCoinRes = userCoinRepository.getUserCoinByPortIdx(portIdx);
@@ -100,6 +104,7 @@ public class UserCoinService {
     }
 
     //소유 코인 삭제
+    @Transactional
     public void deleteByUserCoinIdx(UserCoinDto.PatchUserCoinDelReq patchUserCoinDelReq) throws BaseException{
         int userCoinIdx = patchUserCoinDelReq.getUserCoinIdx();
         try {
@@ -114,6 +119,7 @@ public class UserCoinService {
 
     //소유 코인 전체 삭제
     // 필요없음
+    @Transactional
     public void deleteByUserIdx(UserCoinDto.PatchDelByUserIdxReq patchDelByUserIdxReq) throws BaseException{
 
         try {
@@ -139,6 +145,7 @@ public class UserCoinService {
     }
 
     // Trade - 매수, 매도 계산(매수 평단가), 수수료 0.05%
+    @Transactional
     public void updatePriceAvg(UserCoinDto.PatchBuySellReq patchBuySellReq) throws BaseException{
         int userCoinIdx = patchBuySellReq.getUserCoinIdx();
         int coinIdx = userCoinRepository.getCoinIdxByUserCoinIdx(userCoinIdx);

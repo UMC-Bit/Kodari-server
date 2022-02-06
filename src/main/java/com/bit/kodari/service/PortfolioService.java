@@ -23,6 +23,7 @@ public class PortfolioService {
     //포트폴리오 등록
     //비티코인, 이더리움, 솔라나 로 자동 넣어주기
     //해당 계좌의 유저가 맞는지 확인
+    @Transactional
     public PortfolioDto.PostPortfolioRes registerPortfolio(PortfolioDto.PostPortfolioReq postPortfolioReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postPortfolioReq.getAccountIdx();
@@ -71,6 +72,7 @@ public class PortfolioService {
     //포트폴리오 조회
     // userCoinIdx 대괄호로 쫘르륵...? -> LIST
     // 수익률, 소득, 대표코인 (코인별로)
+    @Transactional
     public PortfolioDto.GetPortfolioRes getPortfolio(int portIdx) throws BaseException {
         //status가 inactive인 account는 오류 메시지
         //String status = accountRepository.getStatusByAccountIdx(accountIdx);
@@ -86,6 +88,7 @@ public class PortfolioService {
     }
 
     // 포트폴리오 전체 조회 userIdx
+    @Transactional
     public List<PortfolioDto.GetAllPortIdxRes> getPortListByUserIdx(int userIdx) throws BaseException {
         try{
             List<PortfolioDto.GetAllPortIdxRes> getAllPortByUserRes = portfolioRepository.getAllPortByUserIdx(userIdx);
@@ -96,6 +99,7 @@ public class PortfolioService {
     }
 
     //포트폴리오 삭제
+    @Transactional
     public void deleteByPortIdx(PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq) throws BaseException{
         int portIdx = patchPortfolioDelReq.getPortIdx();
         int accountIdx = portfolioRepository.getAccountIdx(portIdx);
