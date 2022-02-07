@@ -119,6 +119,9 @@ public class ProfitService {
     }
 
 
+
+
+
     // Profit 수익내역 조회: 특정 계좌의 현재 코인 평가 자산 조회
     @Transactional
     public ProfitDto.GetCurCoinTotalPropertyRes getCurCoinTotalPropertyByAccountIdx(ProfitDto.GetCurCoinTotalPropertyReq getCurCoinTotalPropertyReq) throws BaseException {

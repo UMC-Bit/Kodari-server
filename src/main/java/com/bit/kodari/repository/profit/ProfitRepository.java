@@ -49,6 +49,35 @@ public class ProfitRepository {
 
 
 
+    // 수익내역 생성:  과거 레코드 추가
+    public ProfitDto.PostProfitRes createPrevProfit(ProfitDto.PostPrevProfitReq postPrevProfitReq){
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", postPrevProfitReq.getAccountIdx())
+                .addValue("profitRate",postPrevProfitReq.getProfitRate())
+                .addValue("earning",postPrevProfitReq.getEarning())
+                .addValue("prevDate",postPrevProfitReq.getPrevDate());
+
+        int affectedRows = namedParameterJdbcTemplate.update(ProfitSql.INSERT_PREV,parameterSource,keyHolder);
+
+
+        // 해당 profitIdx 의 거래내역을 PostProfitRes 형태로 반환
+        int lastInsertIdx = keyHolder.getKey().intValue(); // 마지막 들어간 idx 조회
+        SqlParameterSource parameterSource1 = new MapSqlParameterSource("profitIdx",lastInsertIdx);
+        ProfitDto.PostProfitRes postProfitRes = namedParameterJdbcTemplate.queryForObject(ProfitSql.FIND_BY_PROFITIDX,parameterSource1,
+                (rs,rowNum) -> new ProfitDto.PostProfitRes(
+                        rs.getInt("profitIdx"),
+//                        rs.getInt("portIdx"),
+                        rs.getInt("accountIdx"),
+                        rs.getDouble("profitRate"),
+                        rs.getDouble("earning"),
+                        rs.getString("status")
+                ));
+        return postProfitRes;
+    }
+
+
+
+
 
 
     // Profit 수익내역 조회: 특정 계좌의 수익내역 조회
