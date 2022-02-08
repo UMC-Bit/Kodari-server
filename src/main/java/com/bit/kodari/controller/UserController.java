@@ -362,7 +362,7 @@ public class UserController {
 
     // 유저 패스워드 변경 시, 현재 비밀번호 일치 확인
     @ResponseBody
-    @GetMapping("/get/checkPassword/{userIdx}")
+    @PostMapping("/get/checkPassword/{userIdx}")
     @ApiOperation(value = "유저 현재 비밀번호", notes = "유저 비밀번호 변경 시 현재 패스워드 확인")
     public BaseResponse<String> getCheckPassword(@PathVariable("userIdx") int userIdx, @RequestBody UserDto.GetCheckPasswordReq getCheckPasswordReq){
         try{
@@ -397,7 +397,7 @@ public class UserController {
 
     // 유저 회원가입 시 이메일 validatio api
     @ResponseBody
-    @GetMapping("/get/getCheckEmail")
+    @PostMapping("/get/getCheckEmail")
     @ApiOperation(value = "유저 이메일", notes = "회원가입 시 이메일 검증 확인")
     public BaseResponse<String> getCheckEmail(@RequestBody UserDto.GetCheckEmailReq getCheckEmailReq){
         try {
@@ -431,7 +431,7 @@ public class UserController {
 
     // 유저 회원가입 시 패스워드 validatio api
     @ResponseBody
-    @GetMapping("/get/getCheckPassword")
+    @PostMapping("/get/getCheckPassword")
     @ApiOperation(value = "유저 패스워드", notes = "회원가입 시 패스워드 검증 확인")
     public BaseResponse<String> getCheckPassword(@RequestBody UserDto.GetCheckPasswordReq getCheckPasswordReq){
 
@@ -464,7 +464,7 @@ public class UserController {
 
     // 유저 회원가입 시 닉네임 validatio api
     @ResponseBody
-    @GetMapping("/get/getCheckNickName")
+    @PostMapping("/get/getCheckNickName")
     @ApiOperation(value = "유저 닉네임", notes = "회원가입 시 닉네임 검증 확인")
     public BaseResponse<String> getCheckNickName(@RequestBody UserDto.GetCheckNickNameReq getCheckNickNameReq){
         try {
