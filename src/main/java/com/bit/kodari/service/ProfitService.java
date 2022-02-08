@@ -360,6 +360,7 @@ public class ProfitService {
     @Transactional
     public void deleteProfitByUserCoinIdxDate(int userCoinIdx,String date) throws BaseException{
 
+
         // 원하는 시점 이후 수익내역 삭제 요청
         int result = profitRepository.deleteProfitByUserCoinIdx(userCoinIdx,date);
         if(result == 0){// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.

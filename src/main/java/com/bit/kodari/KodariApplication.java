@@ -30,6 +30,13 @@ public class KodariApplication {
         long heapSize = Runtime.getRuntime().totalMemory();
         System.out.println("HEAP Size(M) : "+ heapSize / (1024*1024) + " MB");
 
+//        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        //Date prev = transFormat.parse(prevTradeDate);
+//        Date date=new Date(System.currentTimeMillis());
+//        //Date date = new Date();
+//        //date = transFormat.parse(date.toString());
+//        System.out.println(transFormat.format(date));
+
 
 //        String now = "2022-01-30 01:00:00";
 //        String encodedDate = now.substring(0,10);

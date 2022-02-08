@@ -518,6 +518,9 @@ public class TradeService {
         double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
         double sumCoinAmount = 0; //새로운 코인 전체 갯수
 
+        List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinService.getUserCoinIdx(userCoinIdx);// Profit 의 삭제된 코인 심볼 찾을 때 사용
+        String symbol = getUserCoinIdxRes.get(0).getSymbol();// 삭제할 유저코인의 코인실볼 미리 저장
+
         // 이미 삭제된 거래내역 validation
         String status = tradeRepository.getStatusByTradeIdx(patchStatusReq.getTradeIdx());
         if(status.equals("inactive")){
@@ -584,84 +587,92 @@ public class TradeService {
 //        profitService.deleteProfit(patchProfitStatusReq)
 
         // 삭제하려는 거래내역의 과거 거래시각 조회
-//        TradeDto.Trade getTradeRes = this.getTradeByTradeIdx(patchStatusReq.getTradeIdx());
-//        String prevTradeDate = getTradeRes.getDate();
-//        //String from = "2013-04-08 10:10:10";
-//        // 현재 시각 구하기
-//        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        Date prev = transFormat.parse(prevTradeDate);
-//        Date date = new Date();
-//        long diffDay = (date.getTime()- prev.getTime()) / (24*60*60*1000)+1; // 현재-과거시간 으로 날짜 차이 구하기
-//        //int dayCnt = date.toString().substring()
-//        // 해당 코인 심볼 조회
-//        List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinService.getUserCoinIdx(userCoinIdx);
-//        String symbol = getUserCoinIdxRes.get(0).getSymbol();
-//        // 해당 코인의 과거 거래일시~어제까지의 수익내역 삭제
-//        profitService.deleteProfitByUserCoinIdxDate(userCoinIdx,prevTradeDate);
-//
-//
-//
-//        // 특정 계좌의 모든 코인 심볼 조회
-//        List<ProfitDto.GetCoinSymbolRes> getCoinSymbolRes = profitRepository.getSymbolByAccountIdx(accountIdx);
-//        // 코인 없는 경우 validation
-//        if (getCoinSymbolRes.size() == 0) {
-//            throw new BaseException(BaseResponseStatus.GET_SYMBOLS_NOT_EXISTS);
-//        }
-//        // 반복문으로 모든 소유 코인 들의 과거 평단가 diffDay 일수 만큼 업비트 api 조회
-//        double sumPrevProperty[]= new double[(int)diffDay]; // 각 날짜별 총 자산 배열
-//        String prevJsonTradeDate[] = new String[(int)diffDay]; //과거 거래 시각 배열
-//        for(int i=0;i<getCoinSymbolRes.size();i++){
-//            // 각 날짜별로 코인 매수가=과거 평단가*코인갯수 를 구해서 더한다.
-//            symbol = getCoinSymbolRes.get(i).getSymbol(); // 코인 심볼 조회
-//
-//            // API 요청해서 해당 코인의 과거 거래일시~어제까지 일별 종가 시세 받아오기
-//            Response response = UpbitApi.getPrevClosingPrice(symbol,date.toString(),Long.toString(diffDay));
-//            String resultString = response.body().string();
-//            // 업비트 api 응답이 에러코드일 Validation
-//            if(resultString.charAt(0)=='{'){
-//                //double trade_price = rjson.get("error"); // 코인 현재 시세 평단가
-//                throw new BaseException(BaseResponseStatus.GET_UPBITAPI_ERROR);
-//            }
-//            // 응답 받아온 json 문자열에서 jsonObject 생성
-//            resultString = "{ \"dailyPrices\":"+resultString+"}";
-//            JSONObject rjson = new JSONObject(resultString);
-//            JSONArray rjsonArray = rjson.getJSONArray("dailyPrices");
-//            for(int j=0;j<rjsonArray.length();j++) {
-//                JSONObject obj = rjsonArray.getJSONObject(j);
-//                double prevPrice = obj.getDouble("trade_price"); // 업비트에서 전날 종가 가격 조회
-//                prevJsonTradeDate[j] = obj.getString("candle_date_time_utc"); // 업비트에서 과거 거래 시각 조회
-//                System.out.println(prevPrice);
-//
-//
-//                double prevAmount = getCoinSymbolRes.get(j).getAmount(); // 코인 갯수
-//                double prevProperty = prevPrice*prevAmount;
-//                // 현재 총 자산에 더하기
-//                sumPrevProperty[j] += prevProperty;
-//
-//
-//            }
-//
-//
-//
-//        }
-//        // 총 매수 금액 = 총 자산 - 현금
-//        double totalCoinProperty = getCoinSymbolRes.get(0).getTotalProperty() - getCoinSymbolRes.get(0).getProperty();
-//        //System.out.println(totalCoinProperty);
-//        // 반복문으로 일별 종가시세를 이용해서 과거 거래일시~어제까지 수익내역 새로 생성 ( createAt을 스 날 시각으로 설정)
-//        for(int i=0;i<diffDay;i++){
-//            // 총 손익금:  (현재 총 코인 자산) - 총 매수 금액
-//            double totalEarning = sumPrevProperty[i] - (totalCoinProperty);
-//            //System.out.println(totalEarning);
-//            // 총 수익률: ( (현재 총 코인 자산) - (총 매수 금액))/ 총 매수금액 *100
-//            double totalProfitRate = (sumPrevProperty[i] - totalCoinProperty) / totalCoinProperty * 100;
-//            //System.out.println(totalProfitRate);
-//
-//            // 수익 생성 요청
-//            ProfitDto.PostPrevProfitReq postPrevProfitReq = new ProfitDto.PostPrevProfitReq( accountIdx,totalProfitRate,totalEarning,prevJsonTradeDate[i]); // 과거수익 시각 까지 추가
-//            ProfitDto.PostProfitRes postProfitRes = profitRepository.createPrevProfit(postPrevProfitReq);
-//
-//            //return postProfitRes;
-//        }
+        TradeDto.Trade getTradeRes = this.getTradeByTradeIdx(patchStatusReq.getTradeIdx());
+        String prevTradeDate = getTradeRes.getDate();
+        //String from = "2013-04-08 10:10:10";
+        // 현재 시각 구하기
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date prev = transFormat.parse(prevTradeDate);
+        Date date=new Date(System.currentTimeMillis());
+        //Date date = new Date();
+        //date = transFormat.parse(date.toString());
+        String now = transFormat.format(date);
+
+
+
+        long diffDay = (date.getTime()- prev.getTime()) / (24*60*60*1000)+1; // 현재-과거시간 으로 날짜 차이 구하기
+        //int dayCnt = date.toString().substring()
+        // 해당 코인 심볼 조회
+        //List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinService.getUserCoinIdx(userCoinIdx);
+        //String symbol = getUserCoinIdxRes.get(0).getSymbol();
+        // 해당 코인의 과거 거래일시~어제까지의 수익내역 삭제
+        profitService.deleteProfitByUserCoinIdxDate(userCoinIdx,prevTradeDate);
+
+
+
+        // 특정 계좌의 모든 코인 심볼 조회
+        List<ProfitDto.GetCoinSymbolRes> getCoinSymbolRes = profitRepository.getSymbolByAccountIdx(accountIdx);
+        // 코인 없는 경우 validation
+        if (getCoinSymbolRes.size() == 0) {
+            throw new BaseException(BaseResponseStatus.GET_SYMBOLS_NOT_EXISTS);
+        }
+        // 반복문으로 모든 소유 코인 들의 과거 평단가 diffDay 일수 만큼 업비트 api 조회
+        double sumPrevProperty[]= new double[(int)diffDay]; // 각 날짜별 총 자산 배열
+        String prevJsonTradeDate[] = new String[(int)diffDay]; //과거 거래 시각 배열
+        for(int i=0;i<getCoinSymbolRes.size();i++){
+            // 각 날짜별로 코인 매수가=과거 평단가*코인갯수 를 구해서 더한다.
+            symbol = getCoinSymbolRes.get(i).getSymbol(); // 코인 심볼 조회
+
+            // API 요청해서 해당 코인의 과거 거래일시~어제까지 일별 종가 시세 받아오기
+            Response response = UpbitApi.getPrevClosingPrice(symbol,now,Long.toString(diffDay));
+            String resultString = response.body().string();
+            // 업비트 api 응답이 에러코드일 Validation
+            if(resultString.charAt(0)=='{'){
+                //double trade_price = rjson.get("error"); // 코인 현재 시세 평단가
+                throw new BaseException(BaseResponseStatus.GET_UPBITAPI_ERROR);
+            }
+            // 응답 받아온 json 문자열에서 jsonObject 생성
+            resultString = "{ \"dailyPrices\":"+resultString+"}";
+            JSONObject rjson = new JSONObject(resultString);
+            JSONArray rjsonArray = rjson.getJSONArray("dailyPrices");
+            for(int j=0;j<rjsonArray.length();j++) {
+                JSONObject obj = rjsonArray.getJSONObject(j);
+                double prevPrice = obj.getDouble("trade_price"); // 업비트에서 전날 종가 가격 조회
+                String prevJsonTradeDateTp = obj.getString("candle_date_time_utc"); // 업비트에서 과거 거래 시각 조회
+                String rightPrevJsonTradeDateTp = prevJsonTradeDateTp.substring(0,10)+" "+prevJsonTradeDateTp.substring(11);
+                prevJsonTradeDate[j] = rightPrevJsonTradeDateTp; // 업비트에서 과거 거래 시각 조회
+                System.out.println(prevPrice);
+
+
+                double prevAmount = getCoinSymbolRes.get(j).getAmount(); // 코인 갯수
+                double prevProperty = prevPrice*prevAmount;
+                // 현재 총 자산에 더하기
+                sumPrevProperty[j] += prevProperty;
+
+
+            }
+
+
+
+        }
+        // 총 매수 금액 = 총 자산 - 현금
+        double totalCoinProperty = getCoinSymbolRes.get(0).getTotalProperty() - getCoinSymbolRes.get(0).getProperty();
+        //System.out.println(totalCoinProperty);
+        // 반복문으로 일별 종가시세를 이용해서 과거 거래일시~어제까지 수익내역 새로 생성 ( createAt을 스 날 시각으로 설정)
+        for(int i=0;i<diffDay;i++){
+            // 총 손익금:  (현재 총 코인 자산) - 총 매수 금액
+            double totalEarning = sumPrevProperty[i] - (totalCoinProperty);
+            //System.out.println(totalEarning);
+            // 총 수익률: ( (현재 총 코인 자산) - (총 매수 금액))/ 총 매수금액 *100
+            double totalProfitRate = (sumPrevProperty[i] - totalCoinProperty) / totalCoinProperty * 100;
+            //System.out.println(totalProfitRate);
+
+            // 수익 생성 요청
+            ProfitDto.PostPrevProfitReq postPrevProfitReq = new ProfitDto.PostPrevProfitReq( accountIdx,totalProfitRate,totalEarning,prevJsonTradeDate[i]); // 과거수익 시각 까지 추가
+            ProfitDto.PostProfitRes postProfitRes = profitRepository.createPrevProfit(postPrevProfitReq);
+
+            //return postProfitRes;
+        }
 
 
 
