@@ -542,12 +542,12 @@ public class TradeService {
             else{
                 priceAvg = (priceAvg * uc_amount - price * amount) / sumCoinAmount; //새로운 매수평단가
             }
-            //TODO: 0을 나누는것 예외처리
+            //TODO: 0을 나누는것 예외처리: 완료
             ////////////////////////////////////////////////////////////////
         }else if(category.equals("sell")){
             // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
-            newProperty = property - ((price * amount) + (price * amount * fee)); // 새로운 현금 자산 계산
+            newProperty = property - (price * amount) + (price * amount * fee); // 새로운 현금 자산 계산
             //totalProperty = totalProperty - property + newProperty + (price * amount); // 새로운 총 자산
             //전량매도
             if(uc_amount == 0){
@@ -643,8 +643,8 @@ public class TradeService {
                 prevJsonTradeDate[j] = rightPrevJsonTradeDateTp; // 업비트에서 과거 거래 시각 조회
                 System.out.println(prevPrice);
 
-
-                double prevAmount = getCoinSymbolRes.get(j).getAmount(); // 코인 갯수
+                //TODO: 에러처리
+                double prevAmount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
                 double prevProperty = prevPrice*prevAmount;
                 // 현재 총 자산에 더하기
                 sumPrevProperty[j] += prevProperty;
