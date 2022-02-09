@@ -2,8 +2,8 @@ package com.bit.kodari.repository.user
 
  class UserSql {
     public static final String INSERT = """
-			INSERT INTO User (nickName,email,password, profileImgUrl, status)
-			values (:nickName, :email,  :password, :profileImgUrl, :status)
+			INSERT INTO User (nickName,email,password, profileImgUrl, authKey, status)
+			values (:nickName, :email,  :password, :profileImgUrl, :authKey, :status)
 			"""
     public static final String SELECT = """
 			SELECT * from User where userId = :userId

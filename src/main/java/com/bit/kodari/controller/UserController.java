@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,6 +69,19 @@ public class UserController {
         if (!isRegexNickNameSpecial(postUserReq.getNickName())) {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
         }
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        int num = 0;
+        do {
+            num = random.nextInt(75) + 48;
+            if ((num >= 48 && num <= 57) || (num >= 65 && num <= 90) || (num >= 97 && num <= 122)) {
+                sb.append((char) num);
+            } else {
+                continue;
+            }
+
+        } while (sb.length() < 10);
+        postUserReq.setAuthKey(sb.toString());
 
 
 

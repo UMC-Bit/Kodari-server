@@ -15,6 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.service.ResponseMessage;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
 
 import java.util.List;
 
@@ -36,6 +41,7 @@ public class UserService {
 
 
 
+
     @Autowired //readme 참고
     public UserService(UserRepository userRepository, JwtService jwtService, TradeService tradeService, ProfitService profitService
     ,AccountService accountService ,PortfolioService portfolioService, UserCoinService userCoinService, RepresentService representService) {
@@ -47,7 +53,6 @@ public class UserService {
         this.portfolioService = portfolioService;
         this.userCoinService = userCoinService;
         this.representService = representService;
-
     }
     // ******************************************************************************
 
@@ -292,7 +297,6 @@ public class UserService {
             throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
     }
-
 
 
 

@@ -19,6 +19,9 @@ repositories {
 }
 
 dependencies {
+    // 메일 인증 (spring mail)
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc:2.5.5'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.5.5'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.5.6'

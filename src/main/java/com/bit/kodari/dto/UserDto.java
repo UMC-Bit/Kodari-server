@@ -16,6 +16,7 @@ public class UserDto {
         private String email;
         private String password;
         private String profileImgUrl;
+        private String authKey = " "; //이메일 인증키
         private String status;
     }
 
@@ -28,6 +29,7 @@ public class UserDto {
         private String email;
         private String password;
         private String profileImgUrl;
+        private String authKey; //이메일 인증키
     }
 
     // 회원가입 RESPONSE DTO

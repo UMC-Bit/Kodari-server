@@ -31,6 +31,7 @@ public class UserRepository {
                 .addValue("email", postUserReq.getEmail())
                 .addValue("password", postUserReq.getPassword())
                 .addValue("profileImgUrl", postUserReq.getProfileImgUrl())
+                .addValue("authKey", postUserReq.getAuthKey())
                 .addValue("status", "active");
         int affectedRows = namedParameterJdbcTemplate.update(UserSql.INSERT, parameterSource, keyHolder);
 
@@ -58,6 +59,7 @@ public class UserRepository {
                             rs.getString("email"),
                             rs.getString("password"),
                             rs.getString("profileImgUrl"),
+                            rs.getString("authKey"),
                             rs.getString("status") // RowMapper(): 원하는 결과값 형태로 받기
                     ));
             //return postLoginRes;
