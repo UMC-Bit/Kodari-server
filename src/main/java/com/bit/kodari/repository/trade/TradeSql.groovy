@@ -164,6 +164,7 @@ class TradeSql {
 
     // userIdx, accountIdx로 coinIdx 가져오기
     public static final String GET_ALL_COIN_IDX = """
-            SELECT userCoinIdx, coinIdx from UserCoin where userIdx = :userIdx and accountIdx = :accountIdx
+            SELECT userCoinIdx, coinIdx from UserCoin 
+            WHERE userIdx = :userIdx AND accountIdx = :accountIdx AND status='active'
     """
 }

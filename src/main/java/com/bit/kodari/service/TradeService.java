@@ -9,6 +9,7 @@ import com.bit.kodari.dto.UserDto;
 import com.bit.kodari.repository.account.AccountRepository;
 import com.bit.kodari.repository.coin.CoinRepository;
 import com.bit.kodari.repository.portfolio.PortfolioRepository;
+import com.bit.kodari.repository.profit.ProfitRepository;
 import com.bit.kodari.repository.trade.TradeRepository;
 import com.bit.kodari.repository.user.UserRepository;
 import com.bit.kodari.repository.usercoin.UserCoinRepository;
@@ -39,12 +40,13 @@ public class TradeService {
     private final UserCoinRepository userCoinRepository;
     private final ProfitService profitService;
     private final UserCoinService userCoinService;
+    private final ProfitRepository profitRepository;
 
 
 
     @Autowired //readme 참고
     public TradeService(TradeRepository tradeRepository, JwtService jwtService, AccountService accountService, PortfolioRepository portfolioRepository, AccountRepository accountRepository
-    ,UserCoinRepository userCoinRepository ,ProfitService profitService, UserCoinService userCoinService) {
+    ,UserCoinRepository userCoinRepository ,ProfitService profitService, UserCoinService userCoinService, ProfitRepository profitRepository) {
         this.tradeRepository = tradeRepository;
         this.jwtService = jwtService; // JWT부분
         this.accountService = accountService;
@@ -53,6 +55,7 @@ public class TradeService {
         this.userCoinRepository = userCoinRepository;
         this.profitService = profitService;
         this.userCoinService = userCoinService;
+        this.profitRepository = profitRepository;
     }
 
     // 거래내역 생성(POST)
@@ -213,6 +216,21 @@ public class TradeService {
         }
         try {
             return getTradeRes;
+        } catch (Exception exception) {
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+
+    @Transactional
+    public List<TradeDto.GetTradeInfoRes> getTradeInfo(int tradeIdx) throws BaseException{
+        List<TradeDto.GetTradeInfoRes> getTradeInfoRes = tradeRepository.getTradeInfo(tradeIdx);
+        // 거래내역 없는 경우 validation
+        if(getTradeInfoRes.size()==0){
+            throw new BaseException(BaseResponseStatus.GET_TRADES_NOT_EXISTS);
+        }
+        try {
+            return getTradeInfoRes;
         } catch (Exception exception) {
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }
@@ -485,7 +503,7 @@ public class TradeService {
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void deleteTrade(TradeDto.PatchStatusReq patchStatusReq) throws BaseException, ParseException , IOException {
         int userCoinIdx = tradeRepository.getUserCoinIdxByTradeIdx(patchStatusReq.getTradeIdx());
-        List<TradeDto.GetTradeInfoRes> getTradeInfoRes = tradeRepository.getTradeInfo(patchStatusReq.getTradeIdx());
+        List<TradeDto.GetTradeInfoRes> getTradeInfoRes = this.getTradeInfo(patchStatusReq.getTradeIdx());
         double price = getTradeInfoRes.get(0).getPrice(); // 코인 원래 가격
         double amount = getTradeInfoRes.get(0).getAmount(); // 코인 원래 갯수
         double fee = getTradeInfoRes.get(0).getFee(); // 코인 수수료
@@ -500,6 +518,9 @@ public class TradeService {
         double newProperty = 0; // 업데이트 해줄 새로운 현금 자산
         double sumCoinAmount = 0; //새로운 코인 전체 갯수
 
+        List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinService.getUserCoinIdx(userCoinIdx);// Profit 의 삭제된 코인 심볼 찾을 때 사용
+        String symbol = getUserCoinIdxRes.get(0).getSymbol();// 삭제할 유저코인의 코인실볼 미리 저장
+
         // 이미 삭제된 거래내역 validation
         String status = tradeRepository.getStatusByTradeIdx(patchStatusReq.getTradeIdx());
         if(status.equals("inactive")){
@@ -513,11 +534,20 @@ public class TradeService {
             // TODO 총자산 식 수정해야함.
             //totalProperty = totalProperty - property + newProperty - (price * amount); // 새로운 총 자산
             sumCoinAmount = uc_amount - amount; // 새로운 총 코인 갯수
-            priceAvg = (priceAvg * uc_amount - price * amount) / sumCoinAmount; //새로운 매수평단가
+            // 전량매도
+            if(sumCoinAmount == 0){
+                priceAvg = 0;
+                int delete = userCoinRepository.deleteByUserCoinIdx(userCoinIdx);
+            }
+            else{
+                priceAvg = (priceAvg * uc_amount - price * amount) / sumCoinAmount; //새로운 매수평단가
+            }
+            //TODO: 0을 나누는것 예외처리: 완료
+            ////////////////////////////////////////////////////////////////
         }else if(category.equals("sell")){
             // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
-            newProperty = property - ((price * amount) + (price * amount * fee)); // 새로운 현금 자산 계산
+            newProperty = property - (price * amount) + (price * amount * fee); // 새로운 현금 자산 계산
             //totalProperty = totalProperty - property + newProperty + (price * amount); // 새로운 총 자산
             //전량매도
             if(uc_amount == 0){
@@ -563,48 +593,86 @@ public class TradeService {
         // 현재 시각 구하기
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date prev = transFormat.parse(prevTradeDate);
-        Date date = new Date();
+        Date date=new Date(System.currentTimeMillis());
+        //Date date = new Date();
+        //date = transFormat.parse(date.toString());
+        String now = transFormat.format(date);
+
+
+
         long diffDay = (date.getTime()- prev.getTime()) / (24*60*60*1000)+1; // 현재-과거시간 으로 날짜 차이 구하기
         //int dayCnt = date.toString().substring()
         // 해당 코인 심볼 조회
-        List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinService.getUserCoinIdx(userCoinIdx);
-        String symbol = getUserCoinIdxRes.get(0).getSymbol();
+        //List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinService.getUserCoinIdx(userCoinIdx);
+        //String symbol = getUserCoinIdxRes.get(0).getSymbol();
         // 해당 코인의 과거 거래일시~어제까지의 수익내역 삭제
         profitService.deleteProfitByUserCoinIdxDate(userCoinIdx,prevTradeDate);
 
-        // API 요청해서 해당 코인의 과거 거래일시~어제까지 일별 종가 시세 받아오기
-        Response response = UpbitApi.getPrevClosingPrice(symbol,date.toString(),Long.toString(diffDay));
-        String resultString = response.body().string();
-        // 업비트 api 응답이 에러코드일 Validation
-        if(resultString.charAt(0)=='{'){
-            //double trade_price = rjson.get("error"); // 코인 현재 시세 평단가
-            throw new BaseException(BaseResponseStatus.GET_UPBITAPI_ERROR);
+
+
+        // 특정 계좌의 모든 코인 심볼 조회
+        List<ProfitDto.GetCoinSymbolRes> getCoinSymbolRes = profitRepository.getSymbolByAccountIdx(accountIdx);
+        // 코인 없는 경우 validation
+        if (getCoinSymbolRes.size() == 0) {
+            throw new BaseException(BaseResponseStatus.GET_SYMBOLS_NOT_EXISTS);
         }
-        // 응답 받아온 json 문자열에서 jsonObject 생성
-//        int len = resultString.length();
-//        resultString = resultString.substring(1,len-1);// json앞 뒤 [] 문자 빼기
-        // [] 포함해서 JSONArray 로 해보기
-        resultString = "{ prices:"+resultString+"}";
-        JSONObject rjson = new JSONObject(resultString);
-        JSONArray rjsonArray = rjson.getJSONArray("prices");
+        // 반복문으로 모든 소유 코인 들의 과거 평단가 diffDay 일수 만큼 업비트 api 조회
+        double sumPrevProperty[]= new double[(int)diffDay]; // 각 날짜별 총 자산 배열
+        String prevJsonTradeDate[] = new String[(int)diffDay]; //과거 거래 시각 배열
+        for(int i=0;i<getCoinSymbolRes.size();i++){
+            // 각 날짜별로 코인 매수가=과거 평단가*코인갯수 를 구해서 더한다.
+            symbol = getCoinSymbolRes.get(i).getSymbol(); // 코인 심볼 조회
 
-        for(int i=0;i<rjsonArray.length();i++){
-            JSONObject obj = rjsonArray.getJSONObject(i);
-            Double prevPrice = obj.getDouble("trade_price");
-            System.out.println(prevPrice);
+            // API 요청해서 해당 코인의 과거 거래일시~어제까지 일별 종가 시세 받아오기
+            Response response = UpbitApi.getPrevClosingPrice(symbol,now,Long.toString(diffDay));
+            String resultString = response.body().string();
+            // 업비트 api 응답이 에러코드일 Validation
+            if(resultString.charAt(0)=='{'){
+                //double trade_price = rjson.get("error"); // 코인 현재 시세 평단가
+                throw new BaseException(BaseResponseStatus.GET_UPBITAPI_ERROR);
+            }
+            // 응답 받아온 json 문자열에서 jsonObject 생성
+            resultString = "{ \"dailyPrices\":"+resultString+"}";
+            JSONObject rjson = new JSONObject(resultString);
+            JSONArray rjsonArray = rjson.getJSONArray("dailyPrices");
+            for(int j=0;j<rjsonArray.length();j++) {
+                JSONObject obj = rjsonArray.getJSONObject(j);
+                double prevPrice = obj.getDouble("trade_price"); // 업비트에서 전날 종가 가격 조회
+                String prevJsonTradeDateTp = obj.getString("candle_date_time_utc"); // 업비트에서 과거 거래 시각 조회
+                String rightPrevJsonTradeDateTp = prevJsonTradeDateTp.substring(0,10)+" "+prevJsonTradeDateTp.substring(11);
+                prevJsonTradeDate[j] = rightPrevJsonTradeDateTp; // 업비트에서 과거 거래 시각 조회
+                System.out.println(prevPrice);
+
+                //TODO: 에러처리
+                double prevAmount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
+                double prevProperty = prevPrice*prevAmount;
+                // 현재 총 자산에 더하기
+                sumPrevProperty[j] += prevProperty;
+
+
+            }
+
+
 
         }
-
-
-
-
-
-
-
-
+        // 총 매수 금액 = 총 자산 - 현금
+        double totalCoinProperty = getCoinSymbolRes.get(0).getTotalProperty() - getCoinSymbolRes.get(0).getProperty();
+        //System.out.println(totalCoinProperty);
         // 반복문으로 일별 종가시세를 이용해서 과거 거래일시~어제까지 수익내역 새로 생성 ( createAt을 스 날 시각으로 설정)
+        for(int i=0;i<diffDay;i++){
+            // 총 손익금:  (현재 총 코인 자산) - 총 매수 금액
+            double totalEarning = sumPrevProperty[i] - (totalCoinProperty);
+            //System.out.println(totalEarning);
+            // 총 수익률: ( (현재 총 코인 자산) - (총 매수 금액))/ 총 매수금액 *100
+            double totalProfitRate = (sumPrevProperty[i] - totalCoinProperty) / totalCoinProperty * 100;
+            //System.out.println(totalProfitRate);
 
+            // 수익 생성 요청
+            ProfitDto.PostPrevProfitReq postPrevProfitReq = new ProfitDto.PostPrevProfitReq( accountIdx,totalProfitRate,totalEarning,prevJsonTradeDate[i]); // 과거수익 시각 까지 추가
+            ProfitDto.PostProfitRes postProfitRes = profitRepository.createPrevProfit(postPrevProfitReq);
 
+            //return postProfitRes;
+        }
 
 
 

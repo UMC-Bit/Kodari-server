@@ -8,6 +8,12 @@ class ProfitSql {
         Values (:accountIdx ,:profitRate , :earning)
 """
 
+    // 과거 거래내역 생성
+    public static final String INSERT_PREV = """
+        INSERT INTO Profit (accountIdx, profitRate, earning, createAt)
+        Values (:accountIdx ,:profitRate , :earning, :prevDate);
+"""
+
     public static final String FIND_BY_PROFITIDX = """
         SELECT * from Profit
         WHERE profitIdx = :profitIdx AND status = 'active'

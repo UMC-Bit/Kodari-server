@@ -119,6 +119,9 @@ public class ProfitService {
     }
 
 
+
+
+
     // Profit 수익내역 조회: 특정 계좌의 현재 코인 평가 자산 조회
     @Transactional
     public ProfitDto.GetCurCoinTotalPropertyRes getCurCoinTotalPropertyByAccountIdx(ProfitDto.GetCurCoinTotalPropertyReq getCurCoinTotalPropertyReq) throws BaseException {
@@ -356,6 +359,7 @@ public class ProfitService {
     // Trade연동 수익내역 삭제
     @Transactional
     public void deleteProfitByUserCoinIdxDate(int userCoinIdx,String date) throws BaseException{
+
 
         // 원하는 시점 이후 수익내역 삭제 요청
         int result = profitRepository.deleteProfitByUserCoinIdx(userCoinIdx,date);
