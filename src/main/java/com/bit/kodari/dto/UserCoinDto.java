@@ -75,6 +75,7 @@ public class UserCoinDto {
     @NoArgsConstructor
     public static class GetUserCoinIdxRes{
         private int userCoinIdx;
+        private int coinIdx;
         private String coinName;
         private String symbol;
         private String coinImg;
@@ -94,6 +95,7 @@ public class UserCoinDto {
     public static class GetUserCoinRes{
         private int portIdx;
         private int userCoinIdx;
+        private int coinIdx;
         private String coinName;
         private String symbol;
         private String coinImg;

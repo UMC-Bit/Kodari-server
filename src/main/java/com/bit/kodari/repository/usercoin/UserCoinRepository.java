@@ -45,6 +45,7 @@ public class UserCoinRepository {
         List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = namedParameterJdbcTemplate.query(UserCoinSql.FIND_USER_COIN_IDX, parameterSource,
                 (rs, rowNum) -> new UserCoinDto.GetUserCoinIdxRes(
                         rs.getInt("userCoinIdx"),
+                        rs.getInt("coinIdx"),
                         rs.getString("coinName"),
                         rs.getString("symbol"),
                         rs.getString("coinImg"),
@@ -65,6 +66,7 @@ public class UserCoinRepository {
                 (rs, rowNum) -> new UserCoinDto.GetUserCoinRes(
                         rs.getInt("portIdx"),
                         rs.getInt("userCoinIdx"),
+                        rs.getInt("coinIdx"),
                         rs.getString("coinName"),
                         rs.getString("symbol"),
                         rs.getString("coinImg"),

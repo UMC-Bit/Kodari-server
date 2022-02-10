@@ -9,7 +9,7 @@ class UserCoinSql {
 
     //특정 소유 코인 조회
     public static final String FIND_USER_COIN_IDX = """
-			SELECT u.userCoinIdx, c.coinName, c.symbol, c.coinImg, c.twitter, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName, symbol, coinImg, twitter from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userCoinIdx = :userCoinIdx AND u.status = 'active'
+			SELECT u.userCoinIdx, c.coinIdx, c.coinName, c.symbol, c.coinImg, c.twitter, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u join (select coinIdx, coinName, symbol, coinImg, twitter from Coin) as c on c.coinIdx = u.coinIdx WHERE u.userCoinIdx = :userCoinIdx AND u.status = 'active'
 			"""
 
     //소유 코인 조회
@@ -18,7 +18,7 @@ class UserCoinSql {
     //concat(format(u.priceAvg, 0), '원') as priceAvg
     //format(u.priceAvg, 0) as priceAvg
     public static final String FIND_USER_COIN = """
-			SELECT p.portIdx, u.userCoinIdx, c.coinName, c.symbol, c.coinImg, c.twitter, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u 
+			SELECT p.portIdx, u.userCoinIdx, c.coinIdx, c.coinName, c.symbol, c.coinImg, c.twitter, u.userIdx, u.priceAvg, u.amount, u.status FROM UserCoin u 
 			join (select coinIdx, coinName, symbol, coinImg, twitter from Coin) as c on c.coinIdx = u.coinIdx 
 			join Account as a on a.accountIdx = u.accountIdx
 			join Portfolio as p on p.accountIdx = a.accountIdx

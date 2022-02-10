@@ -382,7 +382,7 @@ public class TradeService {
         } else if(category.equals("buy")){
             // 새로운 카테고리가 "buy" 매수라면 현금 자산에서 빼주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기.
-            newProperty = property - 2*(price * amount); // 새로운 현금 자산 계산
+            newProperty = property + 2*(price * amount) + fee*price*amount; // 새로운 현금 자산 계산
             //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
             // 매도했던 것을 매수로 바꾼것이므로 기존 매수평단가에서 수정.
             sumCoinAmount = uc_amount + 2*amount;
@@ -390,7 +390,7 @@ public class TradeService {
         }else if(category.equals("sell")){
             // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
-            newProperty = property + 2*(price * amount); // 새로운 현금 자산 계산
+            newProperty = property - 2*(price * amount); // 새로운 현금 자산 계산
             //totalProperty = totalProperty - property + newProperty; // 새로운 총 자산
 
             sumCoinAmount = uc_amount - 2*amount;
@@ -486,7 +486,7 @@ public class TradeService {
         }else if(category.equals("sell")){
             // "sell" 매도라면 현금 자산에서 원래 코인 가격, 갯수, 수수료만큼 뺀 후 새로운 것 더해주기
             // 총자산은 원래 현금자산 빼주고 새로운 현금자산 더해주기 -> (매수, 매도 똑같음)
-            newProperty = property - ((price * amount) + (price * amount * fee)); // 새로운 현금 자산 계산
+            newProperty = property - (price * amount) + (price * amount * fee); // 새로운 현금 자산 계산
             //totalProperty = totalProperty - property + newProperty + (price * amount); // 새로운 총 자산
             //전량매도
             if(uc_amount == 0){
