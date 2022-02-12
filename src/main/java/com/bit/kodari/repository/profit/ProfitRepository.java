@@ -27,7 +27,8 @@ public class ProfitRepository {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", postProfitReq.getAccountIdx())
                 .addValue("profitRate",postProfitReq.getProfitRate())
-                .addValue("earning",postProfitReq.getEarning());
+                .addValue("earning",postProfitReq.getEarning())
+                .addValue("date",postProfitReq.getDate());
 
         int affectedRows = namedParameterJdbcTemplate.update(ProfitSql.INSERT,parameterSource,keyHolder);
 
@@ -195,6 +196,7 @@ public class ProfitRepository {
                     // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
                     (rs, rowNum) -> new ProfitDto.GetCoinSymbolRes(
                             rs.getDouble("amount"),
+                            rs.getDouble("priceAvg"),
                             rs.getString("symbol"),
                             rs.getDouble("property"),
                             rs.getDouble("totalProperty")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기

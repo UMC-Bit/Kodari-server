@@ -4,8 +4,8 @@ class ProfitSql {
 
 
     public static final String INSERT = """
-        INSERT INTO Profit (accountIdx, profitRate, earning)
-        Values (:accountIdx ,:profitRate , :earning)
+        INSERT INTO Profit (accountIdx, profitRate, earning, createAt)
+        Values (:accountIdx ,:profitRate , :earning, :date)
 """
 
     // 과거 거래내역 생성
@@ -65,7 +65,7 @@ ORDER BY month asc;
 
     // Profit 수익내역 조회: 특정 계좌의 코인심볼 전체조회
     public static final String FIND_SYMBOL_BY_ACCOUNTIDX="""
-        SELECT U.amount, C.symbol, A.property, A.totalProperty
+        SELECT U.amount,U.priceAvg, C.symbol, A.property, A.totalProperty
         FROM UserCoin as U join Coin as C on U.coinIdx = C.coinIdx join Account as A on U.accountIdx = A.accountIdx
         WHERE U.accountIdx = :accountIdx
         

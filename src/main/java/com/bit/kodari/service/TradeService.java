@@ -172,6 +172,7 @@ public class TradeService {
             // 수익내역 생성 요청
             ProfitDto.PostProfitReq postProfitReq = new ProfitDto.PostProfitReq();
             postProfitReq.setAccountIdx(accountIdx);// 수익내역 요청 dto 의 accountIdx 저장
+            postProfitReq.setDate(date);
             profitService.createProfit(postProfitReq);
 
             return postTradeRes;// 거래내역 반환
@@ -600,7 +601,7 @@ public class TradeService {
 
 
 
-        long diffDay = (date.getTime()- prev.getTime()) / (24*60*60*1000)+1; // 현재-과거시간 으로 날짜 차이 구하기
+        long diffDay = (date.getTime()- prev.getTime()) / (24*60*60*1000)+2; // 현재-과거시간 으로 날짜 차이 구하기
         //int dayCnt = date.toString().substring()
         // 해당 코인 심볼 조회
         //List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = userCoinService.getUserCoinIdx(userCoinIdx);
