@@ -30,11 +30,13 @@ import java.util.List;
 public class ProfitService {
     private final ProfitRepository profitRepository;
     private final JwtService jwtService; // JWT부분
+    private final UserCoinService userCoinService;
 
     @Autowired //readme 참고
-    public ProfitService(ProfitRepository profitRepository, JwtService jwtService) {
+    public ProfitService(ProfitRepository profitRepository, JwtService jwtService, UserCoinService userCoinService) {
         this.profitRepository = profitRepository;
         this.jwtService = jwtService; // JWT부분
+        this.userCoinService = userCoinService;
     }
 
 
@@ -47,6 +49,8 @@ public class ProfitService {
         if(accountIdx<=0){
             throw new BaseException(BaseResponseStatus.ACCONTIDX_RANGE_ERROR);
         }
+
+        // 계좌의 처음 매수각격을 알기위해 유저코인에서 매수평단가, 코인갯수불러오기
 
         // 특정 계좌의 인덱스로 조회해서 총 손익금, 총 수익률 계산해서 Req 에 넣어서 생성요펑하기
 
@@ -61,6 +65,7 @@ public class ProfitService {
         try {
             // 모든 코인 리스트 탐색하며 api로 현재 시세 불러와서 현재 코인 평가 자산 계산
             double sumCurProperty=0;
+            double sumCoinPrice=0;
             for (int i = 0; i < getCoinSymbolRes.size(); i++) {
                 String coinSymbol = getCoinSymbolRes.get(i).getSymbol(); // 코인 심볼 하나 추출
                 // 코인심볼로 업비트 api에서 현재 시세 조회
@@ -84,21 +89,28 @@ public class ProfitService {
                 double curProperty = trade_price*amount;
                 // 현재 총 자산에 더하기
                 sumCurProperty += curProperty;
+
+                // 내 코인의 총 매수금액
+                double priceAvg = getCoinSymbolRes.get(i).getPriceAvg();
+                sumCoinPrice += amount*priceAvg;
             }
 
             // 총 매수 금액 = 총 자산 - 현금
-            double totalCoinProperty = getCoinSymbolRes.get(0).getTotalProperty() - getCoinSymbolRes.get(0).getProperty();
+            //double totalCoinProperty = getCoinSymbolRes.get(0).getTotalProperty() - getCoinSymbolRes.get(0).getProperty();
             //System.out.println(totalCoinProperty);
+
             // 총 손익금:  (현재 총 코인 자산) - 총 매수 금액
-            double totalEarning = sumCurProperty - (totalCoinProperty);
+//            double totalEarning = sumCurProperty - (totalCoinProperty);
+            double totalEarning = sumCurProperty - (sumCoinPrice);
             //System.out.println(totalEarning);
             // 총 수익률: ( (현재 총 코인 자산) - (총 매수 금액))/ 총 매수금액 *100
-            double totalProfitRate = (sumCurProperty - totalCoinProperty) / totalCoinProperty * 100;
+//            double totalProfitRate = (sumCurProperty - totalCoinProperty) / totalCoinProperty * 100;
+            double totalProfitRate = (sumCurProperty - sumCoinPrice) / sumCoinPrice * 100;
             //System.out.println(totalProfitRate);
 
 
             // 수익 생성 요청
-            ProfitDto.PostProfitReq newPostProfitReq = new ProfitDto.PostProfitReq( accountIdx,totalProfitRate,totalEarning);
+            ProfitDto.PostProfitReq newPostProfitReq = new ProfitDto.PostProfitReq( accountIdx,totalProfitRate,totalEarning, postProfitReq.getDate());
             ProfitDto.PostProfitRes postProfitRes = profitRepository.createProfit(newPostProfitReq);
             return postProfitRes;
 

@@ -298,11 +298,11 @@ public class TradeController {
 
             // jwt 부분
             //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if (userIdx != userIdxByJwt) {
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             //**************************************************************************
             //같다면 거래내역 삭제
