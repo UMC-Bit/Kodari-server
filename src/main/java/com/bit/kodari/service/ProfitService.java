@@ -190,7 +190,7 @@ public class ProfitService {
             ProfitDto.GetProfitRes getProfitResEmpty = new ProfitDto.GetProfitRes(0,getProfitReq.getAccountIdx(),0,"0","inactive","0");
             getProfitRes.add(getProfitResEmpty);
             return getProfitRes;
-//            throw new BaseException(BaseResponseStatus.GET_PROFITS_NOT_EXISTS);
+            //throw new BaseException(BaseResponseStatus.GET_PROFITS_NOT_EXISTS);
         }
 
         // 총 손입금 지수형 E 없애기
