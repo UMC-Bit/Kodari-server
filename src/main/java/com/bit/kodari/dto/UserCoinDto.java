@@ -17,6 +17,7 @@ public class UserCoinDto {
         private String coinName;
         private String symbol;
         private String coinImg;
+        private String twitter;
         private int accountIdx;
         private double priceAvg;
         private double amount;

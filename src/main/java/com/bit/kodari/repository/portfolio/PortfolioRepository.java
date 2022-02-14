@@ -209,6 +209,7 @@ public class PortfolioRepository {
                             rs.getString("coinName"),
                             rs.getString("symbol"),
                             rs.getString("coinImg"),
+                            rs.getString("twitter"),
                             rs.getInt("accountIdx"),
                             rs.getDouble("priceAvg"),
                             rs.getDouble("amount"),
