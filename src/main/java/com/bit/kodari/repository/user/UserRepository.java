@@ -178,7 +178,6 @@ public class UserRepository {
         //SqlParameterSource parameterSource = new MapSqlParameterSource("nickName", updateNickNameReq.getNickName());
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", updateNickNameReq.getUserIdx())
                 .addValue("nickName", updateNickNameReq.getNickName());
-
         return namedParameterJdbcTemplate.update(UserSql.UPDATE_NICKNAME, parameterSource);
     }
 

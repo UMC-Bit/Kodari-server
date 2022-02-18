@@ -85,7 +85,7 @@ public enum BaseResponseStatus {
     ALREADY_DELETED_USER(false,3022,"이미 삭제된 회원입니다."),
 
     ALREADY_DELETED_TRADE(false,3023,"이미 삭제된 거래내역입니다."),
-
+    ALREADY_CERTIFICATION_USER(false, 3024, "이미 인증된 회원입니다."),
 
     FAILED_TO_PROPERTY_RES(false,3040,"없는 계좌입니다."),
     OVER_PORT_THREE(false, 3041, "등록할 수 있는 포트폴리오 갯수를 초과하였습니다."),
