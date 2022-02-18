@@ -156,6 +156,20 @@ class PostSql {
         group by c.symbol, u.nickName, u.profileImgUrl, p.content
          """
 
+    //게시글 좋아요 유저 존재 여부 가져오기
+    public static final String GET_POST_LIKE = """
+        SELECT if(likeType = 1,1,0) as 'postLike'
+        FROM PostLike
+        WHERE userIdx = :userIdx and postIdx = :postIdx
+        """
+
+    //게시글 싫어요 유저 존재 여부 가져오기
+    public static final String GET_POST_DISLIKE = """
+        SELECT if(likeType = 0,1,0) as 'postDislike'
+        FROM PostLike
+        WHERE userIdx = :userIdx and postIdx = :postIdx
+        """
+
     //토론장 게시글별 댓글 조회
     public static final String LIST_COMMENT = """
         SELECT c.userIdx, c.postCommentIdx, u.profileImgUrl, u.nickName, c.content, count(case when cl.like = 1 then 1 end) as 'like',
