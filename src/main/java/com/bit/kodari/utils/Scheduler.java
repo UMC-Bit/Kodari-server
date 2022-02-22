@@ -2,6 +2,7 @@ package com.bit.kodari.utils;
 
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.dto.ProfitDto;
+import com.bit.kodari.service.ExchangeRateService;
 import com.bit.kodari.service.ProfitService;
 import com.bit.kodari.service.TradeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,14 @@ import java.util.List;
 public class Scheduler {// 일정시간마다 작동 클래스
     private final TradeService tradeService;
     private final ProfitService profitService;
+    private final ExchangeRateService exchangeRateService; // 환율 관련 서비스
 
 
     @Autowired
-    public Scheduler(TradeService tradeService, ProfitService profitService){
+    public Scheduler(TradeService tradeService, ProfitService profitService, ExchangeRateService exchangeRateService){
         this.tradeService = tradeService;
         this.profitService = profitService;
+        this.exchangeRateService = exchangeRateService;
 
     }
 
@@ -49,4 +52,15 @@ public class Scheduler {// 일정시간마다 작동 클래스
         }
 
     }
+
+    // 1시간 마다 환율 현재 시세로 업데이트 스케쥴링
+    //"0 0/30 8-10 * * *" = 8:00, 8:30, 9:00, 9:30, 10:00 and 10:30 every day.
+    @Scheduled(cron = "0 0 * * * *") // 매 시간 0초 0분
+    public void updateExchangePriceByScheduler() throws BaseException,IOException{
+        System.out.println("환율 업데이트 스케쥴러 테스트");
+
+        exchangeRateService.updateExchangePrice();
+    }
+
+
 }

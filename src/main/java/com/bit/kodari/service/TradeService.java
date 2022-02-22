@@ -644,7 +644,7 @@ public class TradeService {
                 prevJsonTradeDate[j] = rightPrevJsonTradeDateTp; // 업비트에서 과거 거래 시각 조회
                 System.out.println(prevPrice);
 
-                //TODO: 에러처리
+                //TODO: 에러처리 : 처리완료
                 double prevAmount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
                 double prevProperty = prevPrice*prevAmount;
                 // 현재 총 자산에 더하기

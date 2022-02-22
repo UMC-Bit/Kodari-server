@@ -4,7 +4,9 @@ import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.TradeDto;
 import com.bit.kodari.dto.UserCoinDto;
+import com.bit.kodari.service.ExchangeRateService;
 import com.bit.kodari.service.UserCoinService;
+import com.bit.kodari.utils.ExchangeRateApi;
 import com.bit.kodari.utils.UpbitApi;
 import okhttp3.Response;
 import org.json.JSONArray;
@@ -14,6 +16,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,12 +26,35 @@ import java.util.List;
 @EnableScheduling // 일정 시간마다 자동으로 메소드 호출하는 스케줄러 사용가능하게 한다.
 public class KodariApplication {
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, BaseException,IOException {
         SpringApplication.run(KodariApplication.class, args);
 
         // 메모리 사용량 출력
         long heapSize = Runtime.getRuntime().totalMemory();
         System.out.println("HEAP Size(M) : "+ heapSize / (1024*1024) + " MB");
+
+
+        /*//환율 조회 api 테스트
+        Response response = ExchangeRateApi.getExchangeRate();
+        String resultString = response.body().string(); // 주의: toString()은 안됌
+
+        //System.out.println(resultString);
+
+
+        resultString= resultString.substring(62);
+        //System.out.println(resultString);
+        resultString="{ "+resultString;
+        System.out.println(resultString);
+        JSONObject rjson = new JSONObject(resultString);
+
+        JSONArray rjsonArray = rjson.getJSONArray("리스트");
+        for(int i=0;i<rjsonArray.length();i++){
+            JSONObject obj = rjsonArray.getJSONObject(i);
+            String money = obj.getString("통화명");
+            double exchangePrice = obj.getDouble("매매기준율");
+            System.out.println(money+" "+exchangePrice);
+            if(money.equals("미국 USD")){ break;}
+        }*/
 
 //        SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        //Date prev = transFormat.parse(prevTradeDate);
