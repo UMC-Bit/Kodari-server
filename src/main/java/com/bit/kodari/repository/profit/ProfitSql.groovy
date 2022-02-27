@@ -125,7 +125,7 @@ WHERE P.status = 'active';
         UPDATE Profit as P
         INNER JOIN UserCoin as UC on P.accountIdx=UC.accountIdx
         SET P.status='inactive'
-        WHERE UC.userCoinIdx = :userCoinIdx AND P.status = 'active' AND P.createAt > :date;
+        WHERE UC.userCoinIdx = :userCoinIdx AND P.status = 'active' AND P.createAt >= :date;
 """
 
 
