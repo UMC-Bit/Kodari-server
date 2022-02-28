@@ -107,9 +107,11 @@ public class TradeService {
             // 계좌의 현금 - (매수하는 코인 평단가 * 갯수) - 수수료 < 0
             // Trade에서 portIdx를 통해 Portfolio(accountIdx) 구하기
             // Account에서 property 구하기
-            double cashProperty = accountRepository.getPropertyByAccount(accountIdx);
-            if((cashProperty - price*amount - price*amount*fee)<0){
-                throw new BaseException(BaseResponseStatus.LACK_OF_PROPERTY);
+            if(getUserCoinInfoRes.size() != 0) {// 처음 포트폴리오 생성 시에는 현금자산에서 돈 안빼고 유저코인 입력만
+                double cashProperty = accountRepository.getPropertyByAccount(accountIdx);
+                if ((cashProperty - price * amount - price * amount * fee) < 0) {
+                    throw new BaseException(BaseResponseStatus.LACK_OF_PROPERTY);
+                }
             }
         }
 
