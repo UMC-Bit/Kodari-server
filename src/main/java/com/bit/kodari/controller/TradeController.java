@@ -65,6 +65,32 @@ public class TradeController {
         }
     }
 
+    /**
+     * [POST]
+     */
+    //거래내역 생성 API, 포트폴리오 처음 생성 시 사용
+    @ResponseBody
+    @PostMapping("/post/first")
+    @ApiOperation(value = "거래내역", notes = "포트폴리오 처음 생성시 ,거래내역을 새로 등록함.")
+    public BaseResponse createFirstTrade(@RequestBody TradeDto.PostTradeReq postTradeReq) {
+
+        int userIdx = tradeRepository.getUserIdxByPortIdx(postTradeReq.getPortIdx()); // 포트폴리오 인덱스로 유저인덱스 조회
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
+
+            // 거래내역 생성 요청
+            TradeDto.PostTradeRes postTradeRes = tradeService.createFirstTrade(postTradeReq);
+            return new BaseResponse<>(postTradeRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
 
 
     /**

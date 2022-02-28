@@ -191,6 +191,149 @@ public class TradeService {
     }
 
 
+    // Trade거래내역 생성: 포트폴리오 처음 생성시에만 사용
+    public TradeDto.PostTradeRes createFirstTrade(TradeDto.PostTradeReq postTradeReq) throws BaseException{
+        int portIdx = postTradeReq.getPortIdx();
+        int coinIdx = postTradeReq.getCoinIdx();
+        double price = postTradeReq.getPrice();
+        double amount = postTradeReq.getAmount();
+        double max = 100000000000L;
+//        double fee = postTradeReq.getFee();
+        double maxFee = 100L;
+        int accountIdx = portfolioRepository.getAccountIdx(portIdx);
+        //String category = postTradeReq.getCategory();
+//        String date = postTradeReq.getDate();
+        String date = accountRepository.getCreateAtByAccountIdx(accountIdx); // 처음 계좌 생성시 시각
+
+        int userIdx = portfolioRepository.getAccountUserIdx(accountIdx);
+//        List<TradeDto.GetUserCoinInfoRes> getUserCoinInfoRes = tradeRepository.getCoinIdxRes(userIdx, accountIdx);
+
+        // 임의로 설정
+        postTradeReq.setFee(0.05);
+        postTradeReq.setCategory("buy");
+        postTradeReq.setDate(date);
+
+        // portIdx 범위 validation
+        if(portIdx<=0){
+            throw new BaseException(BaseResponseStatus.PORTIDX_RANGE_ERROR);
+        }
+        // coinIdx 범위 validation
+        if(coinIdx<=0){
+            throw new BaseException(BaseResponseStatus.COINIDX_RANGE_ERROR);
+        }
+        // 가격의 범위 validation
+        if(price<=0 || price>max){
+            throw new BaseException(BaseResponseStatus.PRICE_RANGE_ERROR);
+        }
+        // 갯수의 범위 validation
+        if(amount<=0 || amount>max){
+            throw new BaseException(BaseResponseStatus.AMOUNT_RANGE_ERROR);
+        }
+        // 수수료 범위 validation
+//        if(fee<0 || fee>maxFee){
+//            throw new BaseException(BaseResponseStatus.FEE_RANGE_ERROR);
+//        }
+        // 매수/매도 null, 빈값 validation
+//        if(category == null || category.length()==0){
+//            throw new BaseException(BaseResponseStatus.EMPTY_CATEGORY);
+//        }
+        // 거래시각 null, 빈값 validation
+//        if(date == null || date.length()==0){
+//            throw new BaseException(BaseResponseStatus.EMPTY_DATE);
+//        }
+
+
+        // 매수를 진행할 때 사용자의 계좌의 돈이 부족한 경우 Validation
+//        if(category.equals("buy")){
+//            // 계좌의 현금 - (매수하는 코인 평단가 * 갯수) - 수수료 < 0
+//            // Trade에서 portIdx를 통해 Portfolio(accountIdx) 구하기
+//            // Account에서 property 구하기
+//            double cashProperty = accountRepository.getPropertyByAccount(accountIdx);
+//            if ((cashProperty - price * amount - price * amount * fee) < 0) {
+//                throw new BaseException(BaseResponseStatus.LACK_OF_PROPERTY);
+//            }
+//        }
+
+        // 매도를 진행할 때 매도량이 사용자의 소유코인 개수보다 더 많을경우 Validation
+//        else if(category.equals("sell")){
+//            // coinIdx, accountIdx로 UserCoin.amount 조회
+//            //  소유코인갯수 - 매도량  < 0 면 소유코인 갯수 부족 에러
+//            double userCoinAmount = tradeRepository.getUserCoinAmountByAccountIdxCoinIdx(accountIdx,coinIdx);
+//            if((userCoinAmount - amount)<0){
+//                throw new BaseException(BaseResponseStatus.LACK_OF_AMOUNT);
+//            }
+//        }
+
+        // userIdx,cionIdx,accountIdx로 유저 코인 있는지 검사 Validation
+//        int sum=0;
+//        int idx = 0;
+//        for(int i=0; i < getUserCoinInfoRes.size(); i++){
+//            if(getUserCoinInfoRes.get(i).getCoinIdx() == coinIdx){
+//                idx = i;
+//                sum++;
+//                break;
+//            }
+//        }
+
+
+
+        // 입력값 검증되면 생성 요청
+        try {
+            // 거래내역 생성 요청
+            TradeDto.PostTradeRes postTradeRes = tradeRepository.createFirstTrade(postTradeReq);
+
+            // 매수,매도 거래내역 등록 완료 시 Account 보유현금, 총 자산 자동 업데이트
+            accountService.updateTradeProperty(postTradeRes.getTradeIdx());
+
+            UserCoinDto.PostUserCoinReq postUserCoinReq = new UserCoinDto.PostUserCoinReq(userIdx, coinIdx, accountIdx, price, amount);
+            userCoinService.registerUserCoin(postUserCoinReq);
+            // 소유코인이 존재하지 않을때
+//            if(sum == 0){
+//                if(category.equals("buy")){
+//                    // 소유코인을 새로 생성하고
+//                    UserCoinDto.PostUserCoinReq postUserCoinReq = new UserCoinDto.PostUserCoinReq(userIdx, coinIdx, accountIdx, price, amount);
+//                    userCoinService.registerUserCoin(postUserCoinReq);
+//                }
+//                else if(category.equals("sell")){
+//                    // 소유코인이 없을때 매도는 오류처리
+//                    throw new BaseException(BaseResponseStatus.NO_USER_COIN); //4057
+//                }
+//            }
+//            else if(sum != 0){
+//                //소유코인이 있을때
+//                //기존의 해당 userCoinIdx 조회
+//                int userCoinIdx = getUserCoinInfoRes.get(idx).getUserCoinIdx();
+//                //기존 코인 갯수
+//                double existAmount = userCoinRepository.getAmountByUserCoinIdx(userCoinIdx);
+//                //기존 매수평단가
+//                double priceAvg = userCoinRepository.getPriceAvg(userCoinIdx);
+//                // 매수평단가, amount 수정
+//                UserCoinDto.PatchBuySellReq patchBuySellReq = new UserCoinDto.PatchBuySellReq(userCoinIdx, priceAvg, existAmount);
+//                userCoinService.updatePriceAvg(patchBuySellReq);
+//            }
+
+
+            // 수익내역 생성 요청
+            ProfitDto.PostProfitReq postProfitReq = new ProfitDto.PostProfitReq();
+            postProfitReq.setAccountIdx(accountIdx);// 수익내역 요청 dto 의 accountIdx 저장
+            postProfitReq.setDate(date);
+            profitService.createProfit(postProfitReq);
+
+            return postTradeRes;// 거래내역 반환
+
+//  *********** 해당 부분은 7주차 수업 후 주석해제하서 대체해서 사용해주세요! ***********
+//            //jwt 발급.
+//            int userIdx = postUserRes.getUserIdx();
+//            //int userIdx = jwtService.getUserIdx();
+//            String jwt = jwtService.createJwt(userIdx); // jwt 발급
+//            return new UserDto.PostUserRes(userIdx,nickName,jwt); // jwt 담아서 서비스로 반환
+//  *********************************************************************
+        } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+
     // Trade 거래내역 조회: 특정 포트폴리오의  특정 코인의 전체 매수,매도 조회
     @Transactional
     public List<TradeDto.GetTradeRes> getTradeByPortIdxCoinIdx(TradeDto.GetTradeReq getTradeReq) throws BaseException {

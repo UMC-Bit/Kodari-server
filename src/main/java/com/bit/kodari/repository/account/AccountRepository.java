@@ -403,4 +403,16 @@ public class AccountRepository {
     }
 
 
+    public String getCreateAtByAccountIdx(int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx",accountIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_CREATEAT, parameterSource, rs -> {
+            String createAt = "";
+            if (rs.next()) {
+                createAt = rs.getString("createAt");
+            }
+
+            return createAt;
+        });
+    }
+
 }

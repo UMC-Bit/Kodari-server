@@ -6,6 +6,12 @@ class TradeSql {
 			values (:portIdx, :coinIdx,  :price, :amount, :fee, :category, :memo, :date)
 			"""
 
+    // 포트폴리오 처음 생성 시 추가
+    public static final String INSERT_FIRST = """
+			INSERT INTO Trade (portIdx,coinIdx,price, amount, fee, category, memo, date)
+			values (:portIdx, :coinIdx,  :price, :amount, :fee, :category, :memo, :date)
+			"""
+
 
     public static final String FIND_BY_TRADEIDX = """
 			SELECT * from Trade where tradeIdx = :tradeIdx

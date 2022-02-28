@@ -58,6 +58,33 @@ public class TradeRepository {
     }
 
 
+    // 거래내역 생성:  레코드 추가, 포트폴리오 처음 생성 시
+    public TradeDto.PostTradeRes createFirstTrade(TradeDto.PostTradeReq postTradeReq){
+        // TradeReq 레코드 추가
+        //KeyHolder keyHolder = new GeneratedKeyHolder();
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", postTradeReq.getPortIdx())
+                .addValue("coinIdx", postTradeReq.getCoinIdx())
+                .addValue("price", postTradeReq.getPrice())
+                .addValue("amount", postTradeReq.getAmount())
+                .addValue("fee", postTradeReq.getFee())
+                .addValue("category", postTradeReq.getCategory())
+                .addValue("memo", postTradeReq.getMemo())
+                .addValue("date", postTradeReq.getDate());
+
+        int affectedRows = namedParameterJdbcTemplate.update(TradeSql.INSERT_FIRST,parameterSource,keyHolder);
+
+        // 해당 tradeIdx 의 거래내역을 PostTradeRes 형태로 반환
+        int lastInsertIdx = keyHolder.getKey().intValue(); // 마지막 들어간 idx 조회
+        SqlParameterSource parameterSource1 = new MapSqlParameterSource("tradeIdx",lastInsertIdx);
+        TradeDto.PostTradeRes postTradeRes = namedParameterJdbcTemplate.queryForObject(TradeSql.FIND_BY_TRADEIDX,parameterSource1,
+                (rs,rowNum) -> new TradeDto.PostTradeRes(
+                        rs.getInt("tradeIdx")
+                ));
+        return postTradeRes;
+    }
+
+
 
     // Trade 거래내역 조회: 특정 포트폴리오의  특정 코인의 전체 매수,매도 조회
     public List<TradeDto.GetTradeRes> getTradeByPortIdxCoinIdx(TradeDto.GetTradeReq getTradeReq){

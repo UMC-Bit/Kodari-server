@@ -166,4 +166,11 @@ class AccountSql {
         SELECT userCoinIdx from UserCoin where accountIdx = :accountIdx and status = 'active'
     """
 
+    //accountIdx로 거래 생성시각 조회
+    public static final String GET_CREATEAT ="""
+        SELECT createAt 
+        FROM Account 
+        WHERE accountIdx = :accountIdx AND status='active'
+"""
+
 }
