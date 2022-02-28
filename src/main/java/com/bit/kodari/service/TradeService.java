@@ -283,7 +283,7 @@ public class TradeService {
             TradeDto.PostTradeRes postTradeRes = tradeRepository.createFirstTrade(postTradeReq);
 
             // 매수,매도 거래내역 등록 완료 시 Account 보유현금, 총 자산 자동 업데이트
-            accountService.updateTradeProperty(postTradeRes.getTradeIdx());
+            //accountService.updateTradeProperty(postTradeRes.getTradeIdx());
 
             UserCoinDto.PostUserCoinReq postUserCoinReq = new UserCoinDto.PostUserCoinReq(userIdx, coinIdx, accountIdx, price, amount);
             userCoinService.registerUserCoin(postUserCoinReq);
