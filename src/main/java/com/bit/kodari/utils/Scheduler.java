@@ -30,6 +30,7 @@ public class Scheduler {// 일정시간마다 작동 클래스
     }
 
 
+    // 24시간 마다 수익률 저장 스케쥴러
     //"0 0/30 8-10 * * *" = 8:00, 8:30, 9:00, 9:30, 10:00 and 10:30 every day.
     @Scheduled(cron = "0 0 0 * * *") // 초(0-59)   분(0-59)　　시간(0-23)　　일(1-31)　　월(1-12)　　요일(0-7) 로 스케줄 실행 시각 설정
     public void updateTradeByScheduler() throws BaseException , IOException {

@@ -93,7 +93,7 @@ ORDER BY month asc;
     public static final String FIND_ACCOUNTIDX = """
 SELECT DISTINCT A.accountIdx # DISTINCT : 중복제거
 FROM Profit as P INNER JOIN Account as A ON P.accountIdx = A.accountIdx
-WHERE P.status = 'active';
+WHERE P.status = 'active' AND A.status = 'active';
 
 """
 
