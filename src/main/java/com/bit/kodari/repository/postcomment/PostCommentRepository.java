@@ -45,6 +45,19 @@ public class PostCommentRepository {
         });
     }
 
+    //userIdx로 신고 수 가져오기
+    public int getUserReport(int userIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        return namedParameterJdbcTemplate.query(PostCommentSql.GET_REPORT_COUNT, parameterSource, rs -> {
+            int report_count = 0;
+            if (rs.next()) {
+                report_count = rs.getInt("report_count");
+            }
+
+            return report_count;
+        });
+    }
+
 
     //postCommentIdx로 댓글 Status 가져오기
     public String getStatusByPostCommentIdx(int postCommentIdx) {

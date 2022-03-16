@@ -84,6 +84,19 @@ public class PostReplyRepository {
 
     }
 
+    //userIdx로 신고 수 가져오기
+    public int getUserReport(int userIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        return namedParameterJdbcTemplate.query(PostReplySql.GET_REPORT_COUNT, parameterSource, rs -> {
+            int report_count = 0;
+            if (rs.next()) {
+                report_count = rs.getInt("report_count");
+            }
+
+            return report_count;
+        });
+    }
+
     //답글 수정
     public int modifyReply(PostReplyDto.PatchReplyReq patchReplyReq) {
         String qry = PostReplySql.UPDATE_REPLY;

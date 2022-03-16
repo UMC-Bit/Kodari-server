@@ -34,11 +34,15 @@ public class PostService {
     public RegisterRes insertPost(RegisterReq registerReq) throws BaseException {
         String content = registerReq.getContent();
         String tmp_content = content.replaceAll(" ", "");
+        int reportCnt = postRepository.getUserReport(registerReq.getUserIdx());
         if(content.isEmpty() || tmp_content.isEmpty()) { //게시글 내용이 없는 경우 validation 처리
             throw new BaseException(EMPTY_CONTENT);
         }
         else if(content.length() >= 500) { //게시글 500자 이내 제한
             throw new BaseException(OVER_CONTENT);
+        }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
         }
         try {
             return postRepository.insert(registerReq);
@@ -53,6 +57,7 @@ public class PostService {
         int postIdx = post.getPostIdx();
         String content = post.getContent();
         int user = postRepository.getUserIdxByPostIdx(postIdx);
+        int reportCnt = postRepository.getUserReport(user);
         String status = postRepository.getStatusByPostIdx(postIdx);
         String tmp_content = content.replaceAll(" ", "");
         if(status.equals("inactive")) { //삭제된 글은 수정 불가
@@ -64,6 +69,9 @@ public class PostService {
         //게시글 내용 0자 이하 제한
         else if(content.length() >= 500) { //게시글 500자 이내 제한
             throw new BaseException(OVER_CONTENT);
+        }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
         }
         else{
             int result = postRepository.modifyPost(post);

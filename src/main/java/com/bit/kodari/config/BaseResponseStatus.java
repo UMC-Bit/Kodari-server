@@ -17,6 +17,8 @@ public enum BaseResponseStatus {
     SUCCESS_COMMENT_LIKE_REGISTER(true, 1004, "댓글 좋아요 등록을 성공하였습니다."),
     SUCCESS_POST_REPORT_REGISTER(true, 1005, "게시글 신고를 성공하였습니다."),
     SUCCESS_POST_DELETE(true, 1006, "게시글 신고 횟수가 초과되어 삭제되었습니다."),
+    SUCCESS_COMMENT_REPORT_REGISTER(true, 1007, "댓글 신고를 성공하였습니다."),
+    SUCCESS_COMMENT_DELETE(true, 1008, "댓글 신고 횟수가 초과되어 삭제되었습니다."),
 
 
     /**
@@ -150,16 +152,22 @@ public enum BaseResponseStatus {
     //글 존재여부
     IMPOSSIBLE_POST(false, 4083, "게시글이 존재하지 않습니다."),
     IMPOSSIBLE_POST_COMMENT(false, 4084, "댓글이 존재하지 않습니다."),
+    IMPOSSIBLE_POST_REPORT(false, 4085, "신고할 수 없습니다."),
 
     //내용확인
-    EMPTY_CONTENT(false, 4085, "내용이 없습니다."),
+    EMPTY_CONTENT(false, 4086, "내용이 없습니다."),
 
     //글자수 확인
-    OVER_CONTENT(false, 4086, "글자수가 초과되었습니다."),
+    OVER_CONTENT(false, 4087, "글자수가 초과되었습니다."),
 
     //유저 존재 여부
-    ALREADY_REPORT(false, 4087, "이미 신고하셨습니다.");
+    ALREADY_REPORT(false, 4088, "이미 신고하셨습니다."),
 
+    //유저 REPORT 추가 실패
+    FAIL_REPORT_ADD(false, 4089, "유저 신고가 되지 않았습니다."),
+
+    //신고로 인한 토론장 접근 제한
+    BLOCKED_USER(false, 4090, "운영원칙에 위배되어 차단된 사용자입니다.");
 
 
 

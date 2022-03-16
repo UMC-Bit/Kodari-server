@@ -141,6 +141,14 @@ class PostSql {
         WHERE p.postIdx = :postIdx and c.status = 'active'
         """
 
+    //유저의 신고 수 조회
+    public static final String GET_REPORT_COUNT = """
+        SELECT report AS 'report_count'
+        FROM User
+        WHERE userIdx = :userIdx
+        """
+
+
     //토론장 게시글별 게시글 조회
     public static final String LIST_POSTS = """
          SELECT p.postIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',

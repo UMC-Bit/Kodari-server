@@ -240,6 +240,19 @@ public class PostRepository {
         });
     }
 
+    //userIdx로 신고 수 가져오기
+    public int getUserReport(int userIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        return namedParameterJdbcTemplate.query(PostSql.GET_REPORT_COUNT, parameterSource, rs -> {
+            int report_count = 0;
+            if (rs.next()) {
+                report_count = rs.getInt("report_count");
+            }
+
+            return report_count;
+        });
+    }
+
 
     //토론장 특정 게시글의 게시글 조회
     public PostDto.GetUserPostRes getPostsByPostIdx(int postIdx) {

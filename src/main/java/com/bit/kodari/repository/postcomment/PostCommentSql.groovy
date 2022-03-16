@@ -29,6 +29,12 @@ class PostCommentSql {
         WHERE c.postIdx = :postIdx
         """
 
+    //유저의 신고 수 조회
+    public static final String GET_REPORT_COUNT = """
+        SELECT report AS 'report_count'
+        FROM User
+        WHERE userIdx = :userIdx
+        """
 
     //postCommentIdx로 commentLikeIdx 받아오기
     public static final String GET_COMMENT_LIKE_IDX = """
