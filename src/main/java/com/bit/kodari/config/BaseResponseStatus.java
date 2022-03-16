@@ -15,6 +15,8 @@ public enum BaseResponseStatus {
     SUCCESS_POST_LIKE_REGISTER(true, 1002, "게시글 좋아요/싫어요 등록을 성공하였습니다."),
     SUCCESS_COMMENT_LIKE_DELETE(true, 1003, "댓글 좋아요 삭제를 성공하였습니다."),
     SUCCESS_COMMENT_LIKE_REGISTER(true, 1004, "댓글 좋아요 등록을 성공하였습니다."),
+    SUCCESS_POST_REPORT_REGISTER(true, 1005, "게시글 신고를 성공하였습니다."),
+    SUCCESS_POST_DELETE(true, 1006, "게시글 신고 횟수가 초과되어 삭제되었습니다."),
 
 
     /**
@@ -153,7 +155,10 @@ public enum BaseResponseStatus {
     EMPTY_CONTENT(false, 4085, "내용이 없습니다."),
 
     //글자수 확인
-    OVER_CONTENT(false, 4086, "글자수가 초과되었습니다.");
+    OVER_CONTENT(false, 4086, "글자수가 초과되었습니다."),
+
+    //유저 존재 여부
+    ALREADY_REPORT(false, 4087, "이미 신고하셨습니다.");
 
 
 
