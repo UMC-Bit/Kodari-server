@@ -3,9 +3,10 @@ package com.bit.kodari.repository.profit
 class ProfitSql {
 
 
+    // 수익룰 생성
     public static final String INSERT = """
         INSERT INTO Profit (accountIdx, profitRate, earning, createAt)
-        Values (:accountIdx ,:profitRate , :earning, :date)
+        Values (:accountIdx ,:profitRate , :earning, :date) # date는 현재시각과 과거의 거래시간이 다를 때 있어서 따로 추가
 """
 
     // 과거 거래내역 생성
@@ -106,6 +107,11 @@ WHERE P.status = 'active' AND A.status = 'active';
 
 """
 
+    // accountIdx로 marketIdx 가져오기
+    public static final String FIND_MARKETIDX_BY_ACCOUNTIDX = """
+SELECT marketIdx FROM Account
+WHERE accountIdx = :accountIdx AND status='active'
+"""
 
     // Profit 수익내역 삭제: 특정 계좌의 수익내역 삭제
     public static final String DELETE ="""

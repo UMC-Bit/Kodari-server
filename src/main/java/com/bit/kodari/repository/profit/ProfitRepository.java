@@ -255,6 +255,20 @@ public class ProfitRepository {
     }
 
 
+    // accountIdx로 marketIdx 가져오기
+    public int getMarketIdxByAccountIdx(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(ProfitSql.FIND_MARKETIDX_BY_ACCOUNTIDX, parameterSource, rs -> {
+            int marketIdx = 0;
+            if (rs.next()) {
+                marketIdx = rs.getInt("marketIdx");
+            }
+
+            return marketIdx;
+        });
+    }
+
+
 
 
     // Profit 수익내역 삭제: 특정 계좌의 수익내역 삭제

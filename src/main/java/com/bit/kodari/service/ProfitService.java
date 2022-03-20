@@ -6,6 +6,7 @@ import com.bit.kodari.dto.ProfitDto;
 import com.bit.kodari.dto.TradeDto;
 import com.bit.kodari.repository.profit.ProfitRepository;
 import com.bit.kodari.repository.trade.TradeRepository;
+import com.bit.kodari.utils.BithumbApi;
 import com.bit.kodari.utils.JwtService;
 import com.bit.kodari.utils.UpbitApi;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +50,12 @@ public class ProfitService {
         if(accountIdx<=0){
             throw new BaseException(BaseResponseStatus.ACCONTIDX_RANGE_ERROR);
         }
+        // 계좌인덱스로 마켓인덱스 조회
+        int marketIdx = profitRepository.getMarketIdxByAccountIdx(accountIdx);
+        // marketIdx 범위 validation
+        if(marketIdx<=0){
+            throw new BaseException(BaseResponseStatus.MARKETIDX_RANGE_ERROR);
+        }
 
         // 계좌의 처음 매수각격을 알기위해 유저코인에서 매수평단가, 코인갯수불러오기
 
@@ -68,45 +75,71 @@ public class ProfitService {
             double sumCoinPrice=0;
             for (int i = 0; i < getCoinSymbolRes.size(); i++) {
                 String coinSymbol = getCoinSymbolRes.get(i).getSymbol(); // 코인 심볼 하나 추출
-                // 코인심볼로 업비트 api에서 현재 시세 조회
-                Response response = UpbitApi.getCurrentPrice(coinSymbol);
-                String resultString = response.body().string(); // json을 문자열로 추출
-                // 업비트 api 응답이 에러코드일 Validation
-                if(resultString.charAt(0)=='{'){
+                // 업비트 거래소일때
+                if(marketIdx == 1){
+                    // 코인심볼로 업비트 api에서 현재 시세 조회
+                    Response response = UpbitApi.getCurrentPrice(coinSymbol);
+                    String resultString = response.body().string(); // json을 문자열로 추출
+                    // 업비트 api 응답이 에러코드일 Validation
+                    if(resultString.charAt(0)=='{'){
+                        JSONObject rjson = new JSONObject(resultString); // json객체로 변환
+                        //double trade_price = rjson.get("error"); // 코인 현재 시세 평단가
+                        throw new BaseException(BaseResponseStatus.GET_UPBITAPI_ERROR);
+                    }
+                    // 업비트 API 응답 정살 이면
+                    int len = resultString.length();
+                    resultString = resultString.substring(1, len - 1); // json앞 뒤 [] 문자 빼기
                     JSONObject rjson = new JSONObject(resultString); // json객체로 변환
-                    //double trade_price = rjson.get("error"); // 코인 현재 시세 평단가
-                    throw new BaseException(BaseResponseStatus.GET_UPBITAPI_ERROR);
+                    double trade_price = rjson.getDouble("trade_price"); // 코인 현재 시세 평단가
+
+
+                    // 각 코인의 현재 평가 자산 = 현재시세 * 코인 갯수
+                    double amount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
+                    double curProperty = trade_price*amount;
+                    // 현재 총 자산에 더하기
+                    sumCurProperty += curProperty;
+
+                    // 내 코인의 총 매수금액
+                    double priceAvg = getCoinSymbolRes.get(i).getPriceAvg();
+                    sumCoinPrice += amount*priceAvg;
                 }
-                // 업비트 API 응답 정살 이면
-                int len = resultString.length();
-                resultString = resultString.substring(1, len - 1); // json앞 뒤 [] 문자 빼기
-                JSONObject rjson = new JSONObject(resultString); // json객체로 변환
-                double trade_price = rjson.getDouble("trade_price"); // 코인 현재 시세 평단가
+
+                ///////////////////////////////////////////////////////////////////////
+                // 빗썸 거래소일때
+                if(marketIdx == 2){
+                    // 코인심볼로 빗썸 api에서 현재 시세 조회
+                    Response response = BithumbApi.getCurrentPrice(coinSymbol);
+                    String resultString = response.body().string(); // json을 문자열로 추출
+                    JSONObject rjson = new JSONObject(resultString); // json객체로 변환
+                    // 빗썸 api 응답이 에러코드일 경우 Validation , 정상코드 = 0000
+                    if(!rjson.getString("status").equals("0000")){
+                        throw new BaseException(BaseResponseStatus.GET_BITHUMBAPI_ERROR);
+                    }
+                    // 빗썸 api 응답이 정상이면
+                    JSONObject rjsonData = rjson.getJSONObject("data"); // data json객체 추출
+                    double trade_price = rjsonData.getDouble("closing_price"); // data에서 코인 현재 시세 평단가
 
 
-                // 각 코인의 현재 평가 자산 = 현재시세 * 코인 갯수
-                double amount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
-                double curProperty = trade_price*amount;
-                // 현재 총 자산에 더하기
-                sumCurProperty += curProperty;
+                    // 각 코인의 현재 평가 자산 = 현재시세 * 코인 갯수
+                    double amount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
+                    double curProperty = trade_price*amount;
+                    // 현재 총 자산에 더하기
+                    sumCurProperty += curProperty;
 
-                // 내 코인의 총 매수금액
-                double priceAvg = getCoinSymbolRes.get(i).getPriceAvg();
-                sumCoinPrice += amount*priceAvg;
+                    // 내 코인의 총 매수금액
+                    double priceAvg = getCoinSymbolRes.get(i).getPriceAvg();
+                    sumCoinPrice += amount*priceAvg;
+                }
+
             }
 
             // 총 매수 금액 = 총 자산 - 현금
             //double totalCoinProperty = getCoinSymbolRes.get(0).getTotalProperty() - getCoinSymbolRes.get(0).getProperty();
-            //System.out.println(totalCoinProperty);
 
             // 총 손익금:  (현재 총 코인 자산) - 총 매수 금액
-//            double totalEarning = sumCurProperty - (totalCoinProperty);
             double totalEarning = sumCurProperty - (sumCoinPrice);
-            //System.out.println(totalEarning);
             // 총 수익률: ( (현재 총 코인 자산) - (총 매수 금액))/ 총 매수금액 *100
-//            double totalProfitRate = (sumCurProperty - totalCoinProperty) / totalCoinProperty * 100;
             double totalProfitRate = (sumCurProperty - sumCoinPrice) / sumCoinPrice * 100;
-            //System.out.println(totalProfitRate);
 
 
             // 수익 생성 요청

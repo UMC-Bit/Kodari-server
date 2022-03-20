@@ -53,6 +53,7 @@ public enum BaseResponseStatus {
     LACK_OF_PROPERTY(false,2032,"계좌의 현금 잔액 부족"),
     LACK_OF_AMOUNT(false,2033,"계좌의 코인 갯수 부족"),
     DENOMINATOR_ZERO(false, 2034, "나누려는 분모가 0입니다."),
+    MARKETIDX_RANGE_ERROR(false, 2035, "마켓인덱스를 확인해주세요."),
     POST_ACCOUNT_NAME_NULL(false, 2040, "계좌이름을 입력해주세요."),
     INACTIVE_PORTFOLIO(false, 2041, "삭제된 포트폴리오입니다."),
 
@@ -114,6 +115,8 @@ public enum BaseResponseStatus {
 
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
+    GET_BITHUMBAPI_ERROR(false, 4015, "빗썸 API 응답 에러입니다."),
+
     //40-69
     MODIFY_FAIL_ACCOUNTNAME(false, 4040, "계좌 이름 수정 실패"),
     MODIFY_FAIL_PROPERTY(false, 4041, "현금 자산 수정 실패"),
