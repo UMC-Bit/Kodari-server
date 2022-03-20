@@ -4,7 +4,6 @@ package com.bit.kodari.controller;
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponse;
 import com.bit.kodari.config.BaseResponseStatus;
-import com.bit.kodari.dto.CommentLikeDto;
 import com.bit.kodari.dto.ReportDto;
 import com.bit.kodari.repository.report.ReportRepository;
 import com.bit.kodari.service.ReportService;
@@ -36,9 +35,15 @@ public class ReportController {
     //게시글 신고 기능
     @PostMapping(value="/post")
     @ApiOperation(value = "게시글 신고", notes = "토론장 게시글 신고함.")
-    public BaseResponse<ReportDto.PostReportRes> checkPostReport(@RequestBody ReportDto.RegisterPostReportReq registerPostReportReq){
+    public BaseResponse<ReportDto.PostReportRes> checkPostReport(@RequestBody ReportDto.RegisterPostReportReq registerPostReportReq) throws BaseException {
         int postIdx = registerPostReportReq.getPostIdx();
         int reportCnt = reportRepository.getPostReportCnt(postIdx);
+        //jwt에서 idx 추출.
+        int userIdxByJwt = jwtService.getUserIdx();
+        //신고하는 유저와 접근한 유저가 같은지 확인
+        if(registerPostReportReq.getReporter() != userIdxByJwt){
+            return new BaseResponse<>(INVALID_USER_JWT);
+        }
         if(reportCnt < 2) { //신고 3회 초과 -> 추가
             return createPostReport(registerPostReportReq);
         }
@@ -85,9 +90,15 @@ public class ReportController {
     //댓글 신고 기능
     @PostMapping(value="/post/comment")
     @ApiOperation(value = "댓글 신고", notes = "토론장 댓글 신고함.")
-    public BaseResponse<ReportDto.PostCommentReportRes> checkPostCommentReport(@RequestBody ReportDto.RegisterPostCommentReportReq registerPostCommentReportReq){
+    public BaseResponse<ReportDto.PostCommentReportRes> checkPostCommentReport(@RequestBody ReportDto.RegisterPostCommentReportReq registerPostCommentReportReq) throws BaseException {
         int postCommentIdx = registerPostCommentReportReq.getPostCommentIdx();
         int reportCnt = reportRepository.getPostCommentReportCnt(postCommentIdx);
+        //jwt에서 idx 추출.
+        int userIdxByJwt = jwtService.getUserIdx();
+        //신고하는 유저와 접근한 유저가 같은지 확인
+        if(registerPostCommentReportReq.getReporter() != userIdxByJwt){
+            return new BaseResponse<>(INVALID_USER_JWT);
+        }
         if(reportCnt < 2) { //신고 3회 초과 -> 추가
             return createPostCommentReport(registerPostCommentReportReq);
         }
@@ -134,9 +145,15 @@ public class ReportController {
     //답글 신고 기능
     @PostMapping(value="/post/reply")
     @ApiOperation(value = "답글 신고", notes = "토론장 답글 신고함.")
-    public BaseResponse<ReportDto.PostReplyReportRes> checkPostReplyReport(@RequestBody ReportDto.RegisterPostReplyReportReq registerPostReplyReportReq){
+    public BaseResponse<ReportDto.PostReplyReportRes> checkPostReplyReport(@RequestBody ReportDto.RegisterPostReplyReportReq registerPostReplyReportReq) throws BaseException {
         int postReplyIdx = registerPostReplyReportReq.getPostReplyIdx();
         int reportCnt = reportRepository.getPostReplyReportCnt(postReplyIdx);
+        //jwt에서 idx 추출.
+        int userIdxByJwt = jwtService.getUserIdx();
+        //신고하는 유저와 접근한 유저가 같은지 확인
+        if(registerPostReplyReportReq.getReporter() != userIdxByJwt){
+            return new BaseResponse<>(INVALID_USER_JWT);
+        }
         if(reportCnt < 2) { //신고 3회 초과 -> 추가
             return createPostReplyReport(registerPostReplyReportReq);
         }

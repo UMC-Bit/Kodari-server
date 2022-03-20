@@ -10,6 +10,7 @@ public class ReportDto {
     public static class RegisterPostReportReq{
         private int postIdx;
         private int reporter; //신고하는 유저
+        private String reason; //신고 사유
     }
 
     //토론장 게시글 신고기능 선택 RESPONSE DTO
@@ -90,6 +91,7 @@ public class ReportDto {
     public static class RegisterPostCommentReportReq{
         private int postCommentIdx;
         private int reporter; //신고하는 유저
+        private String reason; //신고 사유
     }
 
     //토론장 댓글 신고기능 선택 RESPONSE DTO
@@ -131,6 +133,7 @@ public class ReportDto {
     public static class RegisterPostReplyReportReq{
         private int postReplyIdx;
         private int reporter; //신고하는 유저
+        private String reason; //신고 사유
     }
 
     //토론장 답글 신고기능 선택 RESPONSE DTO

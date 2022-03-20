@@ -3,8 +3,8 @@ package com.bit.kodari.repository.report
 class ReportSql {
     //토론장 게시글 신고
     public static final String REPORT_POST = """
-        INSERT INTO PostReport (postIdx, reporter, respondent)
-        values (:postIdx, :reporter, :respondent)
+        INSERT INTO PostReport (postIdx, reporter, respondent, reason)
+        values (:postIdx, :reporter, :respondent, :reason)
         """
 
     //postIdx로 userIdx 받아오기
@@ -96,8 +96,8 @@ class ReportSql {
 
     //토론장 댓글 신고
     public static final String REPORT_POST_COMMENT = """
-        INSERT INTO PostCommentReport (postCommentIdx, reporter, respondent)
-        values (:postCommentIdx, :reporter, :respondent)
+        INSERT INTO PostCommentReport (postCommentIdx, reporter, respondent, reason)
+        values (:postCommentIdx, :reporter, :respondent, :reason)
         """
 
     //postCommentIdx로 userIdx 받아오기
@@ -130,8 +130,8 @@ class ReportSql {
 
     //토론장 답글 신고
     public static final String REPORT_POST_REPLY = """
-        INSERT INTO PostReplyReport (postReplyIdx, reporter, respondent)
-        values (:postReplyIdx, :reporter, :respondent)
+        INSERT INTO PostReplyReport (postReplyIdx, reporter, respondent, reason)
+        values (:postReplyIdx, :reporter, :respondent, :reason)
         """
 
     //postReplyIdx로 userIdx 받아오기

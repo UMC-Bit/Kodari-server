@@ -26,9 +26,10 @@ public class ReportRepository {
     public ReportDto.PostReportRes choosePostReport(ReportDto.RegisterPostReportReq report, int respondent) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("postIdx", report.getPostIdx())
-                .addValue("reporter", report.getReporter())
-                .addValue("respondent", respondent);
+                .addValue("postIdx", report.getPostIdx()) //신고할 게시글 인덱스
+                .addValue("reporter", report.getReporter()) //신고하는 유저
+                .addValue("respondent", respondent) //신고 당하는 유저
+                .addValue("reason", report.getReason()); //신고 사유
         int affectedRows = namedParameterJdbcTemplate.update(reportSql.REPORT_POST, parameterSource, keyHolder);
 //    return new ReportDto.PostReportRes(report.getReporter(), keyHolder.getKey().intValue());
         return new ReportDto.PostReportRes(report.getReporter());
@@ -205,9 +206,10 @@ public class ReportRepository {
     public ReportDto.PostCommentReportRes choosePostCommentReport(ReportDto.RegisterPostCommentReportReq report, int respondent) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("postCommentIdx", report.getPostCommentIdx())
-                .addValue("reporter", report.getReporter())
-                .addValue("respondent", respondent);
+                .addValue("postCommentIdx", report.getPostCommentIdx()) //신고할 댓글 인덱스
+                .addValue("reporter", report.getReporter()) //신고하는 유저
+                .addValue("respondent", respondent) //신고 당하는 유저
+                .addValue("reason", report.getReason()); //신고 사유
         int affectedRows = namedParameterJdbcTemplate.update(reportSql.REPORT_POST_COMMENT, parameterSource, keyHolder);
 //    return new ReportDto.PostReportRes(report.getReporter(), keyHolder.getKey().intValue());
         return new ReportDto.PostCommentReportRes(report.getReporter());
@@ -276,9 +278,10 @@ public class ReportRepository {
     public ReportDto.PostReplyReportRes choosePostReplyReport(ReportDto.RegisterPostReplyReportReq report, int respondent) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("postReplyIdx", report.getPostReplyIdx())
-                .addValue("reporter", report.getReporter())
-                .addValue("respondent", respondent);
+                .addValue("postReplyIdx", report.getPostReplyIdx()) //신고할 답글 인덱스
+                .addValue("reporter", report.getReporter()) //신고하는 유저
+                .addValue("respondent", respondent) //신고 당하는 유저
+                .addValue("reason", report.getReason()); //신고 사유
         int affectedRows = namedParameterJdbcTemplate.update(reportSql.REPORT_POST_REPLY, parameterSource, keyHolder);
 //    return new ReportDto.PostReportRes(report.getReporter(), keyHolder.getKey().intValue());
         return new ReportDto.PostReplyReportRes(report.getReporter());
