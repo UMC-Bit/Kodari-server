@@ -295,12 +295,15 @@ public class AccountService {
     }
 
     // 총자산 업데이트 버튼 누를때마다 수정되도록 업비트 API로 현재시세로 계산
+    // TODO marketIdx 구분해서 빗썸 API로 계산하는 것 추가
     // Profit 수익내역 조회: 특정 계좌의 현재 코인 평가 자산 조회
     @Transactional
     public ProfitDto.GetCurCoinTotalPropertyRes getCurCoinTotalPropertyByAccountIdx(ProfitDto.GetCurCoinTotalPropertyReq getCurCoinTotalPropertyReq) throws BaseException {
         // 특정 포트폴리오의 모든 코인 심볼 조회
         int accountIdx = getCurCoinTotalPropertyReq.getAccountIdx();
         double property = accountRepository.getPropertyByAccount(accountIdx); //현재 현금 자산
+        // 거래소
+        int marketIdx = accountRepository.getMarketIdxByAccount(accountIdx);
         // accountIdx 범위 validation
         if(accountIdx<=0){
             throw new BaseException(BaseResponseStatus.ACCONTIDX_RANGE_ERROR);

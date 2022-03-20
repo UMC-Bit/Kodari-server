@@ -34,7 +34,7 @@ public class PortfolioService {
         int marketIdx = portfolioRepository.getMarketIdxByAccountIdx(accountIdx);
 
 
-        //TODO 계좌 오류 validation 추가하기
+        //계좌 오류 validation 추가하기
 //        List<AccountDto.GetAccountIdxRes> getAccountIdxRes = accountRepository.getAccountIdxByIdx(userIdx, marketIdx);
 //
 //        if(getAccountIdxRes.size() >= 3){
