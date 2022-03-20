@@ -167,6 +167,19 @@ public class PortfolioRepository {
         });
     }
 
+    // accountIdx로 marketIdx 가져오기
+    public int getMarketIdxByAccountIdx(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(PortfolioSql.GET_MARKET_IDX_BY_ACCOUNT, parameterSource, rs -> {
+            int marketIdx = 0;
+            if (rs.next()) {
+                marketIdx = rs.getInt("marketIdx");
+            }
+
+            return marketIdx;
+        });
+    }
+
     // 모든 포트폴리오 가져오기 - List
     public List<PortfolioDto.GetAllPortfolioRes> getAllPortfolio(){
         try {

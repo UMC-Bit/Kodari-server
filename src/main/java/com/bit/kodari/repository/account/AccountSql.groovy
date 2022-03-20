@@ -91,6 +91,11 @@ class AccountSql {
         SELECT status from Account where accountIdx = :accountIdx
     """;
 
+    //accountIdx로 marketIdx 가져오기
+    public static final String GET_MARKET_IDX_BY_ACCOUNT ="""
+        SELECT marketIdx from Account where accountIdx = :accountIdx
+    """;
+
     // tradeIdx로 portIdx 가져오기
     public static final String GET_PORT_IDX ="""
         SELECT portIdx from Trade where tradeIdx = :tradeIdx

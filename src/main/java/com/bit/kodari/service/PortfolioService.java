@@ -2,6 +2,7 @@ package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponseStatus;
+import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.repository.portfolio.PortfolioRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,15 @@ public class PortfolioService {
         String status = portfolioRepository.getAccountStatus(accountIdx);
         // accountIdx로 불러온 userIdx
         int accountUser = portfolioRepository.getAccountUserIdx(accountIdx);
+        int marketIdx = portfolioRepository.getMarketIdxByAccountIdx(accountIdx);
+
+
+        //계좌 오류 validation 추가하기
+//        List<AccountDto.GetAccountIdxRes> getAccountIdxRes = accountRepository.getAccountIdxByIdx(userIdx, marketIdx);
+//
+//        if(getAccountIdxRes.size() >= 3){
+//            throw  new BaseException(OVER_ACCOUNT_THREE); //3042
+//        }
 
         //해당 유저의 계좌인지 확인
         if(accountUser != postPortfolioReq.getUserIdx()){
@@ -55,12 +65,24 @@ public class PortfolioService {
         try {
             PortfolioDto.PostPortfolioRes postPortfolioRes = portfolioRepository.insert(postPortfolioReq);
             int portIdx = postPortfolioRes.getPortIdx();
-            //비트코인
-            PortfolioDto.GetRepresentRes getRepresentRes1 = portfolioRepository.insertRepresent(portIdx, 16);
-            //이더리움
-            PortfolioDto.GetRepresentRes getRepresentRes2 = portfolioRepository.insertRepresent(portIdx, 32);
-            //솔라나
-            PortfolioDto.GetRepresentRes getRepresentRes3 = portfolioRepository.insertRepresent(portIdx, 82);
+            //업비트
+            if(marketIdx == 1){
+                //비트코인
+                PortfolioDto.GetRepresentRes getRepresentRes1 = portfolioRepository.insertRepresent(portIdx, 16);
+                //이더리움
+                PortfolioDto.GetRepresentRes getRepresentRes2 = portfolioRepository.insertRepresent(portIdx, 32);
+                //솔라나
+                PortfolioDto.GetRepresentRes getRepresentRes3 = portfolioRepository.insertRepresent(portIdx, 82);
+            }
+            //빗썸
+            if(marketIdx == 2){
+                //비트코인
+                PortfolioDto.GetRepresentRes getRepresentRes1 = portfolioRepository.insertRepresent(portIdx, 113);
+                //이더리움
+                PortfolioDto.GetRepresentRes getRepresentRes2 = portfolioRepository.insertRepresent(portIdx, 115);
+                //바이낸스 코인
+                PortfolioDto.GetRepresentRes getRepresentRes3 = portfolioRepository.insertRepresent(portIdx, 116);
+            }
             return postPortfolioRes;
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);

@@ -29,6 +29,16 @@ class RepresentSql {
         SELECT userIdx from Portfolio where portIdx = :portIdx
     """;
 
+    //portIdx로 accountIdx 가져오기
+    public static final String GET_ACCOUNT_IDX_BY_PORT ="""
+        SELECT accountIdx from Portfolio where portIdx = :portIdx
+    """;
+
+    //accountIdx로 marketIdx 가져오기
+    public static final String GET_MARKET_IDX_BY_ACCOUNT ="""
+        SELECT marketIdx from Account where accountIdx = :accountIdx
+    """;
+
     //representIdx로 portIdx 가져오기
     public static final String GET_PORT_IDX_BY_REPRESENT ="""
         SELECT portIdx from Represent where representIdx = :representIdx

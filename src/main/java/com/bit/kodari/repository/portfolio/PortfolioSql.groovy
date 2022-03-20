@@ -75,6 +75,11 @@ class PortfolioSql {
         SELECT accountIdx from Portfolio where portIdx = :portIdx
     """;
 
+    //accountIdx로 marketIdx 가져오기
+    public static final String GET_MARKET_IDX_BY_ACCOUNT ="""
+        SELECT marketIdx from Account where accountIdx = :accountIdx
+    """;
+
     // 모든 포트폴리오 가져오기
     public static final String GET_ALL_PORTFOLIO ="""
         SELECT userIdx, accountIdx from Portfolio where status = 'active'

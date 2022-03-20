@@ -73,7 +73,6 @@ public class RepresentRepository {
     }
 
 
-
     // 대표 코인 삭제 : 전체삭제
     public int deleteAllReprsentByUserIdx(int userIdx){
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);

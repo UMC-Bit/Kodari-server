@@ -254,6 +254,19 @@ public class AccountRepository {
         });
     }
 
+    // accountIdx로 marketIdx 가져오기
+    public int getMarketIdxByAccount(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_MARKET_IDX_BY_ACCOUNT, parameterSource, rs -> {
+            int marketIdx = 0;
+            if (rs.next()) {
+                marketIdx = rs.getInt("marketIdx");
+            }
+
+            return marketIdx;
+        });
+    }
+
     // accountIdx로 totalProperty 가져오기
     public double getTotalPropertyByAccount(int accountIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
