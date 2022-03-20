@@ -7,6 +7,7 @@ import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.ProfitDto;
 import com.bit.kodari.repository.account.AccountRepository;
 import com.bit.kodari.repository.profit.ProfitRepository;
+import com.bit.kodari.utils.BithumbApi;
 import com.bit.kodari.utils.JwtService;
 import com.bit.kodari.utils.UpbitApi;
 import lombok.extern.slf4j.Slf4j;
@@ -295,7 +296,7 @@ public class AccountService {
     }
 
     // 총자산 업데이트 버튼 누를때마다 수정되도록 업비트 API로 현재시세로 계산
-    // TODO marketIdx 구분해서 빗썸 API로 계산하는 것 추가
+    // marketIdx 구분해서 빗썸 API로 계산하는 것 추가
     // Profit 수익내역 조회: 특정 계좌의 현재 코인 평가 자산 조회
     @Transactional
     public ProfitDto.GetCurCoinTotalPropertyRes getCurCoinTotalPropertyByAccountIdx(ProfitDto.GetCurCoinTotalPropertyReq getCurCoinTotalPropertyReq) throws BaseException {
@@ -318,23 +319,48 @@ public class AccountService {
         try {
             // 모든 코인 리스트 탐색하며 api로 현재 시세 불러와서 현재 코인 평가 자산 계산
             double sumCurProperty=0;
-            for (int i = 0; i < getCoinSymbolRes.size(); i++) {
-                String coinSymbol = getCoinSymbolRes.get(i).getSymbol(); // 코인 심볼 하나 추출
-                // 코인심볼로 업비트 api에서 현재 시세 조회
-                Response response = UpbitApi.getCurrentPrice(coinSymbol);
-                String resultString = response.body().string(); // json을 문자열로 추출
-                int len = resultString.length();
-                resultString = resultString.substring(1, len - 1); // json앞 뒤 [] 문자 빼기
+            if(marketIdx == 1){
+                for (int i = 0; i < getCoinSymbolRes.size(); i++) {
+                    String coinSymbol = getCoinSymbolRes.get(i).getSymbol(); // 코인 심볼 하나 추출
+                    // 코인심볼로 업비트 api에서 현재 시세 조회
+                    Response response = UpbitApi.getCurrentPrice(coinSymbol);
+                    String resultString = response.body().string(); // json을 문자열로 추출
+                    int len = resultString.length();
+                    resultString = resultString.substring(1, len - 1); // json앞 뒤 [] 문자 빼기
 
-                JSONObject rjson = new JSONObject(resultString); // json객체로 변환
-                double trade_price = rjson.getDouble("trade_price"); // 코인 현재 시세 평단가
+                    JSONObject rjson = new JSONObject(resultString); // json객체로 변환
+                    double trade_price = rjson.getDouble("trade_price"); // 코인 현재 시세 평단가
 
-                // 캌 코인의 현재 평가 자산 = 현재시세 * 코인 갯수
-                double amount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
-                double curProperty = trade_price*amount;
-                // 현재 총 자산에 더하기
-                sumCurProperty += curProperty;
+                    // 캌 코인의 현재 평가 자산 = 현재시세 * 코인 갯수
+                    double amount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
+                    double curProperty = trade_price*amount;
+                    // 현재 총 자산에 더하기
+                    sumCurProperty += curProperty;
+                }
             }
+            if(marketIdx == 2){
+                for (int i = 0; i < getCoinSymbolRes.size(); i++) {
+                    String coinSymbol = getCoinSymbolRes.get(i).getSymbol(); // 코인 심볼 하나 추출
+                    // 코인심볼로 빗썸 api에서 현재 시세 조회
+                    Response response = BithumbApi.getCurrentPrice(coinSymbol);
+                    String resultString = response.body().string(); // json을 문자열로 추출
+                    JSONObject rjson = new JSONObject(resultString); // json객체로 변환
+                    // 빗썸 api 응답이 에러코드일 경우 Validation , 정상코드 = 0000
+                    if(!rjson.getString("status").equals("0000")){
+                        throw new BaseException(BaseResponseStatus.GET_BITHUMBAPI_ERROR);
+                    }
+                    // 빗썸 api 응답이 정상이면
+                    JSONObject rjsonData = rjson.getJSONObject("data"); // data json객체 추출
+                    double trade_price = rjsonData.getDouble("closing_price"); // data에서 코인 현재 시세 평단가
+
+                    // 각 코인의 현재 평가 자산 = 현재시세 * 코인 갯수
+                    double amount = getCoinSymbolRes.get(i).getAmount(); // 코인 갯수
+                    double curProperty = trade_price*amount;
+                    // 현재 총 자산에 더하기
+                    sumCurProperty += curProperty;
+                }
+            }
+
             // 각 코인 값이 다 더해진 것에 현금자산을 더하면 총자산.
             sumCurProperty += property;
 
