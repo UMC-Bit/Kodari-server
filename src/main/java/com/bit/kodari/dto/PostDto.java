@@ -117,6 +117,8 @@ public class PostDto {
         private String time; // 게시글 시간
         private int like = 0;
         private int dislike = 0;
+        private boolean checkPostLike; // 게시글 좋아요 유저 확인
+        private boolean checkPostDislike; // 게시글 싫어요 유저 확인
         private int comment_cnt;
     }
 
@@ -135,6 +137,8 @@ public class PostDto {
         private int dislike = 0;
         private int comment_cnt; //댓글 수
         private boolean checkWriter; // 게시글 유저 확인
+        private boolean checkPostLike; // 게시글 좋아요 유저 확인
+        private boolean checkPostDislike; // 게시글 싫어요 유저 확인
         private List<GetCommentRes> commentList; //댓글과 답글 리스트
 
 

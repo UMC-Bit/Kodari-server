@@ -43,4 +43,29 @@ public class CoinService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
+    //marketIdx별 코인 조회
+    @Transactional
+    public List<CoinDto.GetCoinRes> getCoinsByMarket(int marketIdx) throws BaseException {
+        try {
+            List<CoinDto.GetCoinRes> getCoinsRes = coinRepository.getCoinsByMarket(marketIdx);
+            return getCoinsRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    // marketIdx별 코인 이름 조회
+    @Transactional
+    public List<CoinDto.GetCoinRes> getMarketCoinByCoinName(int marketIdx, String coinName) throws BaseException {
+        try {
+            List<CoinDto.GetCoinRes> getCoinsRes = coinRepository.getMarketCoinByCoinName(marketIdx, coinName);
+            return getCoinsRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
 }

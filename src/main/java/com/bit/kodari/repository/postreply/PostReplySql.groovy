@@ -30,6 +30,15 @@ class PostReplySql {
         WHERE r.postCommentIdx = :postCommentIdx;
         """
 
+
+    //유저의 신고 수 조회
+    public static final String GET_REPORT_COUNT = """
+        SELECT report AS 'report_count'
+        FROM User
+        WHERE userIdx = :userIdx
+        """
+
+
     //토론장 게시글 답글 수정
     public static final String UPDATE_REPLY = """
          UPDATE PostReply SET content = :content

@@ -32,6 +32,7 @@ public class PostReplyService {
     @Transactional
     public PostReplyDto.RegisterReplyRes insertCommentReply(PostReplyDto.RegisterReplyReq registerReplyReq) throws BaseException {
         int postCommentIdx = registerReplyReq.getPostCommentIdx();
+        int reportCnt = postReplyRepository.getUserReport(registerReplyReq.getUserIdx());
         String content = registerReplyReq.getContent();
         String tmp_content = content.replaceAll(" ", "");
         String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
@@ -48,6 +49,9 @@ public class PostReplyService {
         else if(content.length() >= 100) { //내용 100자 이내 제한
             throw new BaseException(OVER_CONTENT);
         }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
+        }
         try {
             PostReplyDto.RegisterReplyRes registerReplyRes = postReplyRepository.insertReply(registerReplyReq);
             return registerReplyRes;
@@ -62,6 +66,7 @@ public class PostReplyService {
         int postReplyIdx = post.getPostReplyIdx();
         int userIdx = post.getUserIdx();
         int postCommentIdx = post.getPostCommentIdx();
+        int reportCnt = postReplyRepository.getUserReport(userIdx);
         String content = post.getContent();
         String tmp_content = content.replaceAll(" ", "");
         String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
@@ -81,6 +86,9 @@ public class PostReplyService {
         }
         else if(content.length() >= 100) { //내용 100자 이내 제한
             throw new BaseException(OVER_CONTENT);
+        }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
         }
         else{
             int result = postReplyRepository.modifyReply(post);

@@ -114,11 +114,32 @@ public class PostController {
     public BaseResponse<List<PostDto.GetPostRes>> getPosts(@RequestParam(required = false) Integer userIdx) {
         try {
             if (userIdx == null) {
+                int userIdxByJwt = jwtService.getUserIdx();
                 List<PostDto.GetPostRes> getPostsRes = postService.getPosts();
+                for(int k=0; k < getPostsRes.size(); k++) {
+                    boolean checkPostLike = postRepository.getPostLike(userIdxByJwt, getPostsRes.get(k).getPostIdx());
+                    boolean checkPostDislike = postRepository.getPostDislike(userIdxByJwt, getPostsRes.get(k).getPostIdx());
+                    if(checkPostLike) {
+                        getPostsRes.get(k).setCheckPostLike(true); // 접근한 유저가 게시글 좋아요 누른 유저인지 확인
+                    }
+                    if(checkPostDislike) {
+                        getPostsRes.get(k).setCheckPostDislike(true); // 접근한 유저가 게시글 싫어요 누른 유저인지 확인
+                    }
+                }
                 return new BaseResponse<>(getPostsRes);
             }
             // query string인 userIdx이 있을 경우, 조건을 만족하는 상품정보들을 불러온다.
             List<PostDto.GetPostRes> getPostsRes = postService.getPostsByUserIdx(userIdx);
+            for(int j=0; j < getPostsRes.size(); j++) {
+                boolean checkPostLike = postRepository.getPostLike(userIdx, getPostsRes.get(j).getPostIdx());
+                boolean checkPostDislike = postRepository.getPostDislike(userIdx, getPostsRes.get(j).getPostIdx());
+                if(checkPostLike) {
+                    getPostsRes.get(j).setCheckPostLike(true); // 접근한 유저가 게시글 좋아요 누른 유저인지 확인
+                }
+                if(checkPostDislike) {
+                    getPostsRes.get(j).setCheckPostDislike(true); // 접근한 유저가 게시글 싫어요 누른 유저인지 확인
+                }
+            }
             return new BaseResponse<>(getPostsRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -130,7 +151,19 @@ public class PostController {
     @ApiOperation(value = "코인별 게시글 목록 조회", notes = "토론장 코인별 게시글을 조회함")
     public BaseResponse<List<PostDto.GetPostRes>> getPosts(@RequestParam String coinName) {
         try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
             List<PostDto.GetPostRes> getCoinsRes = postService.getPostsByCoinName(coinName);
+            for(int i=0; i < getCoinsRes.size(); i++) {
+                boolean checkPostLike = postRepository.getPostLike(userIdxByJwt, getCoinsRes.get(i).getPostIdx());
+                boolean checkPostDislike = postRepository.getPostDislike(userIdxByJwt, getCoinsRes.get(i).getPostIdx());
+                if(checkPostLike) {
+                    getCoinsRes.get(i).setCheckPostLike(true); // 접근한 유저가 게시글 좋아요 누른 유저인지 확인
+                }
+                if(checkPostDislike) {
+                    getCoinsRes.get(i).setCheckPostDislike(true); // 접근한 유저가 게시글 싫어요 누른 유저인지 확인
+                }
+            }
             return new BaseResponse<>(getCoinsRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -144,16 +177,22 @@ public class PostController {
     @ApiOperation(value = "게시글별 조회", notes = "토론장 게시글별 조회함")
     public BaseResponse<PostDto.GetUserPostRes> getComments(@RequestParam int postIdx) {
         int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
-        List<PostDto.GetCommentDeleteRes> postCommentIdx = postRepository.getPostCommentIdxByPostIdx(postIdx);
-        List<PostDto.GetReplyDeleteRes> postReplyIdx = postRepository.getReplyIdxByPostIdx(postIdx);
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             List<PostDto.GetCommentRes> commentRes = postRepository.getCommentByPostIdx(postIdx);
             PostDto.GetUserPostRes getUserPostRes = postService.getPostsByPostIdx(postIdx);
 
+            boolean checkPostLike = postRepository.getPostLike(userIdxByJwt, postIdx);
+            boolean checkPostDislike = postRepository.getPostDislike(userIdxByJwt, postIdx);
             if(userIdx == userIdxByJwt){
                 getUserPostRes.setCheckWriter(true); //접근한 유저가 게시글 글쓴 유저인지 확인
+            }
+            if(checkPostLike) {
+                getUserPostRes.setCheckPostLike(true); // 접근한 유저가 게시글 좋아요 누른 유저인지 확인
+            }
+            if(checkPostDislike) {
+                getUserPostRes.setCheckPostDislike(true); // 접근한 유저가 게시글 싫어요 누른 유저인지 확인
             }
             for(int i = 0; i < commentRes.size(); i++){
                 boolean checkLike = postRepository.getCommentLike(userIdxByJwt, commentRes.get(i).getPostCommentIdx());

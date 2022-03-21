@@ -33,6 +33,7 @@ public class PostCommentService {
     @Transactional
     public PostCommentDto.RegisterCommentRes insertPostComment(PostCommentDto.RegisterCommentReq registerCommentReq) throws BaseException {
         int postIdx = registerCommentReq.getPostIdx();
+        int reportCnt = postCommentRepository.getUserReport(registerCommentReq.getUserIdx());
         String post_status = postCommentRepository.getStatusByPostIdx(postIdx);
         String content = registerCommentReq.getContent();
         String tmp_content = content.replaceAll(" ", "");
@@ -44,6 +45,9 @@ public class PostCommentService {
         }
         else if(content.length() >= 100) { //내용 100자 이내 제한
             throw new BaseException(OVER_CONTENT);
+        }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
         }
         try {
             PostCommentDto.RegisterCommentRes registerCommentRes = postCommentRepository.insertComment(registerCommentReq);
@@ -59,6 +63,7 @@ public class PostCommentService {
         int postCommentIdx = post.getPostCommentIdx();
         int userIdx = post.getUserIdx();
         int postIdx = post.getPostIdx();
+        int reportCnt = postCommentRepository.getUserReport(userIdx);
         String content = post.getContent();
         String tmp_content = content.replaceAll(" ", "");
         int user = postCommentRepository.getUserIdxByPostCommentIdx(postCommentIdx);
@@ -78,6 +83,9 @@ public class PostCommentService {
         }
         else if(content.length() >= 100) { //내용 100자 이내 제한
             throw new BaseException(OVER_CONTENT);
+        }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
         }
         else{
             int result = postCommentRepository.modifyComment(post);

@@ -53,4 +53,21 @@ public class CoinController {
         }
     }
 
+    //마켓별 코인 조회
+    @GetMapping("/market")
+    @ApiOperation(value = "market별 조회", notes = "market별 코인 조회함")
+    public BaseResponse<List<CoinDto.GetCoinRes>> getCoinsByMarket (@RequestParam int marketIdx, @RequestParam(required = false) String coinName) {
+        try {
+            if (coinName == null) {
+                List<CoinDto.GetCoinRes> getCoinRes = coinService.getCoinsByMarket(marketIdx);
+                return new BaseResponse<>(getCoinRes);
+            }
+            List<CoinDto.GetCoinRes> getCoinsRes = coinService.getMarketCoinByCoinName(marketIdx, coinName);
+            return new BaseResponse<>(getCoinsRes);
+
+    } catch (BaseException exception) {
+        return new BaseResponse<>((exception.getStatus()));
+    }
+}
+
 }

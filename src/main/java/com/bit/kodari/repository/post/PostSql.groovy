@@ -141,6 +141,14 @@ class PostSql {
         WHERE p.postIdx = :postIdx and c.status = 'active'
         """
 
+    //유저의 신고 수 조회
+    public static final String GET_REPORT_COUNT = """
+        SELECT report AS 'report_count'
+        FROM User
+        WHERE userIdx = :userIdx
+        """
+
+
     //토론장 게시글별 게시글 조회
     public static final String LIST_POSTS = """
          SELECT p.postIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
@@ -155,6 +163,20 @@ class PostSql {
         WHERE p.postIdx = :postIdx and p.status = 'active'
         group by c.symbol, u.nickName, u.profileImgUrl, p.content
          """
+
+    //게시글 좋아요 유저 존재 여부 가져오기
+    public static final String GET_POST_LIKE = """
+        SELECT if(likeType = 1,1,0) as 'postLike'
+        FROM PostLike
+        WHERE userIdx = :userIdx and postIdx = :postIdx
+        """
+
+    //게시글 싫어요 유저 존재 여부 가져오기
+    public static final String GET_POST_DISLIKE = """
+        SELECT if(likeType = 0,1,0) as 'postDislike'
+        FROM PostLike
+        WHERE userIdx = :userIdx and postIdx = :postIdx
+        """
 
     //토론장 게시글별 댓글 조회
     public static final String LIST_COMMENT = """

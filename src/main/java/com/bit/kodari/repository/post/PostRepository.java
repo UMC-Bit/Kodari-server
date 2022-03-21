@@ -182,7 +182,7 @@ public class PostRepository {
                         rs.getString("content"),
                         rs.getString("time"),
                         rs.getInt("like"),
-                        rs.getInt("dislike"),
+                        rs.getInt("dislike"), false, false,
                         getCommentCount(rs.getInt("postIdx"))
         ));
 
@@ -201,7 +201,7 @@ public class PostRepository {
                         rs.getString("content"),
                         rs.getString("time"),
                         rs.getInt("like"),
-                        rs.getInt("dislike"),
+                        rs.getInt("dislike"), false, false,
                         getCommentCount(rs.getInt("postIdx"))
                 ));
         return getPostRes;
@@ -220,7 +220,7 @@ public class PostRepository {
                         rs.getString("content"),
                         rs.getString("time"),
                         rs.getInt("like"),
-                        rs.getInt("dislike"),
+                        rs.getInt("dislike"), false, false,
                         getCommentCount(rs.getInt("postIdx"))
                         // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                 ));
@@ -237,6 +237,19 @@ public class PostRepository {
             }
 
             return comment_count;
+        });
+    }
+
+    //userIdx로 신고 수 가져오기
+    public int getUserReport(int userIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        return namedParameterJdbcTemplate.query(PostSql.GET_REPORT_COUNT, parameterSource, rs -> {
+            int report_count = 0;
+            if (rs.next()) {
+                report_count = rs.getInt("report_count");
+            }
+
+            return report_count;
         });
     }
 
@@ -257,7 +270,7 @@ public class PostRepository {
                         rs.getString("content"),
                         rs.getString("time"),
                         rs.getInt("like"),
-                        rs.getInt("dislike"), getCommentCount(rs.getInt("postIdx")), false, commentList); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        rs.getInt("dislike"), getCommentCount(rs.getInt("postIdx")), false, false, false, commentList); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
         return post;
     }
     );
@@ -267,6 +280,35 @@ public class PostRepository {
         }
 
         }
+
+    //userIdx, postIdx로 게시글 좋아요 유저 확인
+    public boolean getPostLike(int userIdx, int postIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx",userIdx)
+                .addValue("postIdx", postIdx);
+        return namedParameterJdbcTemplate.query(PostSql.GET_POST_LIKE, parameterSource, rs -> {
+            boolean postLike = false;
+            if (rs.next()) {
+                postLike = rs.getBoolean("postLike");
+            }
+
+            return postLike;
+        });
+    }
+
+    //userIdx, postIdx로 게시글 싫어요 유저 확인
+    public boolean getPostDislike(int userIdx, int postIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx",userIdx)
+                .addValue("postIdx", postIdx);
+        return namedParameterJdbcTemplate.query(PostSql.GET_POST_DISLIKE, parameterSource, rs -> {
+            boolean postDislike = false;
+            if (rs.next()) {
+                postDislike = rs.getBoolean("postDislike");
+            }
+
+            return postDislike;
+        });
+    }
+
 
     //토론장 특정 게시글의 관련된 댓글 조회
     public List<PostDto.GetCommentRes> getCommentByPostIdx(int postIdx) {
