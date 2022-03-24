@@ -6,8 +6,12 @@ import com.bit.kodari.dto.TradeDto;
 import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.service.ExchangeRateService;
 import com.bit.kodari.service.UserCoinService;
+import com.bit.kodari.utils.BithumbWebSocketListener;
 import com.bit.kodari.utils.ExchangeRateApi;
 import com.bit.kodari.utils.UpbitApi;
+import com.bit.kodari.utils.UpbitWebSocketListener;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,6 +24,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 @SpringBootApplication
@@ -122,6 +127,26 @@ public class KodariApplication {
 //            System.out.println(prevPrice);
 //
 //        }
+
+
+        /*
+        업비트 웹소켓 리스너 실행
+         */
+        UpbitWebSocketListener upbitWebSocket;
+        HashSet<String> upbitCoinSymbolSet = new HashSet<>();
+        upbitCoinSymbolSet.add("BTC");
+        upbitWebSocket = new UpbitWebSocketListener(upbitCoinSymbolSet);
+        upbitWebSocket.start(); // 업비트 웹 소켓 실행
+
+        /*
+        빗썸 웹소켓 리스너 실행
+         */
+        BithumbWebSocketListener bithumbWebSocket;
+        HashSet<String> bithumbCoinSymbolSet = new HashSet<>();
+        bithumbCoinSymbolSet.add("BTC");
+        bithumbWebSocket = new BithumbWebSocketListener(bithumbCoinSymbolSet);
+        bithumbWebSocket.start();// 웹 소켓 실행
+
 
     }
 
