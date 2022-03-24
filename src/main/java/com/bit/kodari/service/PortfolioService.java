@@ -80,8 +80,8 @@ public class PortfolioService {
                 PortfolioDto.GetRepresentRes getRepresentRes1 = portfolioRepository.insertRepresent(portIdx, 113);
                 //이더리움
                 PortfolioDto.GetRepresentRes getRepresentRes2 = portfolioRepository.insertRepresent(portIdx, 115);
-                //바이낸스 코인
-                PortfolioDto.GetRepresentRes getRepresentRes3 = portfolioRepository.insertRepresent(portIdx, 116);
+                //리플코인
+                PortfolioDto.GetRepresentRes getRepresentRes3 = portfolioRepository.insertRepresent(portIdx, 114);
             }
             return postPortfolioRes;
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
