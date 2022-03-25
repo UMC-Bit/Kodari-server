@@ -2,8 +2,10 @@ package com.bit.kodari;
 
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponseStatus;
+import com.bit.kodari.dto.CoinDto;
 import com.bit.kodari.dto.TradeDto;
 import com.bit.kodari.dto.UserCoinDto;
+import com.bit.kodari.service.CoinService;
 import com.bit.kodari.service.ExchangeRateService;
 import com.bit.kodari.service.UserCoinService;
 import com.bit.kodari.utils.BithumbWebSocketListener;
@@ -30,6 +32,13 @@ import java.util.List;
 @SpringBootApplication
 @EnableScheduling // 일정 시간마다 자동으로 메소드 호출하는 스케줄러 사용가능하게 한다.
 public class KodariApplication {
+    public static CoinService coinService;
+
+    // 생성자
+    @Autowired // 의존주압
+    public KodariApplication(CoinService coinService){
+        this.coinService = coinService;
+    }
 
     public static void main(String[] args) throws ParseException, BaseException,IOException {
         SpringApplication.run(KodariApplication.class, args);
@@ -134,7 +143,12 @@ public class KodariApplication {
          */
         UpbitWebSocketListener upbitWebSocket;
         HashSet<String> upbitCoinSymbolSet = new HashSet<>();
-        upbitCoinSymbolSet.add("BTC");
+        // 업비트 전체 코인 upbitCoinSymbolSet 에 저장
+        List<CoinDto.GetCoinRes> getCoinResUpbit = KodariApplication.coinService.getCoinsByMarket(1); // 업비트 전체 코인 심볼 조회
+        for(int i=0;i<getCoinResUpbit.size();i++){
+            upbitCoinSymbolSet.add(getCoinResUpbit.get(i).getSymbol());
+        }
+
         upbitWebSocket = new UpbitWebSocketListener(upbitCoinSymbolSet);
         upbitWebSocket.start(); // 업비트 웹 소켓 실행
 
@@ -143,7 +157,12 @@ public class KodariApplication {
          */
         BithumbWebSocketListener bithumbWebSocket;
         HashSet<String> bithumbCoinSymbolSet = new HashSet<>();
-        bithumbCoinSymbolSet.add("BTC");
+        // 빗썸 전체 코인 upbitCoinSymbolSet 에 저장
+        List<CoinDto.GetCoinRes> getCoinResBithumb = KodariApplication.coinService.getCoinsByMarket(2);// 빗썸 전체 코인 심볼 조회
+        for(int i=0;i<getCoinResBithumb.size();i++){
+            bithumbCoinSymbolSet.add(getCoinResBithumb.get(i).getSymbol());
+        }
+
         bithumbWebSocket = new BithumbWebSocketListener(bithumbCoinSymbolSet);
         bithumbWebSocket.start();// 웹 소켓 실행
 
