@@ -204,7 +204,7 @@ public class ReportController {
         int respondent = reportRepository.getRespondentByPostReplyIdx(postReplyIdx);
         try {
             ReportDto.PostReplyReportRes registerPostReplyReportRes = reportService.choosePostReplyReport(registerPostReplyReportReq, respondent);
-            return new BaseResponse<>(registerPostReplyReportRes, BaseResponseStatus.SUCCESS_COMMENT_REPORT_REGISTER);
+            return new BaseResponse<>(registerPostReplyReportRes, BaseResponseStatus.SUCCESS_REPLY_REPORT_REGISTER);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -218,7 +218,7 @@ public class ReportController {
     public BaseResponse<ReportDto.PostReplyReportRes> deletePostReply(@RequestBody ReportDto.DeletePostReply reply){
         try {
             ReportDto.PostReplyReportRes deletePostReplyRes = reportService.deletePostReply(reply);
-            return new BaseResponse<>(deletePostReplyRes, BaseResponseStatus.SUCCESS_COMMENT_DELETE);
+            return new BaseResponse<>(deletePostReplyRes, BaseResponseStatus.SUCCESS_REPLY_DELETE);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
         }
