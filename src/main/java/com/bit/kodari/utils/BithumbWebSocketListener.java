@@ -1,15 +1,20 @@
 package com.bit.kodari.utils;
 
-import lombok.val;
+import com.bit.kodari.config.BaseException;
+import com.bit.kodari.dto.CoinDto;
+import com.bit.kodari.service.CoinService;
 import okhttp3.*;
-import okio.ByteString;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
+@Service
 public class BithumbWebSocketListener extends WebSocketListener{
 
     private WebSocket webSocket;
@@ -17,13 +22,24 @@ public class BithumbWebSocketListener extends WebSocketListener{
     private String symbols=null;
     private static final int NORMAL_CLOSURE_STATUS = 1000;
     private String text;
+    private CoinService coinService;
+    //private RegisterCoinAlarmService registerCoinAlarmService;
+
 
 
     // 생성자 및 의존주입
+    @Autowired
     public BithumbWebSocketListener(HashSet<String> coinSymbol){
         this.coinSymbol = coinSymbol;
         this.symbols = getCodes(coinSymbol);
     }
+
+//    public BithumbWebSocketListener(HashSet<String> coinSymbol,CoinService coinService,RegisterCoinAlarmService registerCoinAlarmService){
+//        this.coinSymbol = coinSymbol;
+//        this.symbols = getCodes(coinSymbol);
+//        this.coinService = coinService;
+//        this.registerCoinAlarmService = registerCoinAlarmService;
+//    }
 
     public final WebSocket getWebSocket() {
         return this.webSocket;
@@ -63,7 +79,7 @@ public class BithumbWebSocketListener extends WebSocketListener{
 //
 //    }
 
-    public void onMessage(WebSocket webSocket, String message ) {
+    public void onMessage(WebSocket webSocket, String message )  {
         //System.out.println(message);
 
         HashMap coinPriceMap = new HashMap<String, Double>(); // d<코인심볼, 가격>
@@ -92,10 +108,32 @@ public class BithumbWebSocketListener extends WebSocketListener{
 //        Log.d("Upbit_Socket", "Receiving bytes : " + bytes.utf8());
             //System.out.println("Bithumb_Socket"+"Receiving bytes : " + bytes.utf8());
             System.out.println("Bithumb_Socket"+"Receiving message : " + message);
+
+            /*
+            에드온: 사용자 지정 가격과 코인 시세 비교
+            */
+//            // 빗썸 coinName으로 coinIdx 조회
+//            List<CoinDto.GetCoinRes> getCoinRes =  coinService.getMarketCoinByCoinName(2,symbol);
+//            // marketIdx, coinIdx 로 RegisterCoinAlarm에서 사용자 지정가격 조회
+//            int coinIdx = getCoinRes.get(0).getCoinIdx();
+//            List<> getRegisterCoinAlarmRes = registerCoinAlarmService.getRegisterCoinAlarmPriceByMarketIdxCoinIdx(2,coinIdx);
+//            // 지정가격, 시세 비교
+//            int alarmPrice = getRegisterCoinAlarmRes.get(0).getPrice();
+//            //TODO: 가격이 떨어질 때랑 오를 때 어떻게 비교? 아님 필요없나?
+//            if(price == alarmPrice){
+//                // 일치하면 알림 api
+//            }
+
+
         }catch (JSONException jsonException){
             webSocket.send(text); // 응답 받은 후 다시 데이터 넘겨주기
             // 빗썸은 첫번째 , 두번째 응담이 json데이터가 아니고 다른 response이기 때문, 3번째 부터 데이터
         }
+//        catch (JSONException | BaseException jsonException){
+//            webSocket.send(text); // 응답 받은 후 다시 데이터 넘겨주기
+//            // 빗썸은 첫번째 , 두번째 응담이 json데이터가 아니고 다른 response이기 때문, 3번째 부터 데이터
+//        }
+
 
 
 
