@@ -32,14 +32,7 @@ public class ReportService {
     @Transactional
     public ReportDto.PostReportRes choosePostReport(ReportDto.RegisterPostReportReq registerPostReportReq, int respondent) throws BaseException {
         int userIdx = registerPostReportReq.getReporter();
-        int postIdx = registerPostReportReq.getPostIdx();
-        boolean exist_user = reportRepository.getPostExistUser(postIdx, userIdx);
-
-        //유저가 존재하면 신고 불가
-        if(exist_user) {
-            throw new BaseException(ALREADY_REPORT);
-        }
-        else if(userIdx == respondent) {
+        if(userIdx == respondent) {
             throw new BaseException(IMPOSSIBLE_POST_REPORT); //자신의 게시글을 신고불가
         }
         try {
@@ -110,14 +103,7 @@ public class ReportService {
     @Transactional
     public ReportDto.PostCommentReportRes choosePostCommentReport(ReportDto.RegisterPostCommentReportReq registerPostCommentReportReq, int respondent) throws BaseException {
         int userIdx = registerPostCommentReportReq.getReporter();
-        int postCommentIdx = registerPostCommentReportReq.getPostCommentIdx();
-        boolean exist_user = reportRepository.getPostCommentExistUser(postCommentIdx, userIdx);
-
-        //유저가 존재하면 신고 불가
-        if(exist_user) {
-            throw new BaseException(ALREADY_REPORT);
-        }
-        else if(userIdx == respondent) {
+        if(userIdx == respondent) {
             throw new BaseException(IMPOSSIBLE_POST_REPORT); //자신의 게시글을 신고불가
         }
         try {
@@ -154,14 +140,7 @@ public class ReportService {
     @Transactional
     public ReportDto.PostReplyReportRes choosePostReplyReport(ReportDto.RegisterPostReplyReportReq registerPostReplyReportReq, int respondent) throws BaseException {
         int userIdx = registerPostReplyReportReq.getReporter();
-        int postReplyIdx = registerPostReplyReportReq.getPostReplyIdx();
-        boolean exist_user = reportRepository.getPostReplyExistUser(postReplyIdx, userIdx);
-
-        //유저가 존재하면 신고 불가
-        if(exist_user) {
-            throw new BaseException(ALREADY_REPORT);
-        }
-        else if(userIdx == respondent) {
+        if(userIdx == respondent) {
             throw new BaseException(IMPOSSIBLE_POST_REPORT); //자신의 게시글을 신고불가
         }
         try {
@@ -174,7 +153,7 @@ public class ReportService {
     //토론장 답글 삭제
     @Transactional
     public ReportDto.PostReplyReportRes deletePostReply(ReportDto.DeletePostReply delete) throws BaseException {
-        int userIdx = reportRepository.getRespondentByPostReplyIdx(delete.getPostReplyIdx());
+        int userIdx = reportRepository.getRespondentByPostReplyIdx(delete.getPostReplyIdx()); //신고당하는 유저
         try {
             ReportDto.PostReplyReportRes deleteReplyRes = reportRepository.deletePostReply(delete);
             if (deleteReplyRes.getUserIdx() == 0) {

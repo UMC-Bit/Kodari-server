@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static com.bit.kodari.config.BaseResponseStatus.ALREADY_REPORT;
 import static com.bit.kodari.config.BaseResponseStatus.INVALID_USER_JWT;
 
 @Slf4j
@@ -38,6 +39,9 @@ public class ReportController {
     public BaseResponse<ReportDto.PostReportRes> checkPostReport(@RequestBody ReportDto.RegisterPostReportReq registerPostReportReq) throws BaseException {
         int postIdx = registerPostReportReq.getPostIdx();
         int reportCnt = reportRepository.getPostReportCnt(postIdx);
+        int userIdx = registerPostReportReq.getReporter();
+        boolean exist_user = reportRepository.getPostExistUser(postIdx, userIdx);
+
         //jwt에서 idx 추출.
         int userIdxByJwt = jwtService.getUserIdx();
         //신고하는 유저와 접근한 유저가 같은지 확인
@@ -45,9 +49,17 @@ public class ReportController {
             return new BaseResponse<>(INVALID_USER_JWT);
         }
         if(reportCnt < 2) { //신고 3회 초과 -> 추가
+            //유저가 존재하면 신고 불가
+            if(exist_user) {
+                throw new BaseException(ALREADY_REPORT);
+            }
             return createPostReport(registerPostReportReq);
         }
         else{ //신고 3회 초과 -> 게시글 삭제
+            //유저가 존재하면 신고 불가
+            if(exist_user) {
+                throw new BaseException(ALREADY_REPORT);
+            }
             ReportDto.DeletePost delete = new ReportDto.DeletePost(postIdx);
             return deletePost(delete);
         }
@@ -93,16 +105,28 @@ public class ReportController {
     public BaseResponse<ReportDto.PostCommentReportRes> checkPostCommentReport(@RequestBody ReportDto.RegisterPostCommentReportReq registerPostCommentReportReq) throws BaseException {
         int postCommentIdx = registerPostCommentReportReq.getPostCommentIdx();
         int reportCnt = reportRepository.getPostCommentReportCnt(postCommentIdx);
+        int userIdx = registerPostCommentReportReq.getReporter();
+        boolean exist_user = reportRepository.getPostCommentExistUser(postCommentIdx, userIdx);
         //jwt에서 idx 추출.
         int userIdxByJwt = jwtService.getUserIdx();
         //신고하는 유저와 접근한 유저가 같은지 확인
         if(registerPostCommentReportReq.getReporter() != userIdxByJwt){
             return new BaseResponse<>(INVALID_USER_JWT);
         }
+
+
         if(reportCnt < 2) { //신고 3회 초과 -> 추가
+            //유저가 존재하면 신고 불가
+            if(exist_user) {
+                throw new BaseException(ALREADY_REPORT);
+            }
             return createPostCommentReport(registerPostCommentReportReq);
         }
         else{ //신고 3회 초과 -> 게시글 삭제
+            //유저가 존재하면 신고 불가
+            if(exist_user) {
+                throw new BaseException(ALREADY_REPORT);
+            }
             ReportDto.DeletePostComment delete = new ReportDto.DeletePostComment(postCommentIdx);
             return deletePostComment(delete);
         }
@@ -148,13 +172,20 @@ public class ReportController {
     public BaseResponse<ReportDto.PostReplyReportRes> checkPostReplyReport(@RequestBody ReportDto.RegisterPostReplyReportReq registerPostReplyReportReq) throws BaseException {
         int postReplyIdx = registerPostReplyReportReq.getPostReplyIdx();
         int reportCnt = reportRepository.getPostReplyReportCnt(postReplyIdx);
+        int userIdx = registerPostReplyReportReq.getReporter();
+        boolean exist_user = reportRepository.getPostReplyExistUser(postReplyIdx, userIdx);
         //jwt에서 idx 추출.
         int userIdxByJwt = jwtService.getUserIdx();
         //신고하는 유저와 접근한 유저가 같은지 확인
         if(registerPostReplyReportReq.getReporter() != userIdxByJwt){
             return new BaseResponse<>(INVALID_USER_JWT);
         }
+        //유저가 존재하면 신고 불가
+        if(exist_user) {
+            throw new BaseException(ALREADY_REPORT);
+        }
         if(reportCnt < 2) { //신고 3회 초과 -> 추가
+
             return createPostReplyReport(registerPostReplyReportReq);
         }
         else{ //신고 3회 초과 -> 게시글 삭제
