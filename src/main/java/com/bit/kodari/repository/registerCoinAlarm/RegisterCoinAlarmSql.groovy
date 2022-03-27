@@ -35,10 +35,9 @@ class RegisterCoinAlarmSql {
 
     //market별 등록된 코인 시세 알림 수
     public static final String GET_REGISTER_MARKET_ALARM_COUNT = """
-        SELECT COUNT(ifnull(registerCoinAlarmIdx,0)) AS 'alarm_count'
+        SELECT COUNT(DISTINCT coinIdx) AS 'coin_count'
         FROM RegisterCoinAlarm
         WHERE userIdx = :userIdx and marketIdx = :marketIdx and status = 'active'
-        GROUP BY coinIdx
         """
 
     //코인 시세 알림 수정
@@ -60,10 +59,11 @@ class RegisterCoinAlarmSql {
     //유저별 코인 시세 알림 조회
     public static final String LIST_ALARM = """
         SELECT rca.registerCoinAlarmIdx, m.marketName, c.coinName, c.symbol, c.coinImg, rca.targetPrice
-        FROM RegisterCoinAlarm as rca join User as u on rca.userIdx = u.userIdx 
+        FROM RegisterCoinAlarm as rca join User as u on rca.userIdx = u.userIdx
                                       join Market as m on rca.marketIdx = m.marketIdx
                                       join Coin as c on rca.coinIdx = c.coinIdx
         WHERE rca.userIdx = :userIdx and rca.status = 'active'
+        ORDER BY rca.marketIdx, rca.coinIdx
         """
 
 

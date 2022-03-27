@@ -51,12 +51,12 @@ public class RegisterCoinAlarmRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
                 .addValue("marketIdx", marketIdx);
         return namedParameterJdbcTemplate.query(registerCoinAlarmSql.GET_REGISTER_MARKET_ALARM_COUNT, parameterSource, rs -> {
-            int alarm_count = 0;
+            int coin_count = 0;
             if (rs.next()) {
-                alarm_count = rs.getInt("alarm_count");
+                coin_count = rs.getInt("coin_count");
             }
 
-            return alarm_count;
+            return coin_count;
         });
     }
 
