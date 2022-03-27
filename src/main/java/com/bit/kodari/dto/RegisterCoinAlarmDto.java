@@ -2,6 +2,8 @@ package com.bit.kodari.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 public class RegisterCoinAlarmDto {
     //코인 시세 알림 기본정보
     @Data
@@ -56,14 +58,40 @@ public class RegisterCoinAlarmDto {
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetUserCoinAlarmRes{
-        private int registerCoinAlarmIdx; //코인 시세 알림 인덱스
-        private String marketName; //market 이름
+        private int userIdx;
+        private List<GetMarketRes> marketList;
+        private List<GetCoinRes> coinList;
+        private List<GetAlarmRes> alarmList;
+
+    }
+
+    //마켓 조회
+    @Data
+    @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetMarketRes{
+        private int marketIdx;
+        private String marketName;
+    }
+
+    //코인 조회
+    @Data
+    @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetCoinRes{
+        private int coinIdx;
         private String coinName; //코인 이름
         private String symbol; //코인 심볼
         private String coinImg; //코인 이미지
-        private double targetPrice; //지정 가격
     }
 
-
+    //시세 알람 조회
+    @Data
+    @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class GetAlarmRes{
+        private int registerCoinAlarmIdx; //코인 시세 알림 인덱스
+        private double targetPrice; //지정 가격
+    }
 
 }

@@ -1,7 +1,9 @@
 package com.bit.kodari.repository.registerCoinAlarm;
 
 
+import com.bit.kodari.dto.PostDto;
 import com.bit.kodari.dto.RegisterCoinAlarmDto;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -90,20 +92,82 @@ public class RegisterCoinAlarmRepository {
 
 
     //유저별 코인 시세 알림 조회
-    public List<RegisterCoinAlarmDto.GetUserCoinAlarmRes> getAlarms(int userIdx){
+    public RegisterCoinAlarmDto.GetUserCoinAlarmRes getAlarms(int userIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
-        List<RegisterCoinAlarmDto.GetUserCoinAlarmRes> getAlarmRes = namedParameterJdbcTemplate.query(registerCoinAlarmSql.LIST_ALARM,parameterSource,
-                (rs, rowNum) -> new RegisterCoinAlarmDto.GetUserCoinAlarmRes(
-                        rs.getInt("registerCoinAlarmIdx"),
-                        rs.getString("marketName"),
-                        rs.getString("coinName"),
-                        rs.getString("symbol"),
-                        rs.getString("coinImg"),
-                        rs.getDouble("targetPrice")));
+        try {
+            RegisterCoinAlarmDto.GetUserCoinAlarmRes getCoinAlarms = namedParameterJdbcTemplate.queryForObject(registerCoinAlarmSql.LIST_COIN_ALARM, parameterSource,
+                    (rs, rowNum) -> {
+                        List<RegisterCoinAlarmDto.GetMarketRes> marketList = getMarketByUserIdx(userIdx);
+                        List<RegisterCoinAlarmDto.GetCoinRes> coinList = getCoinByUserIdx(userIdx);
+                        List<RegisterCoinAlarmDto.GetAlarmRes> alarmList = getAlarmByUserIdx(userIdx);
 
-        return getAlarmRes;
-
+                        RegisterCoinAlarmDto.GetUserCoinAlarmRes coinalarm = new RegisterCoinAlarmDto.GetUserCoinAlarmRes
+                                (rs.getInt("userIdx"), marketList, coinList, alarmList); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                        return coinalarm;
+                    }
+            );
+            return getCoinAlarms;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
+
+
+
+
+    //코인 시세 알림 조회 시 마켓 정보 조회
+    public List<RegisterCoinAlarmDto.GetMarketRes> getMarketByUserIdx(int userIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        try{
+            List<RegisterCoinAlarmDto.GetMarketRes> getMarketRes = namedParameterJdbcTemplate.query(registerCoinAlarmSql.LIST_MARKET, parameterSource,
+                    (rs, rowNum) -> new RegisterCoinAlarmDto.GetMarketRes(
+                            rs.getInt("marketIdx"),
+                            rs.getString("marketName")
+
+                    ));
+            // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받
+            return getMarketRes;
+        }catch(EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    //코인 시세 알림 조회 시 코인 정보 조회
+    public List<RegisterCoinAlarmDto.GetCoinRes> getCoinByUserIdx(int userIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        try{
+            List<RegisterCoinAlarmDto.GetCoinRes> getCoinRes = namedParameterJdbcTemplate.query(registerCoinAlarmSql.LIST_COIN, parameterSource,
+                    (rs, rowNum) -> new RegisterCoinAlarmDto.GetCoinRes(
+                            rs.getInt("coinIdx"),
+                            rs.getString("coinName"),
+                            rs.getString("symbol"),
+                            rs.getString("coinImg")
+
+                    ));
+            // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받
+            return getCoinRes;
+        }catch(EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    //코인 시세 알림 조회 시 해당 알림 정보 조회
+    public List<RegisterCoinAlarmDto.GetAlarmRes> getAlarmByUserIdx(int userIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        try{
+            List<RegisterCoinAlarmDto.GetAlarmRes> getAlarmRes = namedParameterJdbcTemplate.query(registerCoinAlarmSql.LIST_ALARM, parameterSource,
+                    (rs, rowNum) -> new RegisterCoinAlarmDto.GetAlarmRes(
+                            rs.getInt("registerCoinAlarmIdx"),
+                            rs.getDouble("targetPrice")
+
+                    ));
+            // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받
+            return getAlarmRes;
+        }catch(EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
 
 
 

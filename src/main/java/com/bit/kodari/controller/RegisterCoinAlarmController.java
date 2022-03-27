@@ -105,7 +105,7 @@ public class RegisterCoinAlarmController {
      */
     @GetMapping("/alarm")
     @ApiOperation(value = "유저별 코인 시세 알림 조회", notes = "유저별 코인 시세 알림을 조회함")
-    public BaseResponse<List<RegisterCoinAlarmDto.GetUserCoinAlarmRes>> getCoinAlarm(@RequestParam int userIdx) {
+    public BaseResponse<RegisterCoinAlarmDto.GetUserCoinAlarmRes>> getCoinAlarm(@RequestParam int userIdx) {
         try {
 //            //jwt에서 idx 추출.
 //            int userIdxByJwt = jwtService.getUserIdx();
@@ -113,7 +113,7 @@ public class RegisterCoinAlarmController {
 //            if(userIdx != userIdxByJwt){
 //                return new BaseResponse<>(INVALID_USER_JWT);
 //            }
-            List<RegisterCoinAlarmDto.GetUserCoinAlarmRes> getAlarmsRes = registerCoinAlarmService.getAlarmsByUserIdx(userIdx);
+            RegisterCoinAlarmDto.GetUserCoinAlarmRes getAlarmsRes = registerCoinAlarmService.getAlarmsByUserIdx(userIdx);
             return new BaseResponse<>(getAlarmsRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));

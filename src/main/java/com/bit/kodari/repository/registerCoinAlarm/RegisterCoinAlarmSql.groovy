@@ -57,7 +57,7 @@ class RegisterCoinAlarmSql {
         """
 
     //유저별 코인 시세 알림 조회
-    public static final String LIST_ALARM = """
+    public static final String LIST_COIN_ALARM = """
         SELECT rca.registerCoinAlarmIdx, m.marketName, c.coinName, c.symbol, c.coinImg, rca.targetPrice
         FROM RegisterCoinAlarm as rca join User as u on rca.userIdx = u.userIdx
                                       join Market as m on rca.marketIdx = m.marketIdx

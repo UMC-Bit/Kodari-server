@@ -278,8 +278,7 @@ public class PostRepository {
 }catch(EmptyResultDataAccessException e) {
         return null;
         }
-
-        }
+    }
 
     //userIdx, postIdx로 게시글 좋아요 유저 확인
     public boolean getPostLike(int userIdx, int postIdx) {

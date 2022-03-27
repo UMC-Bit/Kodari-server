@@ -141,8 +141,6 @@ public class PostDto {
         private boolean checkPostDislike; // 게시글 싫어요 유저 확인
         private List<GetCommentRes> commentList; //댓글과 답글 리스트
 
-
-
     }
 
     //토론장 게시글 댓글조회
