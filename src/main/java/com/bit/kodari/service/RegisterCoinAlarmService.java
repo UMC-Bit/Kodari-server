@@ -79,9 +79,9 @@ public class RegisterCoinAlarmService {
 
     //유저별 코인 시세 알림 조회
     @Transactional
-    public List<RegisterCoinAlarmDto.GetUserCoinAlarmRes> getAlarmsByUserIdx(int userIdx) throws BaseException {
+    public RegisterCoinAlarmDto.GetUserCoinAlarmRes getAlarmsByUserIdx(int userIdx) throws BaseException {
         try {
-            List<RegisterCoinAlarmDto.GetUserCoinAlarmRes> getAlarmsRes = registerCoinAlarmRepository.getAlarms(userIdx);
+            RegisterCoinAlarmDto.GetUserCoinAlarmRes getAlarmsRes = registerCoinAlarmRepository.getAlarms(userIdx);
             return getAlarmsRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

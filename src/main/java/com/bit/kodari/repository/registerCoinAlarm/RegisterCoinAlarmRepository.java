@@ -98,11 +98,8 @@ public class RegisterCoinAlarmRepository {
             RegisterCoinAlarmDto.GetUserCoinAlarmRes getCoinAlarms = namedParameterJdbcTemplate.queryForObject(registerCoinAlarmSql.LIST_COIN_ALARM, parameterSource,
                     (rs, rowNum) -> {
                         List<RegisterCoinAlarmDto.GetMarketRes> marketList = getMarketByUserIdx(userIdx);
-                        List<RegisterCoinAlarmDto.GetCoinRes> coinList = getCoinByUserIdx(userIdx);
-                        List<RegisterCoinAlarmDto.GetAlarmRes> alarmList = getAlarmByUserIdx(userIdx);
-
                         RegisterCoinAlarmDto.GetUserCoinAlarmRes coinalarm = new RegisterCoinAlarmDto.GetUserCoinAlarmRes
-                                (rs.getInt("userIdx"), marketList, coinList, alarmList); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+                                (rs.getInt("userIdx"), marketList); // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
                         return coinalarm;
                     }
             );
@@ -122,7 +119,7 @@ public class RegisterCoinAlarmRepository {
             List<RegisterCoinAlarmDto.GetMarketRes> getMarketRes = namedParameterJdbcTemplate.query(registerCoinAlarmSql.LIST_MARKET, parameterSource,
                     (rs, rowNum) -> new RegisterCoinAlarmDto.GetMarketRes(
                             rs.getInt("marketIdx"),
-                            rs.getString("marketName")
+                            rs.getString("marketName"),getCoinByUserIdx(userIdx, rs.getInt("marketIdx"))
 
                     ));
             // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받
@@ -133,15 +130,16 @@ public class RegisterCoinAlarmRepository {
     }
 
     //코인 시세 알림 조회 시 코인 정보 조회
-    public List<RegisterCoinAlarmDto.GetCoinRes> getCoinByUserIdx(int userIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+    public List<RegisterCoinAlarmDto.GetCoinRes> getCoinByUserIdx(int userIdx, int marketIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
+                .addValue("marketIdx", marketIdx);
         try{
             List<RegisterCoinAlarmDto.GetCoinRes> getCoinRes = namedParameterJdbcTemplate.query(registerCoinAlarmSql.LIST_COIN, parameterSource,
                     (rs, rowNum) -> new RegisterCoinAlarmDto.GetCoinRes(
                             rs.getInt("coinIdx"),
                             rs.getString("coinName"),
                             rs.getString("symbol"),
-                            rs.getString("coinImg")
+                            rs.getString("coinImg"),getAlarmByUserIdx(userIdx, marketIdx, rs.getInt("coinIdx"))
 
                     ));
             // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받
@@ -152,8 +150,10 @@ public class RegisterCoinAlarmRepository {
     }
 
     //코인 시세 알림 조회 시 해당 알림 정보 조회
-    public List<RegisterCoinAlarmDto.GetAlarmRes> getAlarmByUserIdx(int userIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+    public List<RegisterCoinAlarmDto.GetAlarmRes> getAlarmByUserIdx(int userIdx, int marketIdx, int coinIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
+                .addValue("marketIdx", marketIdx)
+                .addValue("coinIdx", coinIdx);
         try{
             List<RegisterCoinAlarmDto.GetAlarmRes> getAlarmRes = namedParameterJdbcTemplate.query(registerCoinAlarmSql.LIST_ALARM, parameterSource,
                     (rs, rowNum) -> new RegisterCoinAlarmDto.GetAlarmRes(

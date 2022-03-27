@@ -105,7 +105,7 @@ public class RegisterCoinAlarmController {
      */
     @GetMapping("/alarm")
     @ApiOperation(value = "유저별 코인 시세 알림 조회", notes = "유저별 코인 시세 알림을 조회함")
-    public BaseResponse<RegisterCoinAlarmDto.GetUserCoinAlarmRes>> getCoinAlarm(@RequestParam int userIdx) {
+    public BaseResponse<RegisterCoinAlarmDto.GetUserCoinAlarmRes> getCoinAlarm(@RequestParam int userIdx) {
         try {
 //            //jwt에서 idx 추출.
 //            int userIdxByJwt = jwtService.getUserIdx();

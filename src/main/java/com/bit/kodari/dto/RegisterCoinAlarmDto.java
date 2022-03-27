@@ -60,8 +60,6 @@ public class RegisterCoinAlarmDto {
     public static class GetUserCoinAlarmRes{
         private int userIdx;
         private List<GetMarketRes> marketList;
-        private List<GetCoinRes> coinList;
-        private List<GetAlarmRes> alarmList;
 
     }
 
@@ -72,6 +70,7 @@ public class RegisterCoinAlarmDto {
     public static class GetMarketRes{
         private int marketIdx;
         private String marketName;
+        private List<GetCoinRes> coinList;
     }
 
     //코인 조회
@@ -83,6 +82,7 @@ public class RegisterCoinAlarmDto {
         private String coinName; //코인 이름
         private String symbol; //코인 심볼
         private String coinImg; //코인 이미지
+        private List<GetAlarmRes> alarmList;
     }
 
     //시세 알람 조회

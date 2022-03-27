@@ -58,12 +58,33 @@ class RegisterCoinAlarmSql {
 
     //유저별 코인 시세 알림 조회
     public static final String LIST_COIN_ALARM = """
-        SELECT rca.registerCoinAlarmIdx, m.marketName, c.coinName, c.symbol, c.coinImg, rca.targetPrice
-        FROM RegisterCoinAlarm as rca join User as u on rca.userIdx = u.userIdx
-                                      join Market as m on rca.marketIdx = m.marketIdx
-                                      join Coin as c on rca.coinIdx = c.coinIdx
-        WHERE rca.userIdx = :userIdx and rca.status = 'active'
-        ORDER BY rca.marketIdx, rca.coinIdx
+        SELECT userIdx
+        FROM RegisterCoinAlarm
+        WHERE userIdx = :userIdx
+        GROUP BY userIdx
+        """
+
+    //코인 시세 알림 조회 시 마켓 정보 조회
+    public static final String LIST_MARKET = """
+        SELECT m.marketIdx, m.marketName
+        FROM RegisterCoinAlarm as r join Market as m on r.marketIdx = m.marketIdx
+        WHERE r.userIdx = :userIdx
+        GROUP BY r.marketIdx
+        """
+
+    //코인 시세 알림 조회 시 코인 정보 조회
+    public static final String LIST_COIN = """
+        SELECT c.coinIdx, c.coinName, c.symbol, c.coinImg
+        FROM RegisterCoinAlarm as r join Coin as c on r.coinIdx = c.coinIdx
+        WHERE r.userIdx = :userIdx and r.marketIdx = :marketIdx
+        GROUP BY r.coinIdx
+        """
+
+    //코인 시세 알림 조회 시 해당 알림 정보 조회
+    public static final String LIST_ALARM = """
+        SELECT registerCoinAlarmIdx, targetPrice
+        FROM RegisterCoinAlarm 
+        WHERE userIdx = :userIdx and marketIdx = :marketIdx and coinIdx = :coinIdx
         """
 
 
