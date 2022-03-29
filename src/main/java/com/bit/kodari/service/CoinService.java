@@ -67,5 +67,16 @@ public class CoinService {
         }
     }
 
+    // marketIdx별 코인 심볼 조회
+    @Transactional
+    public List<CoinDto.GetCoinRes> getMarketCoinBySymbol(int marketIdx, String symbol) throws BaseException {
+        try {
+            List<CoinDto.GetCoinRes> getCoinsRes = coinRepository.getMarketCoinBySymbol(marketIdx, symbol);
+            return getCoinsRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 
 }

@@ -70,4 +70,19 @@ public class CoinRepository {
         return getCoinRes;
     }
 
+
+    //토론장 특정 코인 심볼로 조회
+    public List<CoinDto.GetCoinRes> getMarketCoinBySymbol(int marketIdx, String symbol) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("marketIdx", marketIdx)
+                .addValue("symbol", symbol);
+        List<CoinDto.GetCoinRes> getCoinRes = namedParameterJdbcTemplate.query(coinSql.LIST_MARKET_COIN_SYMBOL, parameterSource,
+                (rs, rowNum) -> new CoinDto.GetCoinRes(
+                        rs.getInt("coinIdx"),
+                        rs.getString("coinName"),
+                        rs.getString("symbol"),
+                        rs.getString("coinImg"))
+        );
+        return getCoinRes;
+    }
+
 }

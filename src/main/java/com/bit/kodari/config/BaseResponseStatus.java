@@ -98,6 +98,7 @@ public enum BaseResponseStatus {
     FAILED_TO_CHECKPASSWORD(false, 3025, "비밀번호가 틀렸습니다."),
     GET_EXCHANGERATE_NOT_EXISTS(false,3026,"환율내역이 없습니다."),
     ALREADY_CERTIFICATION_USER(false, 3027, "이미 인증된 회원입니다."),
+    GET_REGISTERCOINALARM_NOT_EXISTS(false,3028,"등록된 코인지적가격이 없습니다."),
 
     FAILED_TO_PROPERTY_RES(false,3040,"없는 계좌입니다."),
     OVER_PORT_THREE(false, 3041, "등록할 수 있는 포트폴리오 갯수를 초과하였습니다."),
