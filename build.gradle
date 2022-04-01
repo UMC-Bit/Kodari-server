@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.bit'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '1.8'
 
 configurations {
     compileOnly {
@@ -41,6 +41,16 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+// groovy 파일 aws에서 컴파일 하기위한 설정
+apply plugin: 'groovy'
+
+sourceSets {
+    main {
+        java { srcDirs = [] }
+        groovy { srcDirs += ['src/main/java'] }
+    }
 }
 
 // groovy 파일 aws에서 컴파일 하기위한 설정
