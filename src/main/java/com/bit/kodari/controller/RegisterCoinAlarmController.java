@@ -20,7 +20,7 @@ public class RegisterCoinAlarmController {
     @Autowired
     private final JwtService jwtService;
 
-    public RegisterCoinAlarmController(registerCoinAlarmService registerCoinAlarmService, JwtService jwtService) {
+    public RegisterCoinAlarmController(RegisterCoinAlarmService registerCoinAlarmService, JwtService jwtService) {
         this.registerCoinAlarmService = registerCoinAlarmService;
         this.jwtService = jwtService;
     }

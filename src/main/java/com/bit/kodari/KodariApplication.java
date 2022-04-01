@@ -7,6 +7,7 @@ import com.bit.kodari.dto.TradeDto;
 import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.service.CoinService;
 import com.bit.kodari.service.ExchangeRateService;
+import com.bit.kodari.service.RegisterCoinAlarmService;
 import com.bit.kodari.service.UserCoinService;
 import com.bit.kodari.utils.BithumbWebSocketListener;
 import com.bit.kodari.utils.ExchangeRateApi;
@@ -33,11 +34,15 @@ import java.util.List;
 @EnableScheduling // 일정 시간마다 자동으로 메소드 호출하는 스케줄러 사용가능하게 한다.
 public class KodariApplication {
     public static CoinService coinService;
+    public static RegisterCoinAlarmService registerCoinAlarmService;
+    private BithumbWebSocketListener bithumbWebSocketListener;
+    private UpbitWebSocketListener upbitWebSocketListener;
 
     // 생성자
     @Autowired // 의존주압
-    public KodariApplication(CoinService coinService){
+    public KodariApplication(CoinService coinService,RegisterCoinAlarmService registerCoinAlarmService){
         this.coinService = coinService;
+        this.registerCoinAlarmService = registerCoinAlarmService;
     }
 
     public static void main(String[] args) throws ParseException, BaseException,IOException {
@@ -141,16 +146,18 @@ public class KodariApplication {
         /*
         업비트 웹소켓 리스너 실행
          */
-        UpbitWebSocketListener upbitWebSocket;
-        HashSet<String> upbitCoinSymbolSet = new HashSet<>();
-        // 업비트 전체 코인 upbitCoinSymbolSet 에 저장
-        List<CoinDto.GetCoinRes> getCoinResUpbit = KodariApplication.coinService.getCoinsByMarket(1); // 업비트 전체 코인 심볼 조회
-        for(int i=0;i<getCoinResUpbit.size();i++){
-            upbitCoinSymbolSet.add(getCoinResUpbit.get(i).getSymbol());
-        }
-
-        upbitWebSocket = new UpbitWebSocketListener(upbitCoinSymbolSet);
-        upbitWebSocket.start(); // 업비트 웹 소켓 실행
+//        UpbitWebSocketListener upbitWebSocket;
+//        HashSet<String> upbitCoinSymbolSet = new HashSet<>();
+//        // 업비트 전체 코인 upbitCoinSymbolSet 에 저장
+//        List<CoinDto.GetCoinRes> getCoinResUpbit = KodariApplication.coinService.getCoinsByMarket(1); // 업비트 전체 코인 심볼 조회
+//        //List<CoinDto.GetCoinRes> getCoinResUpbit = (new CoinService()).getCoinsByMarket(1); // 업비트 전체 코인 심볼 조회
+//
+//        for(int i=0;i<getCoinResUpbit.size();i++){
+//            upbitCoinSymbolSet.add(getCoinResUpbit.get(i).getSymbol());
+//        }
+//
+//        upbitWebSocket = new UpbitWebSocketListener(upbitCoinSymbolSet);
+//        upbitWebSocket.start(); // 업비트 웹 소켓 실행
 
         /*
         빗썸 웹소켓 리스너 실행
@@ -163,7 +170,7 @@ public class KodariApplication {
             bithumbCoinSymbolSet.add(getCoinResBithumb.get(i).getSymbol());
         }
 
-        bithumbWebSocket = new BithumbWebSocketListener(bithumbCoinSymbolSet);
+        bithumbWebSocket = new BithumbWebSocketListener(bithumbCoinSymbolSet,coinService,registerCoinAlarmService);
         bithumbWebSocket.start();// 웹 소켓 실행
 
 

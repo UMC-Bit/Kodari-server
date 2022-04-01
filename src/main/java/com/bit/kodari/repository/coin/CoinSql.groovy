@@ -32,4 +32,12 @@ class CoinSql {
          WHERE status = 'active' and marketIdx = :marketIdx and coinName = :coinName
          """
 
+
+    //토론장 특정 코인 심볼로 조회
+    public static final String LIST_MARKET_COIN_SYMBOL = """
+         SELECT coinIdx, coinName, symbol, coinImg
+         FROM Coin
+         WHERE status = 'active' and marketIdx = :marketIdx and symbol = :symbol
+         """
+
 }
