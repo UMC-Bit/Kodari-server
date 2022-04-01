@@ -173,22 +173,28 @@ public enum BaseResponseStatus {
 
     //내용확인
     EMPTY_CONTENT(false, 4088, "내용이 없습니다."),
+    EMPTY_PRICE(false, 4089, "지정가격을 입력해주세요."),
+    EMPTY_PERCENT(false, 4090, "퍼센트를 입력해주세요."),
 
     //글자수 확인
-    OVER_CONTENT(false, 4089, "글자수가 초과되었습니다."),
+    OVER_CONTENT(false, 4091, "글자수가 초과되었습니다."),
 
     //유저 존재 여부
-    ALREADY_REPORT(false, 4090, "이미 신고하셨습니다."),
+    ALREADY_REPORT(false, 4092, "이미 신고하셨습니다."),
 
     //유저 REPORT 추가 실패
-    FAIL_REPORT_ADD(false, 4091, "유저 신고가 되지 않았습니다."),
+    FAIL_REPORT_ADD(false, 4093, "유저 신고가 되지 않았습니다."),
 
     //신고로 인한 토론장 접근 제한
-    BLOCKED_USER(false, 4092, "운영원칙에 위배되어 차단된 사용자입니다."),
+    BLOCKED_USER(false, 4094, "운영원칙에 위배되어 차단된 사용자입니다."),
 
     //알림 등록 실패
-    FAIL_REGISTER_ALARM(false, 4093, "알림은 최대 3개까지 등록할 수 있습니다."),
-    FAIL_REGISTER_COIN_ALARM(false, 4094, "코인 등록은 최대 3개까지 등록할 수 있습니다.");
+    FAIL_REGISTER_ALARM(false, 4095, "알림은 최대 3개까지 등록할 수 있습니다."),
+    FAIL_REGISTER_COIN_ALARM(false, 4096, "코인 등록은 최대 3개까지 등록할 수 있습니다."),
+    NOT_REFLECTED_IN_NOTIFICATIONS(false, 4097, "0%로 설정된 알림은 반영되지 않습니다."),
+    ASCENT_RATE_IS_LIMITED(false, 4098,"지정한 상승률이 제한된 설정값을 넘어갔습니다."),
+    DECLINE_RATE_IS_LIMITED(false, 4098,"지정한 하락률이 제한된 설정값을 넘어갔습니다."),
+    EQUALS_REGISTER_ALARM(false, 4099,"같은 값의 알림이 존재합니다.");
 
 
 

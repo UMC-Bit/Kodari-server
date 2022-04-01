@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 import static com.bit.kodari.config.BaseResponseStatus.*;
 
@@ -34,13 +33,21 @@ public class RegisterCoinAlarmService {
         int userIdx = registerReq.getUserIdx();
         int marketIdx = registerReq.getMarketIdx();
         int coinIdx = registerReq.getCoinIdx();
+        double targetPrice = registerReq.getTargetPrice();
+        boolean exist = registerCoinAlarmRepository.getExistAlarm(userIdx, marketIdx, coinIdx, targetPrice);
         int alarm_count = registerCoinAlarmRepository.getAlarmByCoinIdx(userIdx, marketIdx, coinIdx);
         int coin_count = registerCoinAlarmRepository.getCoinByMarketIdx(userIdx, marketIdx);
+        if(coin_count > 2 && alarm_count == 3) { //코인은 세개만 등록 가능
+            throw new BaseException(FAIL_REGISTER_COIN_ALARM); //코인 등록은 최대 3개까지 가능
+        }
         if(alarm_count > 2) { //코인 당 알림 최대 3개까지 등록
             throw new BaseException(FAIL_REGISTER_ALARM); //지정가 알림 등록은 최대 3개까지 가능
         }
-        else if(coin_count > 2) { //코인은 세개만 등록 가능
-            throw new BaseException(FAIL_REGISTER_COIN_ALARM); //코인 등록은 최대 3개까지 가능
+        else if(exist) {
+            throw new BaseException(EQUALS_REGISTER_ALARM); //같은값의 알림이 존재
+        }
+        else if(targetPrice == 0.0) { //숫자 이외의 문자는 등록 불가능
+            throw new BaseException(EMPTY_PRICE);
         }
         try {
             return registerCoinAlarmRepository.insert(registerReq);
@@ -52,6 +59,17 @@ public class RegisterCoinAlarmService {
     //코인 시세 알림 수정
     @Transactional
     public void modifyCoinAlarm(RegisterCoinAlarmDto.PatchCoinAlarmReq patch) throws BaseException{
+        double targetPrice = patch.getTargetPrice();
+        int userIdx = registerCoinAlarmRepository.getUserIdxByRegisterCoinAlarmIdx(patch.getRegisterCoinAlarmIdx());
+        int marketIdx = registerCoinAlarmRepository.getMarketIdxByRegisterCoinAlarmIdx(patch.getRegisterCoinAlarmIdx());
+        int coinIdx = registerCoinAlarmRepository.getCoinIdxByRegisterCoinAlarmIdx(patch.getRegisterCoinAlarmIdx());
+        boolean exist = registerCoinAlarmRepository.getExistAlarm(userIdx, marketIdx, coinIdx, targetPrice);
+        if(targetPrice == 0.0) { //숫자 이외의 문자는 등록 불가능
+            throw new BaseException(EMPTY_PRICE);
+        }
+        else if(exist) {
+            throw new BaseException(EQUALS_REGISTER_ALARM); //같은값의 알림이 존재
+        }
         try {
             int result = registerCoinAlarmRepository.modifyCoinAlarm(patch);
             if(result == 0){ // 0이면 에러가 발생

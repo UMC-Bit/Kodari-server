@@ -1,24 +1,6 @@
 package com.bit.kodari.repository.registerCoinAlarm
 
-import com.bit.kodari.utils.JwtService
-import lombok.extern.slf4j.Slf4j
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
-
-
-@Slf4j
-@Service
 class RegisterCoinAlarmSql {
-    @Autowired
-    RegisterCoinAlarmRepository registerCoinAlarmRepository;
-    //private final JwtService jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
-    @Autowired
-    JwtService jwtService;
-
-    public RegisterCoinAlarmService(RegisterCoinAlarmRepository registerCoinAlarmRepository, JwtService jwtService) {
-        this.registerCoinAlarmRepository = registerCoinAlarmRepository;
-        this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
-    }
 
     //코인 시세 알림 등록
     public static final String INSERT_COIN_ALARM = """
@@ -40,6 +22,13 @@ class RegisterCoinAlarmSql {
         WHERE userIdx = :userIdx and marketIdx = :marketIdx and status = 'active'
         """
 
+    //같은 값의 알림 존재 여부
+    public static final String GET_EXIST_ALARM = """
+        SELECT if(registerCoinAlarmIdx, true, false) as 'exist'
+        FROM RegisterCoinAlarm
+        WHERE userIdx = :userIdx and marketIdx = :marketIdx and coinIdx = :coinIdx and targetPrice = :targetPrice
+        """
+
     //코인 시세 알림 수정
     public static final String UPDATE_REGISTER_COIN_ALARM = """
         UPDATE RegisterCoinAlarm SET targetPrice = :targetPrice
@@ -51,6 +40,16 @@ class RegisterCoinAlarmSql {
         SELECT userIdx from RegisterCoinAlarm WHERE registerCoinAlarmIdx = :registerCoinAlarmIdx 
         """
 
+    //registerCoinAlarmIdx로 marketIdx 구하기
+    public static final String GET_MARKET_IDX = """
+        SELECT marketIdx from RegisterCoinAlarm WHERE registerCoinAlarmIdx = :registerCoinAlarmIdx 
+        """
+
+    //registerCoinAlarmIdx로 marketIdx 구하기
+    public static final String GET_COIN_IDX = """
+        SELECT coinIdx from RegisterCoinAlarm WHERE registerCoinAlarmIdx = :registerCoinAlarmIdx 
+        """
+
     //코인 시세 알림 삭제
     public static final String DELETE_ALARM = """
         UPDATE RegisterCoinAlarm SET status = 'inactive' WHERE registerCoinAlarmIdx = :registerCoinAlarmIdx
@@ -60,7 +59,7 @@ class RegisterCoinAlarmSql {
     public static final String LIST_COIN_ALARM = """
         SELECT userIdx
         FROM RegisterCoinAlarm
-        WHERE userIdx = :userIdx
+        WHERE userIdx = :userIdx and status = 'active'
         GROUP BY userIdx
         """
 
@@ -68,7 +67,7 @@ class RegisterCoinAlarmSql {
     public static final String LIST_MARKET = """
         SELECT m.marketIdx, m.marketName
         FROM RegisterCoinAlarm as r join Market as m on r.marketIdx = m.marketIdx
-        WHERE r.userIdx = :userIdx
+        WHERE r.userIdx = :userIdx and r.status = 'active'
         GROUP BY r.marketIdx
         """
 
@@ -76,7 +75,7 @@ class RegisterCoinAlarmSql {
     public static final String LIST_COIN = """
         SELECT c.coinIdx, c.coinName, c.symbol, c.coinImg
         FROM RegisterCoinAlarm as r join Coin as c on r.coinIdx = c.coinIdx
-        WHERE r.userIdx = :userIdx and r.marketIdx = :marketIdx
+        WHERE r.userIdx = :userIdx and r.marketIdx = :marketIdx and r.status = 'active'
         GROUP BY r.coinIdx
         """
 
@@ -84,7 +83,7 @@ class RegisterCoinAlarmSql {
     public static final String LIST_ALARM = """
         SELECT registerCoinAlarmIdx, targetPrice
         FROM RegisterCoinAlarm 
-        WHERE userIdx = :userIdx and marketIdx = :marketIdx and coinIdx = :coinIdx
+        WHERE userIdx = :userIdx and marketIdx = :marketIdx and coinIdx = :coinIdx and status = 'active'
         """
 
 
