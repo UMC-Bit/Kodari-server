@@ -110,6 +110,7 @@ public class PostDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetPostRes{
         private int postIdx; //게시글 인덱스
+        private int userIdx; //게시글 글쓴 유저
         private String symbol; //코인 심볼
         private String nickName; //유저 닉네임
         private String profileImgUrl; //유저 프로필
@@ -121,6 +122,7 @@ public class PostDto {
         private boolean checkPostDislike; // 게시글 싫어요 유저 확인
         private int comment_cnt;
     }
+
 
     //토론장 게시글별 조회
     @Data
@@ -140,8 +142,6 @@ public class PostDto {
         private boolean checkPostLike; // 게시글 좋아요 유저 확인
         private boolean checkPostDislike; // 게시글 싫어요 유저 확인
         private List<GetCommentRes> commentList; //댓글과 답글 리스트
-
-
 
     }
 

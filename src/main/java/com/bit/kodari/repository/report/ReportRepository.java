@@ -340,6 +340,37 @@ public class ReportRepository {
     }
 
 
+    //토론장 유저 차단 신고
+
+    //토론장 답글 신고
+    public ReportDto.RegisterPostUserReportRes choosePostUserReport(ReportDto.RegisterPostUserReportReq report, int respondent) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("postIdx", report.getPostIdx()) //신고될 게시글 인덱스
+                .addValue("reporter", report.getReporter()) //신고하는 유저
+                .addValue("respondent", respondent); //신고 당하는 유저
+        int affectedRows = namedParameterJdbcTemplate.update(reportSql.REPORT_POST_USER, parameterSource, keyHolder);
+        return ReportDto.RegisterPostUserReportRes.builder().respondent(respondent).build();
+    }
+
+
+
+    //userIdx, postIdx로 게시글 신고 유저 확인
+    public boolean getPostUserExist(int postIdx, int userIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("postIdx",postIdx)
+                .addValue("userIdx", userIdx);
+        return namedParameterJdbcTemplate.query(ReportSql.GET_POST_USER_EXIST, parameterSource, rs -> {
+            boolean user_exist = false;
+            if (rs.next()) {
+                user_exist = rs.getBoolean("user");
+            }
+
+            return user_exist;
+        });
+    }
+
+
+
 
 
 

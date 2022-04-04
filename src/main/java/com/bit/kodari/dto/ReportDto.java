@@ -162,6 +162,35 @@ public class ReportDto {
     }
 
 
+    //토론장 유저 신고
+
+
+    //토론장 유저 신고기능 선택 REQUEST DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class RegisterPostUserReportReq{
+        private int postIdx;
+        private int reporter; //신고하는 유저
+    }
+
+    //토론장 유저 신고기능 선택 RESPONSE DTO
+    @Data
+    @Builder // 빌더 클래스 자동 생성
+    public static class RegisterPostUserReportRes{
+        private int respondent; //신고당하는 유저인덱스
+        //    private String jwt;
+    }
+
+    //토론장 유저 신고기능
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class PostUserReportRes{
+        private int userIdx; //신고하는 유저
+    }
+
+
 
 
 

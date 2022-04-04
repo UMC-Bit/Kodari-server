@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.bit.kodari.config.BaseResponseStatus.*;
@@ -135,9 +136,17 @@ public class PostService {
     // 토론장 게시글 목록 조회
     @Transactional
     public List<GetPostRes> getPosts() throws BaseException {
+        int userIdx = jwtService.getUserIdx();
+        List<PostDto.GetPostRes> postList = new ArrayList<PostDto.GetPostRes>();
+        List<PostDto.GetPostRes> getPost = postRepository.getPosts();
+        List<Integer> getBlock = postRepository.getBlockPosts(userIdx);
         try {
-            List<GetPostRes> getPostRes = postRepository.getPosts();
-            return getPostRes;
+            for(int i=0; i < getPost.size(); i++) {
+                if(!getBlock.contains(getPost.get(i).getUserIdx())){
+                    postList.add(getPost.get(i));
+                }
+            }
+            return postList;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -157,9 +166,17 @@ public class PostService {
     // 특정 코인의 게시글 조회
     @Transactional
     public List<GetPostRes> getPostsByCoinName(String coinName) throws BaseException {
+        int userIdx = jwtService.getUserIdx();
+        List<PostDto.GetPostRes> postList = new ArrayList<PostDto.GetPostRes>();
+        List<PostDto.GetPostRes> getPost = postRepository.getPostsByCoinName(coinName);
+        List<Integer> getBlock = postRepository.getBlockPosts(userIdx);
         try {
-            List<GetPostRes> getCoinsRes = postRepository.getPostsByCoinName(coinName);
-            return getCoinsRes;
+            for(int i=0; i < getPost.size(); i++) {
+                if(!getBlock.contains(getPost.get(i).getUserIdx())){
+                    postList.add(getPost.get(i));
+                }
+            }
+            return postList;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }

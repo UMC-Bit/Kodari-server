@@ -159,4 +159,23 @@ class ReportSql {
     """
 
 
+
+    //토론장 유저 차단 신고
+
+
+    //토론장 유저 신고
+    public static final String REPORT_POST_USER = """
+        INSERT INTO UserReport (postIdx, reporter, respondent)
+        values (:postIdx, :reporter, :respondent)
+        """
+
+
+    //해당 게시글을 신고한 유저 존재 여부 가져오기 -> userIdx와 reporter 오류날 가능성 있음
+    public static final String GET_POST_USER_EXIST = """
+    SELECT case when COUNT(ifnull(userReportIdx,0)) = 1 then true when COUNT(ifnull(userReportIdx,0)) = 0 then false end as 'user'
+    FROM UserReport
+    WHERE postIdx = :postIdx and reporter = :userIdx
+    """
+
+
 }
