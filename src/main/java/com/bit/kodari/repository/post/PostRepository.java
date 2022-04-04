@@ -176,6 +176,7 @@ public class PostRepository {
         List<PostDto.GetPostRes> getPostRes = namedParameterJdbcTemplate.query(PostSql.LIST_POST,parameterSource,
                 (rs, rowNum) -> new PostDto.GetPostRes(
                         rs.getInt("postIdx"),
+                        rs.getInt("userIdx"),
                         rs.getString("symbol"),
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
@@ -189,12 +190,27 @@ public class PostRepository {
         return getPostRes;
     }
 
+
+
+
+
+    //토론장 차단된 유저의 게시글 조회
+    public List<Integer> getBlockPosts(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        List<Integer> getPostRes = namedParameterJdbcTemplate.query(PostSql.LIST_BLOCK_POST,parameterSource,
+                (rs, rowNum) ->
+                        rs.getInt("userIdx"));
+
+        return getPostRes;
+    }
+
     //토론장 특정 유저의 게시글 조회
     public List<PostDto.GetPostRes> getPostsByUserIdx(int userIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
         List<PostDto.GetPostRes> getPostRes = namedParameterJdbcTemplate.query(PostSql.LIST_USER_POST, parameterSource,
                 (rs, rowNum) -> new PostDto.GetPostRes(
                         rs.getInt("postIdx"),
+                        rs.getInt("userIdx"),
                         rs.getString("symbol"),
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),
@@ -208,12 +224,13 @@ public class PostRepository {
     }
 
 
-    //토론장 특정 유저의 게시글 조회
+    //토론장 특정 코인의 게시글 조회
     public List<PostDto.GetPostRes> getPostsByCoinName(String coinName) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("coinName", coinName);
         List<PostDto.GetPostRes> getCoinRes = namedParameterJdbcTemplate.query(PostSql.LIST_COIN_POST, parameterSource,
                 (rs, rowNum) -> new PostDto.GetPostRes(
                         rs.getInt("postIdx"),
+                        rs.getInt("userIdx"),
                         rs.getString("symbol"),
                         rs.getString("nickName"),
                         rs.getString("profileImgUrl"),

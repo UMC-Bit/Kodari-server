@@ -2,17 +2,14 @@ package com.bit.kodari.controller;
 
 import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponse;
-import com.bit.kodari.dto.PostCommentDto;
 import com.bit.kodari.dto.PostDto;
 import com.bit.kodari.repository.post.PostRepository;
 import com.bit.kodari.service.PostService;
 import com.bit.kodari.utils.JwtService;
-import groovy.util.logging.Log;
 import groovy.util.logging.Slf4j;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.service.ResponseMessage;
 
 import java.util.List;
 
@@ -80,6 +77,8 @@ public class PostController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
+
+
     /*
         토론장 게시글 삭제
      */

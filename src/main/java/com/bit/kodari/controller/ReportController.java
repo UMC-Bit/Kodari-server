@@ -226,5 +226,34 @@ public class ReportController {
 
 
 
+    //유저 차단 기능
+
+
+
+    /*
+    게시글 글쓴이 차단 신고
+  */
+    @PostMapping(value="/post/user/report")
+    @ApiOperation(value = "유저 신고", notes = "토론장 글쓴이를 신고함.")
+    public BaseResponse<ReportDto.RegisterPostUserReportRes> createPostUserReport(@RequestBody ReportDto.RegisterPostUserReportReq registerPostUserReportReq) throws BaseException {
+        int postIdx = registerPostUserReportReq.getPostIdx();
+        int respondent = reportRepository.getRespondentByPostIdx(postIdx);
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //신고하는 유저와 접근한 유저가 같은지 확인
+            if(registerPostUserReportReq.getReporter() != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            ReportDto.RegisterPostUserReportRes registerPostUserReportRes = reportService.choosePostUserReport(registerPostUserReportReq, respondent);
+            return new BaseResponse<>(registerPostUserReportRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+
+
 
 }

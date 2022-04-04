@@ -88,7 +88,7 @@ class PostSql {
 
     //토론장 게시글 조회
     public static final String LIST_POST = """
-        SELECT p.postIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
+        SELECT p.postIdx, p.userIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
         case
                 when timestampdiff(minute, p.updateAt, current_timestamp()) <= 0 then '방금 전'
                 when timestampdiff(minute, p.updateAt, current_timestamp()) < 60 then CONCAT(TIMESTAMPDIFF(minute, p.updateAt , NOW()), '분 전')
@@ -103,9 +103,18 @@ class PostSql {
         ORDER BY p.postIdx DESC
          """
 
+
+    //토론장 차단된 유저의 게시글 조회
+    public static final String LIST_BLOCK_POST = """
+        SELECT respondent as 'userIdx'
+        FROM UserReport
+        WHERE reporter = :userIdx
+        """
+
+
     //토론장 유저 게시글 조회
     public static final String LIST_USER_POST = """
-         SELECT p.postIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
+         SELECT p.postIdx, p.userIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
          case
                 when timestampdiff(minute, p.updateAt, current_timestamp()) <= 0 then '방금 전'
                 when timestampdiff(minute, p.updateAt, current_timestamp()) < 60 then CONCAT(TIMESTAMPDIFF(minute, p.updateAt , NOW()), '분 전')
@@ -122,7 +131,7 @@ class PostSql {
 
     //토론장 코인 게시글 조회
     public static final String LIST_COIN_POST = """
-        SELECT p.postIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
+        SELECT p.postIdx, p.userIdx, c.symbol, u.nickName, u.profileImgUrl, p.content, count(case when l.likeType = 1 then 1 end) as 'like', count(case when l.likeType = 0 then 0 end) as 'dislike',
         case
            when timestampdiff(minute, p.updateAt, current_timestamp()) <= 0 then '방금 전'
            when timestampdiff(minute, p.updateAt, current_timestamp()) < 60 then CONCAT(TIMESTAMPDIFF(minute, p.updateAt , NOW()), '분 전')

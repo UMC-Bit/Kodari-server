@@ -171,5 +171,28 @@ public class ReportService {
     }
 
 
+    //토론장 유저 신고
+
+
+    // 토론장 유저 신고 선택(POST)
+    @Transactional
+    public ReportDto.RegisterPostUserReportRes choosePostUserReport(ReportDto.RegisterPostUserReportReq registerPostUserReportReq, int respondent) throws BaseException {
+        int userIdx = registerPostUserReportReq.getReporter();
+        int postIdx = registerPostUserReportReq.getPostIdx();
+        boolean exist_user = reportRepository.getPostUserExist(postIdx, userIdx);
+        if(userIdx == respondent) {
+            throw new BaseException(IMPOSSIBLE_POST_REPORT); //자신의 게시글을 신고불가
+        }
+        else if(exist_user) { //유저 존재하면 신고 불가
+                throw new BaseException(ALREADY_REPORT);
+        }
+        try {
+            return reportRepository.choosePostUserReport(registerPostUserReportReq, respondent);
+        } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
 
 }
