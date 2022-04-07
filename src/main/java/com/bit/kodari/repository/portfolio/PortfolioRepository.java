@@ -94,6 +94,38 @@ public class PortfolioRepository {
         }
     }
 
+    public PortfolioDto.GetPortSumByMarketRes getPortSumByMarketRes(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+        try {
+            PortfolioDto.GetPortSumByMarketRes GetPortSumByMarketRes = namedParameterJdbcTemplate.queryForObject(PortfolioSql.GET_PORT_SUM_BY_USER, parameterSource, (rs, rowNum) -> {
+
+                        List<PortfolioDto.GetPortSumRes> portSumList1 = getPortSum(userIdx, 1);
+                        List<PortfolioDto.GetPortSumRes> portSumList2 = getPortSum(userIdx, 2);
+                        PortfolioDto.GetPortSumByMarketRes sumByMarketRes = new PortfolioDto.GetPortSumByMarketRes(rs.getInt("userIdx"), rs.getString("nickName"), portSumList1, portSumList2);
+                        return sumByMarketRes;
+                    }
+            );
+            return GetPortSumByMarketRes;
+        }catch(EmptyResultDataAccessException e) {
+            return null;
+        }
+
+    }
+
+    //거래소별 포트폴리오 갯수 조회하기
+    public List<PortfolioDto.GetPortSumRes> getPortSum(int userIdx, int marketIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx)
+                .addValue("marketIdx", marketIdx);
+        List<PortfolioDto.GetPortSumRes> GetPortSumRes = namedParameterJdbcTemplate.query(PortfolioSql.GET_PORT_SUM, parameterSource,
+                (rs, rowNum) -> new PortfolioDto.GetPortSumRes(
+                        rs.getInt("marketIdx"),
+                        rs.getString("marketName"),
+                        rs.getInt("portSum")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        );
+
+        return GetPortSumRes;
+    }
+
 
     //포트폴리오 삭제 - 소유코인, 계좌, 대표코인 다 삭제되도록(모두 있을 때)
     public int deleteByPortIdx(int portIdx, int accountIdx, int userIdx) {

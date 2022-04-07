@@ -25,6 +25,24 @@ class PortfolioSql {
             AND p.portIdx = :portIdx
     """
 
+    // 거래소별 포트폴리오 갯수 조회
+    public static final String GET_PORT_SUM_BY_USER = """
+			select userIdx, nickName
+			from User
+			where userIdx = :userIdx
+    """
+
+    // 거래소별 포트폴리오 갯수 조회
+    public static final String GET_PORT_SUM = """
+			select p.userIdx, a.marketIdx, m.marketName, count(a.marketIdx) as portSum
+			from Portfolio p
+            join Account as a on a.accountIdx = p.accountIdx
+            join Market as m on m.marketIdx = a.marketIdx
+            where p.status = 'active'
+            and p.userIdx = :userIdx
+            and m.marketIdx = :marketIdx
+    """
+
     //소유코인 가져오기
     public static final String GET_USER_COIN = """
         select u.userCoinIdx, u.userIdx, u.coinIdx, c.coinName, c.symbol, c.coinImg, c.twitter, u.accountIdx, u.priceAvg, u.amount, u.status from UserCoin as u
