@@ -43,6 +43,19 @@ dependencies {
 
     // 이메일 인증
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    //sns
+    implementation platform('software.amazon.awssdk:bom:2.5.29')
+    //implementation 'software.amazon.awssdk:sns' // We only need to get SNS SDK in our case
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-aws-messaging
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-aws-messaging', version: '2.2.1.RELEASE'
+    // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.1.RELEASE'
+    implementation 'com.google.firebase:firebase-admin:7.1.1'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'com.google.firebase:firebase-analytics'
+    // implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.8.1'
+
 }
 
 test {

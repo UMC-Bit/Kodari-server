@@ -131,5 +131,25 @@ public class PortfolioController {
         }
     }
 
+    // 거래소별 포트폴리오 갯수 조회하기
+    //Query String
+    @ResponseBody
+    @GetMapping("/portSum/{userIdx}")
+    public BaseResponse<PortfolioDto.GetPortSumByMarketRes> getPortSumByMarket(@PathVariable("userIdx") int userIdx) {
+        try {
+//            // 해당 accountIdx를 만족하는 계좌의 현금 자산 정보를 불러온다.
+//            //jwt에서 idx 추출.
+//            int userIdxByJwt = jwtService.getUserIdx();
+//            //userIdx와 접근한 유저가 같은지 확인
+//            if(userIdx != userIdxByJwt){
+//                return new BaseResponse<>(INVALID_USER_JWT);
+//            }
+            PortfolioDto.GetPortSumByMarketRes getPortSumByMarketRes = portfolioService.getPortSumByMarket(userIdx);
+            return new BaseResponse<>(getPortSumByMarketRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
 
 }

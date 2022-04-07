@@ -24,7 +24,12 @@ spring:
           auth: true
           starttls:
             enable: true
-
-
+  autoconfigure:
+    exclude: org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfiguration
+cloud:
+  aws:
+    region:
+      auto: false
+      static: ap-northeast-2
 
 

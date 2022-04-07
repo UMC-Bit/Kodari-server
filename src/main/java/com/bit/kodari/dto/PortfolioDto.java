@@ -64,6 +64,26 @@ public class PortfolioDto {
         //    private String jwt;
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetPortSumByMarketRes{
+        private int userIdx;
+        private String nickName;
+        private List<PortfolioDto.GetPortSumRes> portSumList1;
+        private List<PortfolioDto.GetPortSumRes> portSumList2;
+    }
+
+    // 거래소별 포트폴리오 갯수 조회 RESPONSE DTO
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetPortSumRes{
+        private int marketIdx;
+        private String marketName;
+        private int portSum;
+    }
+
 
     //포트폴리오 삭제 Request Dto
     @Data

@@ -120,6 +120,17 @@ public class PortfolioService {
         }
     }
 
+    //포트폴리오 조회
+    @Transactional
+    public PortfolioDto.GetPortSumByMarketRes getPortSumByMarket(int userIdx) throws BaseException {
+        try {
+            PortfolioDto.GetPortSumByMarketRes getPortSumByMarketRes = portfolioRepository.getPortSumByMarketRes(userIdx);
+            return getPortSumByMarketRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     //포트폴리오 삭제
     @Transactional
     public void deleteByPortIdx(PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq) throws BaseException{

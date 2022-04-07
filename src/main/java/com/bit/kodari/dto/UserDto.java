@@ -49,6 +49,7 @@ public class UserDto {
     public static class PostLoginReq{
         private String email;
         private String password;
+        //private String token;
     }
 
     // 로그인 RESPONSE DTO
