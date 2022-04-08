@@ -189,7 +189,9 @@ public class UserCoinService {
             }
             else{
                 //새로운 매수평단가
-                total = (priceAvg * existCoinAmount - price * newCoinAmount) / sumCoinAmount;
+                //TODO: 매도 시 데이터베이스 에러 확인
+                //total = (priceAvg * existCoinAmount - price * newCoinAmount) / sumCoinAmount;
+                total = priceAvg;
                 if(total < 0){
                     throw new BaseException(MODIFY_FAIL_PRICE_AVG); //4048
                 }
