@@ -3,6 +3,7 @@ package com.bit.kodari.repository.usercoin;
 import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.UserCoinDto;
 import com.bit.kodari.repository.account.AccountSql;
+import com.bit.kodari.repository.portfolio.PortfolioSql;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -43,7 +44,12 @@ public class UserCoinRepository {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userCoinIdx", userCoinIdx);
         List<UserCoinDto.GetUserCoinIdxRes> getUserCoinIdxRes = namedParameterJdbcTemplate.query(UserCoinSql.FIND_USER_COIN_IDX, parameterSource,
                 (rs, rowNum) -> new UserCoinDto.GetUserCoinIdxRes(
+                        rs.getInt("userCoinIdx"),
+                        rs.getInt("coinIdx"),
                         rs.getString("coinName"),
+                        rs.getString("symbol"),
+                        rs.getString("coinImg"),
+                        rs.getString("twitter"),
                         rs.getInt("userIdx"),
                         rs.getDouble("priceAvg"),
                         rs.getDouble("amount"),
@@ -54,11 +60,17 @@ public class UserCoinRepository {
     }
 
     //소유 코인 조회
-    public List<UserCoinDto.GetUserCoinRes> getUserCoinByUserIdx(int userIdx){
-        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+    public List<UserCoinDto.GetUserCoinRes> getUserCoinByPortIdx(int portIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
         List<UserCoinDto.GetUserCoinRes> getUserCoinRes = namedParameterJdbcTemplate.query(UserCoinSql.FIND_USER_COIN, parameterSource,
                 (rs, rowNum) -> new UserCoinDto.GetUserCoinRes(
+                        rs.getInt("portIdx"),
+                        rs.getInt("userCoinIdx"),
+                        rs.getInt("coinIdx"),
                         rs.getString("coinName"),
+                        rs.getString("symbol"),
+                        rs.getString("coinImg"),
+                        rs.getString("twitter"),
                         rs.getInt("userIdx"),
                         rs.getDouble("priceAvg"),
                         rs.getDouble("amount"),
@@ -87,6 +99,14 @@ public class UserCoinRepository {
     public int deletebyUserIdx(UserCoinDto.PatchDelByUserIdxReq patchDelByUserIdxReq) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", patchDelByUserIdxReq.getUserIdx());
         return namedParameterJdbcTemplate.update(UserCoinSql.ALL_DELETE, parameterSource);
+    }
+
+
+    // 소유 코인 삭제 : 전체 삭제
+    public int deleteAllUserCoinByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(UserCoinSql.DELETE_ALL, parameterSource);
     }
 
     //매수평단가 계산
@@ -141,6 +161,19 @@ public class UserCoinRepository {
             }
 
             return status;
+        });
+    }
+
+    // portIdx로 userIdx 가져오기
+    public int getUserIdxByPortIdx(int portIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        return namedParameterJdbcTemplate.query(UserCoinSql.GET_USER_IDX_BY_PORT, parameterSource, rs -> {
+            int userIdx = 0;
+            if (rs.next()) {
+                userIdx = rs.getInt("userIdx");
+            }
+
+            return userIdx;
         });
     }
 
@@ -288,6 +321,19 @@ public class UserCoinRepository {
             }
 
             return property;
+        });
+    }
+
+    //accountIdx로 계좌 userIdx 가져오기
+    public int getAccountUserIdx(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(UserCoinSql.GET_ACCOUNT_USER, parameterSource, rs -> {
+            int userIdx = 0;
+            if (rs.next()) {
+                userIdx = rs.getInt("userIdx");
+            }
+
+            return userIdx;
         });
     }
 }

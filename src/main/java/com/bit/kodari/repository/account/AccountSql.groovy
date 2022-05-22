@@ -34,7 +34,12 @@ class AccountSql {
 
     //Trade - 현금 자산 수정
     public static final String UPDATE_TRADE_PROPERTY = """
-			UPDATE Account SET property = :property, totalProperty = :totalProperty WHERE accountIdx = :accountIdx
+			UPDATE Account SET property = :property WHERE accountIdx = :accountIdx
+    """
+
+    // 총 자산 수정 - 업데이트 버튼 누를때마다
+    public static final String UPDATE_TOTAL_PROPERTY_BUTTON = """
+			UPDATE Account SET totalProperty = :totalProperty WHERE accountIdx = :accountIdx
     """
 
     //현금 자산 조회
@@ -60,6 +65,12 @@ class AccountSql {
 			AND a.accountIdx = :accountIdx
     """
 
+    // 계좌 삭제: 전체삭제
+    public static final String DELETE_ALL = """
+			DELETE FROM Account
+            WHERE userIdx = :userIdx;
+"""
+
     //accountIdx로 userIdx 가져오기
     public static final String GET_USER_IDX ="""
         SELECT userIdx from Account where accountIdx = :accountIdx
@@ -78,6 +89,11 @@ class AccountSql {
     //accountIdx로 status 가져오기
     public static final String GET_ACCOUNT_STATUS ="""
         SELECT status from Account where accountIdx = :accountIdx
+    """;
+
+    //accountIdx로 marketIdx 가져오기
+    public static final String GET_MARKET_IDX_BY_ACCOUNT ="""
+        SELECT marketIdx from Account where accountIdx = :accountIdx
     """;
 
     // tradeIdx로 portIdx 가져오기
@@ -154,5 +170,12 @@ class AccountSql {
     public  static final String GET_USER_COIN_IDX_LIST = """
         SELECT userCoinIdx from UserCoin where accountIdx = :accountIdx and status = 'active'
     """
+
+    //accountIdx로 거래 생성시각 조회
+    public static final String GET_CREATEAT ="""
+        SELECT createAt 
+        FROM Account 
+        WHERE accountIdx = :accountIdx AND status='active'
+"""
 
 }

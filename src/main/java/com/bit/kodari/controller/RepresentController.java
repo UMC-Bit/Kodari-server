@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.bit.kodari.config.BaseResponseStatus.INVALID_USER_JWT;
+
 @RestController
 @RequestMapping("/represent")
 public class RepresentController {
@@ -44,11 +46,11 @@ public class RepresentController {
         int userIdx = representRepository.getUserIdxByPortIdx(postRepresentReq.getPortIdx());
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-            //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             RepresentDto.PostRepresentRes postRepresentRes = representService.registerRepresent(postRepresentReq);
             return new BaseResponse<>(postRepresentRes);
         } catch (BaseException exception) {
@@ -67,11 +69,11 @@ public class RepresentController {
         int userIdx = representRepository.getUserIdxByPortIdx(portIdx);
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-            //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             List<RepresentDto.GetRepresentRes> getRepresentRes = representService.getRepresent(portIdx);
             return new BaseResponse<>(getRepresentRes);
         } catch (BaseException exception) {
@@ -90,11 +92,11 @@ public class RepresentController {
         int userIdx = representRepository.getUserIdxByPortIdx(representRepository.getPortIdxByRepresentIdx(representIdx));
         try {
             //jwt에서 idx 추출.
-            //int userIdxByJwt = jwtService.getUserIdx();
+            int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-            //if(userIdx != userIdxByJwt){
-            //return new BaseResponse<>(INVALID_USER_JWT);
-            //}
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
             RepresentDto.DeleteRepresentReq deleteRepresentReq = new RepresentDto.DeleteRepresentReq(representIdx);
             representService.delete(deleteRepresentReq);
 

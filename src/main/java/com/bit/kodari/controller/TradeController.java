@@ -16,6 +16,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -46,17 +48,43 @@ public class TradeController {
     @ApiOperation(value = "거래내역", notes = "거래내역을 새로 등록함.")
     public BaseResponse createTrade(@RequestBody TradeDto.PostTradeReq postTradeReq) {
 
-//        int userIdx = tradeRepository.getUserIdxByPortIdx(postTradeReq.getPortIdx()); // 포트폴리오 인덱스로 유저인덱스 조회
+        int userIdx = tradeRepository.getUserIdxByPortIdx(postTradeReq.getPortIdx()); // 포트폴리오 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             // 거래내역 생성 요청
             TradeDto.PostTradeRes postTradeRes = tradeService.createTrade(postTradeReq);
+            return new BaseResponse<>(postTradeRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * [POST]
+     */
+    //거래내역 생성 API, 포트폴리오 처음 생성 시 사용
+    @ResponseBody
+    @PostMapping("/post/first")
+    @ApiOperation(value = "거래내역", notes = "포트폴리오 처음 생성시 ,거래내역을 새로 등록함.")
+    public BaseResponse createFirstTrade(@RequestBody TradeDto.PostTradeReq postTradeReq) {
+
+        int userIdx = tradeRepository.getUserIdxByPortIdx(postTradeReq.getPortIdx()); // 포트폴리오 인덱스로 유저인덱스 조회
+        try {
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
+
+            // 거래내역 생성 요청
+            TradeDto.PostTradeRes postTradeRes = tradeService.createFirstTrade(postTradeReq);
             return new BaseResponse<>(postTradeRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -74,14 +102,14 @@ public class TradeController {
     @ApiOperation(value = "특정 포트폴리오,특정 코인인덱스", notes = "Trade 거래내역 조회: 특정 포트폴리오의  특정 코인의 전체 매수,매도 조회")
     public BaseResponse<List<TradeDto.GetTradeRes>> getTradeByPortIdxCoinIdx(@PathVariable("portIdx") int portIdx, @PathVariable("coinIdx") int coinIdx) {
 
-//        int userIdx = tradeRepository.getUserIdxByPortIdx(portIdx);// 포트폴리오 인덱스로 유저인덱스 조회
+        int userIdx = tradeRepository.getUserIdxByPortIdx(portIdx);// 포트폴리오 인덱스로 유저인덱스 조회
         try {
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if(userIdx != userIdxByJwt){
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdx != userIdxByJwt){
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             TradeDto.GetTradeReq getTradeReq = new TradeDto.GetTradeReq(portIdx,coinIdx);
             List<TradeDto.GetTradeRes> getTradeRes = tradeService.getTradeByPortIdxCoinIdx(getTradeReq);
@@ -99,16 +127,16 @@ public class TradeController {
     @PatchMapping("/update/price/{tradeIdx}")
     @ApiOperation(value = "거래내역의 코인가격", notes = "코인가격 수정")
     public BaseResponse<String> updatePrice (@PathVariable("tradeIdx") int tradeIdx, @RequestBody TradeDto.PatchPriceReq patchPriceReq) {
-//        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
+        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
 
         try {
-//            // jwt 부분
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if (userIdx != userIdxByJwt) {
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            // jwt 부분
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             //**************************************************************************
             //같다면 코인 가격 수정
@@ -131,16 +159,16 @@ public class TradeController {
     @ApiOperation(value = "거래내역의 코인 갯수", notes = "코인 갯수 수정")
     public BaseResponse<String> updateAmount (@PathVariable("tradeIdx") int tradeIdx, @RequestBody TradeDto.PatchAmountReq patchAmountReq) {
 
-//        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
+        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
         try {
 
-//            // jwt 부분
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if (userIdx != userIdxByJwt) {
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            // jwt 부분
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             //**************************************************************************
             //같다면 코인 갯수 수정
@@ -164,16 +192,16 @@ public class TradeController {
     @ApiOperation(value = "거래내역의 수수료", notes = "수수료 수정")
     public BaseResponse<String> updateFee (@PathVariable("tradeIdx") int tradeIdx, @RequestBody TradeDto.PatchFeeReq patchFeeReq) {
 
-//        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
+        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
         try {
 
-//            // jwt 부분
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if (userIdx != userIdxByJwt) {
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            // jwt 부분
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             //**************************************************************************
             //같다면 수수료 수정
@@ -196,16 +224,16 @@ public class TradeController {
     @PatchMapping("/update/category/{tradeIdx}")
     @ApiOperation(value = "거래내역의 매수/매도", notes = "매수/매도 수정")
     public BaseResponse<String> updateCategory (@PathVariable("tradeIdx") int tradeIdx, @RequestBody TradeDto.PatchCategoryReq patchCategoryReq) {
-//        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
+        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
         try {
 
             // jwt 부분
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if (userIdx != userIdxByJwt) {
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             //**************************************************************************
             //같다면 매수/매도 수정
@@ -227,16 +255,16 @@ public class TradeController {
     @PatchMapping("/update/memo/{tradeIdx}")
     @ApiOperation(value = "거래내역의 메모", notes = "메모 수정")
     public BaseResponse<String> updateMemo (@PathVariable("tradeIdx") int tradeIdx, @RequestBody TradeDto.PatchMemoReq patchMemoReq) {
-//        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
+        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
         try {
 
-//            // jwt 부분
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if (userIdx != userIdxByJwt) {
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            // jwt 부분
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             //**************************************************************************
             //같다면 메모 수정
@@ -260,16 +288,16 @@ public class TradeController {
     @ApiOperation(value = "거래내역의 거래시각", notes = "거래시각 수정")
     public BaseResponse<String> updateDate (@PathVariable("tradeIdx") int tradeIdx, @RequestBody TradeDto.PatchDateReq patchDateReq) {
 
-//        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
+        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
         try {
 
-//            // jwt 부분
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if (userIdx != userIdxByJwt) {
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            // jwt 부분
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             //**************************************************************************
             //같다면 거래시각 수정
@@ -290,17 +318,17 @@ public class TradeController {
      */
     @PatchMapping("/delete/{tradeIdx}")
     @ApiOperation(value = "거래내역", notes = "거래내역 삭제,status를 inactive로 수정")
-    public BaseResponse<String> deleteTrade (@PathVariable("tradeIdx") int tradeIdx) {
-//        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
+    public BaseResponse<String> deleteTrade (@PathVariable("tradeIdx") int tradeIdx) throws ParseException , IOException {
+        int userIdx = tradeRepository.getUserIdxByTradeIdx(tradeIdx);
         try {
 
-//            // jwt 부분
-//            //jwt에서 idx 추출.
-//            int userIdxByJwt = jwtService.getUserIdx();
-//            //userIdx와 접근한 유저가 같은지 확인
-//            if (userIdx != userIdxByJwt) {
-//                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
-//            }
+            // jwt 부분
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
 
             //**************************************************************************
             //같다면 거래내역 삭제

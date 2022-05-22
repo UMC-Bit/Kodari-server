@@ -15,6 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.service.ResponseMessage;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
 
 import java.util.List;
 
@@ -28,15 +33,26 @@ public class UserService {
     private final JwtService jwtService; // JWT부분
     private final TradeService tradeService;
     private final ProfitService profitService;
+    private final AccountService accountService;
+    private final PortfolioService portfolioService;
+    private final UserCoinService userCoinService;
+    private final RepresentService representService;
+
+
+
 
 
     @Autowired //readme 참고
-    public UserService(UserRepository userRepository, JwtService jwtService, TradeService tradeService, ProfitService profitService) {
+    public UserService(UserRepository userRepository, JwtService jwtService, TradeService tradeService, ProfitService profitService
+    ,AccountService accountService ,PortfolioService portfolioService, UserCoinService userCoinService, RepresentService representService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService; // JWT부분
         this.tradeService = tradeService;
         this.profitService = profitService;
-
+        this.accountService = accountService;
+        this.portfolioService = portfolioService;
+        this.userCoinService = userCoinService;
+        this.representService = representService;
     }
     // ******************************************************************************
 
@@ -208,15 +224,41 @@ public class UserService {
 
         // 유저 삭제가 완성되면
         // 해당 유저의 거래내역 전체 삭제
-//        tradeService.deleteAllTradeByUserIdx(deleteUserReq.getUserIdx());
-//        // 해당 유저의 수익내역 전체 삭제
-//        profitService.deleteAllProfitByUserIdx(deleteUserReq.getUserIdx());
+        // 주의: 참조관계 따져서 순서도 맞아야 삭제가능
+        tradeService.deleteAllTradeByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 거래내역 삭제 완료");
+        // 해당 유저의 수익내역 전체 삭제
+        profitService.deleteAllProfitByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 수익내역 삭제 완료");
+        // 해당 유저의 데표코인 전체 삭제
+        representService.deleteAllReprsentByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 대표코인 삭제 완료");
+        // 해당 유저의 소유코인 전체 삭제
+        userCoinService.deleteAllUserCoinByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 소유코인 삭제 완료");
+        // 해당 유저의 포트폴리오 전체 삭제
+        portfolioService.deleteAllPortfolioByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 포트폴리오 삭제 완료");
+        // 해당 유저의 계좌 전체 삭제
+        accountService.deleteAllAccountByUserIdx(deleteUserReq.getUserIdx());
+        System.out.println("해당 유저의 전체 계좌 삭제 완료");
+
+
+
+
 
     }
 
     // 회원 닉네임 정보 수정(Patch)
     @Transactional // Trancaction 기능 : 데이터 생성,수정,삭제와같은 데이터를 작업하는 일이 여러 과정을 한번에 수행 항 때 수행을 끝마쳐야 저장, 오류나면 Rollback 해서 안전성을 부여.
     public void updateNickName(UserDto.UpdateNickNameReq updateNickNameReq) throws BaseException{
+
+        // 닉네임 중복 확인 validation: 해당 닉네임을 가진 유저가 있는지 확인
+        String nickName = updateNickNameReq.getNickName();
+        List<UserDto.GetUserRes> nickNameUser = userRepository.getUserByNickname(nickName); // 닉네임으로 유저 조회
+        if(nickNameUser.size() != 0){ //  이미 존재하면 이메일 중복 예외
+            throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_NICKNAME);
+        }
 
         int result = userRepository.updateNickName(updateNickNameReq);
         if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
@@ -256,6 +298,34 @@ public class UserService {
         }
     }
 
+
+    // 회원 비밀번호 정보 맞는지 확인 api
+    @Transactional
+    public void getCheckPassword(UserDto.GetCheckPasswordReq getCheckPasswordReq) throws BaseException{
+        String userIdx = Integer.toString(getCheckPasswordReq.getUserIdx());
+
+        // 현재 유저 인덱스로 유저 불러오기
+        // 현재 유저 인덱스의 패스워드 복호화
+        // 입력된 패스워드와 비교
+        List<UserDto.GetUserRes> getUserRes;
+        getUserRes = this.getUserByUserIdx(userIdx);
+
+        // 복호화 validation: 복호롸 하는도중 에러
+        String password;
+        // 리파지토리의 암호화된 password 복호화  안되면 에러
+        try {
+            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(getUserRes.get(0).getPassword()); // 복호화
+            // 회원가입할 때 비밀번호가 암호화되어 저장되었기 떄문에 복호화된 값끼리 비교를 해야합니다.
+        } catch (Exception ignored) {
+            throw new BaseException(BaseResponseStatus.PASSWORD_DECRYPTION_ERROR);
+        }
+
+        // 입력된 패스워드 틀림 validation  : password 비교
+        if (!getCheckPasswordReq.getPassword().equals(password)) { //비말번호가 일치한다면 userIdx를 가져온다.
+            throw new BaseException(BaseResponseStatus.FAILED_TO_CHECKPASSWORD);
+        }
+
+    }
 
 
 

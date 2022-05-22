@@ -8,6 +8,7 @@ import com.bit.kodari.utils.JwtService;
 import groovy.util.logging.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,8 +29,10 @@ public class PostReplyService {
     }
 
     //토론장 게시글 답글 등록
+    @Transactional
     public PostReplyDto.RegisterReplyRes insertCommentReply(PostReplyDto.RegisterReplyReq registerReplyReq) throws BaseException {
         int postCommentIdx = registerReplyReq.getPostCommentIdx();
+        int reportCnt = postReplyRepository.getUserReport(registerReplyReq.getUserIdx());
         String content = registerReplyReq.getContent();
         String tmp_content = content.replaceAll(" ", "");
         String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
@@ -46,6 +49,9 @@ public class PostReplyService {
         else if(content.length() >= 100) { //내용 100자 이내 제한
             throw new BaseException(OVER_CONTENT);
         }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
+        }
         try {
             PostReplyDto.RegisterReplyRes registerReplyRes = postReplyRepository.insertReply(registerReplyReq);
             return registerReplyRes;
@@ -55,10 +61,12 @@ public class PostReplyService {
     }
 
     //토론장 게시글 답글 수정
+    @Transactional
     public void modifyReply(PostReplyDto.PatchReplyReq post) throws BaseException{
         int postReplyIdx = post.getPostReplyIdx();
         int userIdx = post.getUserIdx();
         int postCommentIdx = post.getPostCommentIdx();
+        int reportCnt = postReplyRepository.getUserReport(userIdx);
         String content = post.getContent();
         String tmp_content = content.replaceAll(" ", "");
         String comment_status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
@@ -79,6 +87,9 @@ public class PostReplyService {
         else if(content.length() >= 100) { //내용 100자 이내 제한
             throw new BaseException(OVER_CONTENT);
         }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
+        }
         else{
             int result = postReplyRepository.modifyReply(post);
             if(result == 0){ // 0이면 에러가 발생
@@ -94,6 +105,7 @@ public class PostReplyService {
     }
 
     //토론장 게시글 답글 삭제
+    @Transactional
     public void modifyReplyStatus(PostReplyDto.PatchReplyDeleteReq post) throws BaseException{
         int postReplyIdx = post.getPostReplyIdx();
         int userIdx = post.getUserIdx();
@@ -115,6 +127,7 @@ public class PostReplyService {
     }
 
     // 특정 댓글별 답글 조회
+    @Transactional
     public List<PostReplyDto.GetReplyRes> getReplyByPostCommentIdx(int postCommentIdx) throws BaseException {
         try {
             List<PostReplyDto.GetReplyRes> getReplyRes = postReplyRepository.getReplyByPostCommentIdx(postCommentIdx);
@@ -126,6 +139,7 @@ public class PostReplyService {
 
 
     // 특정 유저의 답글 조회
+    @Transactional
     public List<PostReplyDto.GetReplyRes> getReplyByUserIdx(int userIdx) throws BaseException {
         try {
             List<PostReplyDto.GetReplyRes> getReplysRes = postReplyRepository.getReplyByUserIdx(userIdx);
@@ -136,11 +150,8 @@ public class PostReplyService {
     }
 
     // 특정 댓글별 답글 수 조회
+    @Transactional
     public List<PostReplyDto.GetReplyCntRes> getReplyCntByPostCommentIdx(int postCommentIdx) throws BaseException {
-//        String status = postReplyRepository.getStatusByPostCommentIdx(postCommentIdx);
-//        if(status.equals("inactive")) { //삭제된 댓글은 답글 수 조회 불가
-//            throw new BaseException(IMPOSSIBLE_POST_COMMENT); // 댓글이 존재하지 않음.
-//        }
         try {
             List<PostReplyDto.GetReplyCntRes> getReplyCntRes = postReplyRepository.getReplyCntByPostCommentIdx(postCommentIdx);
             return getReplyCntRes;

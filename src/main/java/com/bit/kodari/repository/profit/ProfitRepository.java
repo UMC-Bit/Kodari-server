@@ -27,7 +27,8 @@ public class ProfitRepository {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", postProfitReq.getAccountIdx())
                 .addValue("profitRate",postProfitReq.getProfitRate())
-                .addValue("earning",postProfitReq.getEarning());
+                .addValue("earning",postProfitReq.getEarning())
+                .addValue("date",postProfitReq.getDate());
 
         int affectedRows = namedParameterJdbcTemplate.update(ProfitSql.INSERT,parameterSource,keyHolder);
 
@@ -46,6 +47,35 @@ public class ProfitRepository {
                 ));
         return postProfitRes;
     }
+
+
+
+    // 수익내역 생성:  과거 레코드 추가
+    public ProfitDto.PostProfitRes createPrevProfit(ProfitDto.PostPrevProfitReq postPrevProfitReq){
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", postPrevProfitReq.getAccountIdx())
+                .addValue("profitRate",postPrevProfitReq.getProfitRate())
+                .addValue("earning",postPrevProfitReq.getEarning())
+                .addValue("prevDate",postPrevProfitReq.getPrevDate());
+
+        int affectedRows = namedParameterJdbcTemplate.update(ProfitSql.INSERT_PREV,parameterSource,keyHolder);
+
+
+        // 해당 profitIdx 의 거래내역을 PostProfitRes 형태로 반환
+        int lastInsertIdx = keyHolder.getKey().intValue(); // 마지막 들어간 idx 조회
+        SqlParameterSource parameterSource1 = new MapSqlParameterSource("profitIdx",lastInsertIdx);
+        ProfitDto.PostProfitRes postProfitRes = namedParameterJdbcTemplate.queryForObject(ProfitSql.FIND_BY_PROFITIDX,parameterSource1,
+                (rs,rowNum) -> new ProfitDto.PostProfitRes(
+                        rs.getInt("profitIdx"),
+//                        rs.getInt("portIdx"),
+                        rs.getInt("accountIdx"),
+                        rs.getDouble("profitRate"),
+                        rs.getDouble("earning"),
+                        rs.getString("status")
+                ));
+        return postProfitRes;
+    }
+
 
 
 
@@ -77,6 +107,84 @@ public class ProfitRepository {
 
 
 
+    // Profit 수익내역 일별 조회: 특정 계좌의 수익내역 조회
+    public List<ProfitDto.GetProfitRes> getDailyProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", getProfitReq.getAccountIdx());
+
+        try{
+            // Profit 수익내역 조회: 특정 계좌의 수익내역 조회
+            List<ProfitDto.GetProfitRes> getProfitRes = namedParameterJdbcTemplate.query(ProfitSql.FIND_DAILY_BY_ACCOUNTIDX, parameterSource,
+                    // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
+                    (rs, rowNum) -> new ProfitDto.GetProfitRes(
+                            rs.getInt("profitIdx"),
+                            rs.getInt("accountIdx"),
+                            rs.getDouble("profitRate"),
+                            rs.getString("earning"),
+                            rs.getString("status"),
+                            rs.getString("createAt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+            );
+            return getProfitRes;
+        }
+        catch (EmptyResultDataAccessException e) {
+            // EmptyResultDataAccessException 예외 발생시 null 리턴
+            return null;
+        }
+    }
+
+
+
+    // Profit 수익내역 주 별 조회: 특정 계좌의 전체 수익내역 조회
+    public List<ProfitDto.GetProfitRes> getWeeklyProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", getProfitReq.getAccountIdx());
+
+        try{
+            // Profit 수익내역 조회: 특정 계좌의 수익내역 조회
+            List<ProfitDto.GetProfitRes> getProfitRes = namedParameterJdbcTemplate.query(ProfitSql.FIND_WEEKLY_BY_ACCOUNTIDX, parameterSource,
+                    // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
+                    (rs, rowNum) -> new ProfitDto.GetProfitRes(
+                            rs.getInt("profitIdx"),
+                            rs.getInt("accountIdx"),
+                            rs.getDouble("profitRate"),
+                            rs.getString("earning"),
+                            rs.getString("status"),
+                            rs.getString("createAt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+            );
+            return getProfitRes;
+        }
+        catch (EmptyResultDataAccessException e) {
+            // EmptyResultDataAccessException 예외 발생시 null 리턴
+            return null;
+        }
+    }
+
+
+
+    // Profit 수익내역 월 별 조회: 특정 계좌의 전체 수익내역 조회
+    public List<ProfitDto.GetProfitRes> getMonthlyProfitByAccountIdx(ProfitDto.GetProfitReq getProfitReq){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", getProfitReq.getAccountIdx());
+
+        try{
+            // Profit 수익내역 조회: 특정 계좌의 수익내역 조회
+            List<ProfitDto.GetProfitRes> getProfitRes = namedParameterJdbcTemplate.query(ProfitSql.FIND_MONTHLY_BY_ACCOUNTIDX, parameterSource,
+                    // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
+                    (rs, rowNum) -> new ProfitDto.GetProfitRes(
+                            rs.getInt("profitIdx"),
+                            rs.getInt("accountIdx"),
+                            rs.getDouble("profitRate"),
+                            rs.getString("earning"),
+                            rs.getString("status"),
+                            rs.getString("createAt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+            );
+            return getProfitRes;
+        }
+        catch (EmptyResultDataAccessException e) {
+            // EmptyResultDataAccessException 예외 발생시 null 리턴
+            return null;
+        }
+    }
+
+
+
 
     // Profit 수익내역 조회: 특정 계좌의 코인심볼 전체조회
     public List<ProfitDto.GetCoinSymbolRes> getSymbolByAccountIdx(int accountIdx){
@@ -88,6 +196,7 @@ public class ProfitRepository {
                     // 이 자리에 new getUserMapper() 생성해서 넣어주거나 람다식으로 바로 생성해서 넘겨주기
                     (rs, rowNum) -> new ProfitDto.GetCoinSymbolRes(
                             rs.getDouble("amount"),
+                            rs.getDouble("priceAvg"),
                             rs.getString("symbol"),
                             rs.getDouble("property"),
                             rs.getDouble("totalProperty")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
@@ -121,6 +230,19 @@ public class ProfitRepository {
         //return namedParameterJdbcTemplate.update(TradeSql.UPDATE_PRICE, parameterSource);
     }
 
+    // 수익조회: 전체 accountIdx 조회
+    public List<Integer> getAllAccountIdx(){
+        SqlParameterSource parameterSource = new MapSqlParameterSource();
+
+//        namedParameterJdbcTemplate.query(ProfitSql.DELETE,int.class);
+//        namedParameterJdbcTemplate.query(ProfitSql.DELETE,int.class);
+        return namedParameterJdbcTemplate.queryForList(ProfitSql.FIND_ACCOUNTIDX,parameterSource,int.class);
+//        return namedParameterJdbcTemplate.query(ProfitSql.FIND_ACCOUNTIDX,parameterSource,int.class);
+
+        //return namedParameterJdbcTemplate.update(TradeSql.UPDATE_PRICE, parameterSource);
+    }
+
+
 
 
     //  profit인덱스로 status 값 조회
@@ -130,6 +252,20 @@ public class ProfitRepository {
         return namedParameterJdbcTemplate.queryForObject(ProfitSql.FIND_STATUS_BY_PROFITIDX,parameterSource,String.class);
 
         //return namedParameterJdbcTemplate.update(TradeSql.UPDATE_PRICE, parameterSource);
+    }
+
+
+    // accountIdx로 marketIdx 가져오기
+    public int getMarketIdxByAccountIdx(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(ProfitSql.FIND_MARKETIDX_BY_ACCOUNTIDX, parameterSource, rs -> {
+            int marketIdx = 0;
+            if (rs.next()) {
+                marketIdx = rs.getInt("marketIdx");
+            }
+
+            return marketIdx;
+        });
     }
 
 
@@ -151,6 +287,16 @@ public class ProfitRepository {
         return namedParameterJdbcTemplate.update(ProfitSql.DELETE_ALL, parameterSource);
     }
 
+
+
+
+    // Trade연동 수익내역 삭제 및 새로 생성
+    public int deleteProfitByUserCoinIdx(int userCoinIdx,String date){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userCoinIdx",userCoinIdx)
+                .addValue("date",date);
+
+        return namedParameterJdbcTemplate.update(ProfitSql.DELETE_BY_USERCOINIDX_DATE,parameterSource);
+    }
 
 
 

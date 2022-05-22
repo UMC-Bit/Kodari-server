@@ -16,6 +16,7 @@ public class UserDto {
         private String email;
         private String password;
         private String profileImgUrl;
+        private String authKey = " "; //이메일 인증키
         private String status;
     }
 
@@ -28,6 +29,7 @@ public class UserDto {
         private String email;
         private String password;
         private String profileImgUrl;
+        private String authKey; //이메일 인증키
     }
 
     // 회원가입 RESPONSE DTO
@@ -107,6 +109,44 @@ public class UserDto {
         private int userIdx;
         private String password;
     }
+
+
+    // 유저 현재 패스워드 맞는지 확인 REQUEST DTO
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class GetCheckPasswordReq {
+        private int userIdx;
+        private String password;
+    }
+
+
+    // 유저 이메일 validation REQUEST DTO
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class GetCheckEmailReq {
+        private String email;
+    }
+
+
+    // 유저 패스워드 validation REQUEST DTO
+//    @Data // @Getter @Setter 포함
+//    @AllArgsConstructor // 인자 포함한 생성자 생성
+//    @NoArgsConstructor // 인자 없는 생성자 생성
+//    public static class GetCheckPasswordReq {
+//        private String password;
+//    }
+
+
+    // 유저 닉네임 validation REQUEST DTO
+    @Data // @Getter @Setter 포함
+    @AllArgsConstructor // 인자 포함한 생성자 생성
+    @NoArgsConstructor // 인자 없는 생성자 생성
+    public static class GetCheckNickNameReq {
+        private String nickName;
+    }
+
 
 
 

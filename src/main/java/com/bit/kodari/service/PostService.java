@@ -7,6 +7,7 @@ import com.bit.kodari.utils.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,14 +30,19 @@ public class PostService {
 
 
     // 토론장 게시글 등록(POST)
+    @Transactional
     public RegisterRes insertPost(RegisterReq registerReq) throws BaseException {
         String content = registerReq.getContent();
         String tmp_content = content.replaceAll(" ", "");
+        int reportCnt = postRepository.getUserReport(registerReq.getUserIdx());
         if(content.isEmpty() || tmp_content.isEmpty()) { //게시글 내용이 없는 경우 validation 처리
             throw new BaseException(EMPTY_CONTENT);
         }
         else if(content.length() >= 500) { //게시글 500자 이내 제한
             throw new BaseException(OVER_CONTENT);
+        }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
         }
         try {
             return postRepository.insert(registerReq);
@@ -46,18 +52,16 @@ public class PostService {
     }
 
     //토론장 게시글 수정
+    @Transactional
     public void modifyPost(PatchPostReq post) throws BaseException{
         int postIdx = post.getPostIdx();
-        int userIdx = post.getUserIdx();
         String content = post.getContent();
         int user = postRepository.getUserIdxByPostIdx(postIdx);
+        int reportCnt = postRepository.getUserReport(user);
         String status = postRepository.getStatusByPostIdx(postIdx);
         String tmp_content = content.replaceAll(" ", "");
         if(status.equals("inactive")) { //삭제된 글은 수정 불가
             throw new BaseException(IMPOSSIBLE_POST);
-        }
-        else if(userIdx != user) { //글쓴 유저가 아닌 경우 수정 불가
-            throw new BaseException(USER_NOT_EQUAL);
         }
         else if(content.isEmpty() || tmp_content.isEmpty()) { //게시글 내용 입력 없을 경우 validation 처리
             throw new BaseException(EMPTY_CONTENT);
@@ -65,6 +69,9 @@ public class PostService {
         //게시글 내용 0자 이하 제한
         else if(content.length() >= 500) { //게시글 500자 이내 제한
             throw new BaseException(OVER_CONTENT);
+        }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
         }
         else{
             int result = postRepository.modifyPost(post);
@@ -81,18 +88,15 @@ public class PostService {
     }
 
     //토론장 게시글 삭제
+    @Transactional
     public void modifyPostStatus(PatchDeleteReq post) throws BaseException{
         int postIdx = post.getPostIdx();
-        int userIdx = postRepository.getUserIdxByPostIdx(postIdx);
-        int user = postRepository.getUserIdxByPostIdx(postIdx);
         List<PostDto.GetCommentDeleteRes> getCommentDeleteRes = postRepository.getPostCommentIdxByPostIdx(postIdx);
         List<PostDto.GetCommentLikeDeleteRes> getCommentLikeDeleteRes = postRepository.getCommentLikeIdxByPostIdx(postIdx);
         List<PostDto.GetLikeDeleteRes> getLikeDeleteRes = postRepository.getPostLikeIdxByPostIdx(postIdx);
         List<PostDto.GetReplyDeleteRes> getReplyDeleteRes = postRepository.getReplyIdxByPostIdx(postIdx);
-        if(userIdx != user) { //글쓴 유저가 아닌 경우 삭제 불가
-            throw new BaseException(USER_NOT_EQUAL); //4072
-        }
-        else{
+
+        try{
             int result = postRepository.modifyPostStatus(post);
             if(result == 0){ // 0이면 에러가 발생
                 throw new BaseException(DELETE_FAIL_POST); //407
@@ -122,10 +126,6 @@ public class PostService {
                     throw new BaseException(DELETE_FAIL_COMMENT_REPLY);
                 }
             }
-        }
-
-        try {
-
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
         }
@@ -133,6 +133,7 @@ public class PostService {
 
 
     // 토론장 게시글 목록 조회
+    @Transactional
     public List<GetPostRes> getPosts() throws BaseException {
         try {
             List<GetPostRes> getPostRes = postRepository.getPosts();
@@ -143,6 +144,7 @@ public class PostService {
     }
 
     // 특정 유저의 게시글 조회
+    @Transactional
     public List<GetPostRes> getPostsByUserIdx(int userIdx) throws BaseException {
         try {
             List<GetPostRes> getPostsRes = postRepository.getPostsByUserIdx(userIdx);
@@ -152,12 +154,25 @@ public class PostService {
         }
     }
 
+    // 특정 코인의 게시글 조회
+    @Transactional
+    public List<GetPostRes> getPostsByCoinName(String coinName) throws BaseException {
+        try {
+            List<GetPostRes> getCoinsRes = postRepository.getPostsByCoinName(coinName);
+            return getCoinsRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     // 특정 게시글 조회
+    @Transactional
     public GetUserPostRes getPostsByPostIdx(int postIdx) throws BaseException {
         String status = postRepository.getStatusByPostIdx(postIdx);
-        if(status.equals("inactive")) { //삭제된 게시글이면 조회 불가
+        if (status.equals("inactive")) { //삭제된 게시글이면 조회 불가
             throw new BaseException(IMPOSSIBLE_POST);
         }
+
         try {
             PostDto.GetUserPostRes getUserPostRes = postRepository.getPostsByPostIdx(postIdx);
             return getUserPostRes;

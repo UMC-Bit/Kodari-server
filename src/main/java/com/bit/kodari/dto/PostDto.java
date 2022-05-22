@@ -43,7 +43,6 @@ public class PostDto {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 해당 클래스의 파라미스의 모든 멤버 변수(email, password, nickName 없는 생성자를 생성, 접근제한자를 PROTECTED로 설정.
     public static class PatchPostReq{
         private int postIdx;
-        private int userIdx;
         private String content;
     }
 
@@ -110,6 +109,7 @@ public class PostDto {
     @AllArgsConstructor // 해당 클래ame, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetPostRes{
+        private int postIdx; //게시글 인덱스
         private String symbol; //코인 심볼
         private String nickName; //유저 닉네임
         private String profileImgUrl; //유저 프로필
@@ -117,6 +117,9 @@ public class PostDto {
         private String time; // 게시글 시간
         private int like = 0;
         private int dislike = 0;
+        private boolean checkPostLike; // 게시글 좋아요 유저 확인
+        private boolean checkPostDislike; // 게시글 싫어요 유저 확인
+        private int comment_cnt;
     }
 
     //토론장 게시글별 조회
@@ -124,6 +127,7 @@ public class PostDto {
     @AllArgsConstructor // 해당 클래스, profileImage)를 받는 생성자를 생성
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetUserPostRes{
+        private int postIdx;
         private String symbol; //코인 심볼
         private String nickName; //유저 닉네임
         private String profileImgUrl; //유저 프로필
@@ -131,10 +135,13 @@ public class PostDto {
         private String time; //게시글 시간
         private int like = 0;
         private int dislike = 0;
+        private int comment_cnt; //댓글 수
         private boolean checkWriter; // 게시글 유저 확인
-        private List<GetCommentRes> commentList;
-        private boolean checkCommentWriter; // 댓글 유저 확인
-        private boolean checkReplyWriter; // 답글 유저 확인
+        private boolean checkPostLike; // 게시글 좋아요 유저 확인
+        private boolean checkPostDislike; // 게시글 싫어요 유저 확인
+        private List<GetCommentRes> commentList; //댓글과 답글 리스트
+
+
 
     }
 
@@ -143,12 +150,17 @@ public class PostDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetCommentRes{
+        private int userIdx;
+        private int postCommentIdx;
         private String profileImgUrl;
         private String nickName;
         private String content;
         private String time; //댓글 시간
         private int like;
-        private List<GetReplyRes> replyList;
+        private boolean checkCommentWriter; // 댓글 유저 확인
+        private String comment_status; // 댓글 삭제 여부 확인
+        private boolean checkCommentLike; //댓글 좋아요 유저 확인
+        private List<GetReplyRes> replyList; //답글 리스트
     }
 
     //토론장 게시글 유저별 답글조회
@@ -156,11 +168,14 @@ public class PostDto {
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class GetReplyRes{
+        private int userIdx;
+        private int postReplyIdx;
         private String profileImgUrl;
         private String nickName;
         private String content;
         private String time; //답글 시간
-
+        private boolean checkReplyWriter; // 답글 유저 확인
+        private String reply_status; //답글 삭제 여부 확인
     }
 
 

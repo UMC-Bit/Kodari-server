@@ -4,6 +4,7 @@ import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.RepresentDto;
 import com.bit.kodari.repository.account.AccountSql;
 import com.bit.kodari.repository.portfolio.PortfolioSql;
+import com.bit.kodari.repository.profit.ProfitSql;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -71,6 +72,14 @@ public class RepresentRepository {
         });
     }
 
+
+    // 대표 코인 삭제 : 전체삭제
+    public int deleteAllReprsentByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(RepresentSql.DELETE_ALL, parameterSource);
+    }
+
     // representIdx로 portIdx 가져오기
     public int getPortIdxByRepresentIdx(int representIdx) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("representIdx", representIdx);
@@ -95,5 +104,17 @@ public class RepresentRepository {
 
             return status;
         });
+    }
+
+    // 대표 코인 조회 - userIdx
+    public List<RepresentDto.GetRepresentIdxRes> getRepresentIdxRes(int portIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        List<RepresentDto.GetRepresentIdxRes> getRepresentIdxRes = namedParameterJdbcTemplate.query(RepresentSql.FIND_ALL_REPRESENT_BY_PORT, parameterSource,
+                (rs, rowNum) -> new RepresentDto.GetRepresentIdxRes(
+                        rs.getInt("representIdx"),
+                        rs.getInt("portIdx"),
+                        rs.getInt("coinIdx")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        );
+        return getRepresentIdxRes;
     }
 }

@@ -4,15 +4,19 @@ import com.bit.kodari.config.BaseException;
 import com.bit.kodari.config.BaseResponse;
 import com.bit.kodari.config.BaseResponseStatus;
 import com.bit.kodari.dto.UserDto;
+import com.bit.kodari.repository.user.UserRepository;
 import com.bit.kodari.service.UserService;
 import com.bit.kodari.utils.JwtService;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,10 +32,13 @@ public class UserController {
     private final UserService userService;
     @Autowired
     private final JwtService jwtService; // JWT부분
+    @Autowired
+    private final UserRepository userRepository;
 
-    public UserController( UserService userService, JwtService jwtService) {
+    public UserController( UserService userService, JwtService jwtService, UserRepository userRepository) {
         this.userService = userService;
         this.jwtService = jwtService; // JWT부분
+        this.userRepository = userRepository;
     }
     // ******************************************************************************
 
@@ -65,9 +72,22 @@ public class UserController {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_LENGTH_NICKNAME);
         }
         // 닉네임 특수문자 포함 예외
-        if (isRegexNickNameSpecial(postUserReq.getNickName())) {
+        if (!isRegexNickNameSpecial(postUserReq.getNickName())) {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
         }
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        int num = 0;
+        do {
+            num = random.nextInt(75) + 48;
+            if ((num >= 48 && num <= 57) || (num >= 65 && num <= 90) || (num >= 97 && num <= 122)) {
+                sb.append((char) num);
+            } else {
+                continue;
+            }
+
+        } while (sb.length() < 10);
+        postUserReq.setAuthKey(sb.toString());
 
 
 
@@ -82,9 +102,9 @@ public class UserController {
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
         }
         // 비밀번호 특수문자 확인 예외
-        if(!isRegexPasswordSpecial(postUserReq.getPassword())){
-            return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
-        }
+//        if(!isRegexPasswordSpecial(postUserReq.getPassword())){
+//            return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
+//        }
 
 
 
@@ -250,7 +270,7 @@ public class UserController {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_LENGTH_NICKNAME);
             }
             // 닉네임 특수문자 포함 예외
-            if (isRegexNickNameSpecial(nickName)) {
+            if (!isRegexNickNameSpecial(nickName)) {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
             }
 
@@ -272,11 +292,11 @@ public class UserController {
 
     /**
      * 유저 정보 업데이트: 유저 비밀번호 변경 API
-     * [PATCH] /users/update/password/:userIdx?password
+     * [PATCH] /users/update/password/:userIdx
      */
     @PatchMapping("/update/password/{userIdx}")
     @ApiOperation(value = "유저 패스워드", notes = "유저 패스워드 변경")
-    public BaseResponse<String> updatePassword (@PathVariable("userIdx") int userIdx,@RequestParam String password) {
+    public BaseResponse<String> updatePassword (@PathVariable("userIdx") int userIdx, @RequestBody UserDto.UpdatePasswordReq updatePasswordReq) {
         try {
 
             // jwt 부분
@@ -289,6 +309,7 @@ public class UserController {
 
  //**************************************************************************
             // 비밀번호 Validation
+            String password = updatePasswordReq.getPassword();
             String passwordVal = password.replaceAll(" ","");
             // 회원가입 validation :  password null값 예외
             if (passwordVal == null || passwordVal.length()==0) {
@@ -299,12 +320,13 @@ public class UserController {
                 return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
             }
             // 비밀번호 특수문자 확인 예외
-            if(!isRegexPasswordSpecial(password)){
-                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
-            }
+//            if(!isRegexPasswordSpecial(password)){
+//                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
+//            }
 
             //같다면 유저 패스워드 변경
-            UserDto.UpdatePasswordReq updatePasswordReq = new UserDto.UpdatePasswordReq(userIdx,password);
+            updatePasswordReq.setUserIdx(userIdx);
+            //UserDto.UpdatePasswordReq updatePasswordReq = new UserDto.UpdatePasswordReq(userIdx,password);
             userService.updatePassword(updatePasswordReq);
 
             String result = "회원 비밀번호가 변경되었습니다.";
@@ -350,5 +372,150 @@ public class UserController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+
+    // 유저 패스워드 변경 시, 현재 비밀번호 일치 확인
+    @ResponseBody
+    @PostMapping("/get/checkPassword/{userIdx}")
+    @ApiOperation(value = "유저 현재 비밀번호", notes = "유저 비밀번호 변경 시 현재 패스워드 확인")
+    public BaseResponse<String> getCheckPassword(@PathVariable("userIdx") int userIdx, @RequestBody UserDto.GetCheckPasswordReq getCheckPasswordReq){
+        try{
+            // jwt 부분
+            //jwt에서 idx 추출.
+            int userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if (userIdx != userIdxByJwt) {
+                return new BaseResponse<>(BaseResponseStatus.INVALID_USER_JWT);
+            }
+
+            // 비밀번호 Validation
+            String password = getCheckPasswordReq.getPassword();
+            String passwordVal = password.replaceAll(" ","");
+            // 회원가입 validation :  password null값 예외
+            if (passwordVal == null || passwordVal.length()==0) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_PASSWORD);
+            }
+            //**************************************************************************
+            //같다면 유저 현재 비밀번호 맞는지 확인
+            getCheckPasswordReq.setUserIdx(userIdx);
+            userService.getCheckPassword(getCheckPasswordReq);
+
+            String result = "현재 비밀번호가 맞습니다.";
+            return new BaseResponse<>(result);
+
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+    // 유저 회원가입 시 이메일 validatio api
+    @ResponseBody
+    @PostMapping("/get/getCheckEmail")
+    @ApiOperation(value = "유저 이메일", notes = "회원가입 시 이메일 검증 확인")
+    public BaseResponse<String> getCheckEmail(@RequestBody UserDto.GetCheckEmailReq getCheckEmailReq){
+        try {
+
+            //**************************************************************************
+            // 회원가입 validation : email null값 예외
+            String email = getCheckEmailReq.getEmail().replaceAll(" ","");
+            if (email == null || email.length()==0) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_EMAIL);
+            }
+            // 회원가입 validation: 이메일 정규표현 = 입력받은 이메일이 email@domain.xxx와 같은 형식인지 검사합니다. 형식이 올바르지 않다면 에러 메시지를 보냅니다.
+            if (!isRegexEmail(getCheckEmailReq.getEmail())) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_EMAIL);
+            }
+
+            // 이메일 중복 확인 validation: 해당 이메일을 가진 유저가 있는지 확인
+            email = getCheckEmailReq.getEmail();
+            List<UserDto.GetUserRes> emailUser = userRepository.getUserByEmail(email); // 이메일로 유저 조회
+            if(emailUser.size() != 0){ //  이미 존재하면 이메일 중복 예외
+                throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_EMAIL);
+            }
+
+            String result = "사용 가능한 이메일 입니다.";
+            return new BaseResponse<>(result);
+
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+    // 유저 회원가입 시 패스워드 validatio api
+    @ResponseBody
+    @PostMapping("/get/getCheckPassword")
+    @ApiOperation(value = "유저 패스워드", notes = "회원가입 시 패스워드 검증 확인")
+    public BaseResponse<String> getCheckPassword(@RequestBody UserDto.GetCheckPasswordReq getCheckPasswordReq){
+
+//        try
+        {
+
+
+            //**************************************************************************
+            String password = getCheckPasswordReq.getPassword().replaceAll(" ","");
+            // 회원가입 validation :  password null값 예외
+            if (password == null || password.length()==0) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_PASSWORD);
+            }
+            // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
+            if(!isRegexPasswordKind(getCheckPasswordReq.getPassword())){
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_PASSWORD);
+            }
+
+
+            String result = "사용 가능한 패스워드입니다.";
+            return new BaseResponse<>(result);
+
+        }
+//        catch (BaseException exception){
+//            return new BaseResponse<>(exception.getStatus());
+//        }
+    }
+
+
+
+    // 유저 회원가입 시 닉네임 validatio api
+    @ResponseBody
+    @PostMapping("/get/getCheckNickName")
+    @ApiOperation(value = "유저 닉네임", notes = "회원가입 시 닉네임 검증 확인")
+    public BaseResponse<String> getCheckNickName(@RequestBody UserDto.GetCheckNickNameReq getCheckNickNameReq){
+        try {
+
+
+            //**************************************************************************
+            String nickName = getCheckNickNameReq.getNickName().replaceAll(" ","");
+            // 회원가입 validation : nickName null값 예외
+            if (nickName == null || nickName.length()==0) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_EMPTY_NICKNAME);
+            }
+            // 닉네임 길이 15글자 초과 예외
+            if (getCheckNickNameReq.getNickName().length()<=0 || getCheckNickNameReq.getNickName().length()>15) {// 닉네임 길이 Validation
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_LENGTH_NICKNAME);
+            }
+            // 닉네임 특수문자 포함 예외
+            if (!isRegexNickNameSpecial(getCheckNickNameReq.getNickName())) {
+                return new BaseResponse<>(BaseResponseStatus.POST_USERS_INVALID_NICKNAME);
+            }
+
+            // 닉네임 중복 확인 validation: 해당 닉네임을 가진 유저가 있는지 확인
+            nickName = getCheckNickNameReq.getNickName();
+            List<UserDto.GetUserRes> nickNameUser = userRepository.getUserByNickname(nickName); // 닉네임으로 유저 조회
+            if(nickNameUser.size() != 0){ //  이미 존재하면 이메일 중복 예외
+                throw new BaseException(BaseResponseStatus.POST_USERS_EXISTS_NICKNAME);
+            }
+
+
+            String result = "사용 가능한 닉네임 입니다.";
+            return new BaseResponse<>(result);
+
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+
 
 }

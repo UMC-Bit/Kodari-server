@@ -6,6 +6,7 @@ import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.repository.account.AccountSql;
 import com.bit.kodari.repository.portfolio.PortfolioSql;
+import com.bit.kodari.repository.trade.TradeSql;
 import com.bit.kodari.repository.usercoin.UserCoinSql;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -120,10 +121,9 @@ public class AccountRepository {
     }
 
     // Trade - 현금 자산 수정
-    public int modifyTradeProperty(double property, double totalProperty, int accountIdx) {
+    public int modifyTradeProperty(double property, int accountIdx) {
         String qry = AccountSql.UPDATE_TRADE_PROPERTY;
         SqlParameterSource parameterSource = new MapSqlParameterSource("property", property)
-                .addValue("totalProperty", totalProperty)
                 .addValue("accountIdx", accountIdx);
         return namedParameterJdbcTemplate.update(qry, parameterSource);
     }
@@ -138,6 +138,22 @@ public class AccountRepository {
     public int deleteTwo(AccountDto.PatchAccountDelReq patchAccountDelReq) {
         SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", patchAccountDelReq.getAccountIdx());
         return namedParameterJdbcTemplate.update(AccountSql.DELETE_TWO, parameterSource);
+    }
+
+    // 총 자산 수정 - 업데이트 버튼 누를때마다
+    public int updateTotalProperty(int accountIdx, double totalProperty) {
+        String qry = AccountSql.UPDATE_TOTAL_PROPERTY_BUTTON;
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx)
+                .addValue("totalProperty", totalProperty);
+        return namedParameterJdbcTemplate.update(qry, parameterSource);
+    }
+
+
+    // 거래내역 삭제 : 전체 거래내역 삭제
+    public int deleteAllAccountByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(AccountSql.DELETE_ALL, parameterSource);
     }
 
     // accountIdx로 userIdx 가져오기
@@ -235,6 +251,19 @@ public class AccountRepository {
             }
 
             return property;
+        });
+    }
+
+    // accountIdx로 marketIdx 가져오기
+    public int getMarketIdxByAccount(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_MARKET_IDX_BY_ACCOUNT, parameterSource, rs -> {
+            int marketIdx = 0;
+            if (rs.next()) {
+                marketIdx = rs.getInt("marketIdx");
+            }
+
+            return marketIdx;
         });
     }
 
@@ -386,5 +415,17 @@ public class AccountRepository {
         }
     }
 
+
+    public String getCreateAtByAccountIdx(int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx",accountIdx);
+        return namedParameterJdbcTemplate.query(AccountSql.GET_CREATEAT, parameterSource, rs -> {
+            String createAt = "";
+            if (rs.next()) {
+                createAt = rs.getString("createAt");
+            }
+
+            return createAt;
+        });
+    }
 
 }

@@ -26,6 +26,7 @@ public class ProfitDto {
         private int accountIdx;// Account.accountIdx
         private double profitRate; // 전날 대비 수익률
         private double earning; // 수익금
+        private String date; // 거래 날짜
 
     }
 
@@ -41,6 +42,18 @@ public class ProfitDto {
         private double profitRate; // 전날 대비 수익률
         private double earning; // 전 날 대비 수익금
         private String status;
+    }
+
+    // 과거 수익 생성 REQUEST DTO
+    @Data
+    @AllArgsConstructor // 해당 클래스 인자를 받는 생성자를 생성
+    @NoArgsConstructor  // 해당 클래스의 파라미스의 모든 멤버 변수 없는 생성자를 생성
+    public static class PostPrevProfitReq{
+        private int accountIdx;// Account.accountIdx
+        private double profitRate; // 전날 대비 수익률
+        private double earning; // 수익금
+        private String prevDate; // 거래된 과거시각
+
     }
 
     // 수익내역 조회 REQUEST DTO
@@ -91,6 +104,7 @@ public class ProfitDto {
     @NoArgsConstructor  // 해당 클래스의 파라미스의 모든 멤버 변수 없는 생성자를 생성
     public static class GetCoinSymbolRes{
         private double amount; // 코인 갯수
+        private double priceAvg; // 매수 평단가
         private String symbol; // 코인 심볼
         private double Property; // 현재 총 현금
         private double totalProperty; // 현재 총 자산

@@ -37,7 +37,7 @@ public class ValidationRegex {
 
 
     // 비밀번호 특수문자 확인
-    public static boolean isRegexPasswordSpecial(String pwd) {
+    /*public static boolean isRegexPasswordSpecial(String pwd) {
 
         Pattern passPattern3 = Pattern.compile("\\W");
         Pattern passPattern4 = Pattern.compile("[!@#$%^*+=-]");
@@ -65,44 +65,17 @@ public class ValidationRegex {
             //return passMatcher4.find();
         }
         return ok;
-    }
+    }*/
 
 
 
     // 닉네임 특수문자 포함 예외
-    /*public static boolean isRegexNickNameKind(String nickName) {
-
-        //특수문자_공백_미포함_정규식_
-        Pattern pattern = Pattern.compile("[!@#$%^&*(),.?\":{}|<>]");
-        boolean ok = true;
-        for (int i = 0; i < nickName.length(); i++) {
-            String s = String.valueOf(nickName.charAt(i));
-            Matcher matcher = pattern.matcher(s);
-
-            if(matcher.find()){
-                ok=false;
-            }
-        }
-
-        return ok;
-    }*/
     public static boolean isRegexNickNameSpecial(String nickName) {
 
         //특수문자_공백_미포함_정규식_
-        Pattern pattern = Pattern.compile("[!@#$%^&*(),.?\":{}|<>]");
+        Pattern pattern = Pattern.compile("^[A-Z|a-z|0-9|가-힣\\w]+$");
         Matcher matcher = pattern.matcher(nickName);
         return matcher.find();
-        /*boolean ok = true;
-        for (int i = 0; i < nickName.length(); i++) {
-            String s = String.valueOf(nickName.charAt(i));
-            Matcher matcher = pattern.matcher(s);
-
-            if(matcher.find()){
-                ok=false;
-            }
-        }
-
-        return ok;*/
     }
 
 

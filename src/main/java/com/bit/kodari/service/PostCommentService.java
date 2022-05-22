@@ -8,6 +8,7 @@ import com.google.common.io.LittleEndianDataOutputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,8 +30,10 @@ public class PostCommentService {
 
 
     // 토론장 게시글 댓글 등록 (POST)
+    @Transactional
     public PostCommentDto.RegisterCommentRes insertPostComment(PostCommentDto.RegisterCommentReq registerCommentReq) throws BaseException {
         int postIdx = registerCommentReq.getPostIdx();
+        int reportCnt = postCommentRepository.getUserReport(registerCommentReq.getUserIdx());
         String post_status = postCommentRepository.getStatusByPostIdx(postIdx);
         String content = registerCommentReq.getContent();
         String tmp_content = content.replaceAll(" ", "");
@@ -43,6 +46,9 @@ public class PostCommentService {
         else if(content.length() >= 100) { //내용 100자 이내 제한
             throw new BaseException(OVER_CONTENT);
         }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
+        }
         try {
             PostCommentDto.RegisterCommentRes registerCommentRes = postCommentRepository.insertComment(registerCommentReq);
             return registerCommentRes;
@@ -52,10 +58,12 @@ public class PostCommentService {
     }
 
     //토론장 게시글 댓글 수정
+    @Transactional
     public void modifyComment(PostCommentDto.PatchCommentReq post) throws BaseException{
         int postCommentIdx = post.getPostCommentIdx();
         int userIdx = post.getUserIdx();
         int postIdx = post.getPostIdx();
+        int reportCnt = postCommentRepository.getUserReport(userIdx);
         String content = post.getContent();
         String tmp_content = content.replaceAll(" ", "");
         int user = postCommentRepository.getUserIdxByPostCommentIdx(postCommentIdx);
@@ -76,6 +84,9 @@ public class PostCommentService {
         else if(content.length() >= 100) { //내용 100자 이내 제한
             throw new BaseException(OVER_CONTENT);
         }
+        else if(reportCnt > 2) { //신고 당한 횟수가 3회 초과 시 토론장 접근 제한
+            throw new BaseException(BLOCKED_USER);
+        }
         else{
             int result = postCommentRepository.modifyComment(post);
             if(result == 0){ // 0이면 에러가 발생
@@ -91,6 +102,7 @@ public class PostCommentService {
     }
 
     //토론장 게시글 댓글 삭제
+    @Transactional
     public void modifyCommentStatus(PostCommentDto.PatchDeleteReq post) throws BaseException{
         int postCommentIdx = post.getPostCommentIdx();
         int userIdx = post.getUserIdx();
@@ -100,9 +112,6 @@ public class PostCommentService {
 
         if(status.equals("inactive")) { //삭제된 댓글 삭제 불가
             throw new BaseException(IMPOSSIBLE_POST_COMMENT);
-        }
-        else if(userIdx != user) { //댓글 쓴 유저가 아니면 삭제 불가
-            throw new BaseException(USER_NOT_EQUAL_COMMENT);
         }
         else {
             int result = postCommentRepository.modifyCommentStatus(post);
@@ -124,43 +133,46 @@ public class PostCommentService {
         }
     }
 
-    // 특정 게시글별 댓글 조회
-    public List<PostCommentDto.GetPostCommentRes> getCommentsByPostIdx(int postIdx) throws BaseException {
-        String status = postCommentRepository.getStatusByPostIdx(postIdx);
-        if(status.equals("inactive")) { //삭제된 게시글은 댓글 조회 불가
-            throw new BaseException(IMPOSSIBLE_POST); //게시글이 존재하지 않음
-        }
-        try {
-            List<PostCommentDto.GetPostCommentRes> getPostCommentRes = postCommentRepository.getCommentsByPostIdx(postIdx);
-            return getPostCommentRes;
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
-
-
-    // 특정 유저의 댓글 조회
-    public List<PostCommentDto.GetCommentRes> getCommentsByUserIdx(int userIdx) throws BaseException {
+        // 특정 유저의 댓글 조회
+        @Transactional
+    public List<PostCommentDto.GetCommentsRes> getCommentsByUserIdx(int userIdx) throws BaseException {
         //PostCommentsql에 삭제된 게시글 댓글 조회 불가능 하도록 처리함
         try {
-            List<PostCommentDto.GetCommentRes> getCommentsRes = postCommentRepository.getCommentsByUserIdx(userIdx);
+            List<PostCommentDto.GetCommentsRes> getCommentsRes = postCommentRepository.getCommentsByUserIdx(userIdx);
             return getCommentsRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    // 특정 게시글별 댓글 수 조회
-    public List<PostCommentDto.GetCommentCntRes> getCommentCntByPostIdx(int postIdx) throws BaseException {
-        String status = postCommentRepository.getStatusByPostIdx(postIdx);
-        if(status.equals("inactive")) { //삭제된 게시글은 댓글 수 조회 불가
-            throw new BaseException(IMPOSSIBLE_POST); // 게시글이 존재하지 않음.
-        }
-        try {
-            List<PostCommentDto.GetCommentCntRes> getCommentCntRes = postCommentRepository.getCommentCntByPostIdx(postIdx);
-            return getCommentCntRes;
-        } catch (Exception exception) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
+//    // 특정 게시글별 댓글 조회
+//    public List<PostCommentDto.GetPostCommentRes> getCommentsByPostIdx(int postIdx) throws BaseException {
+//        String status = postCommentRepository.getStatusByPostIdx(postIdx);
+//        if(status.equals("inactive")) { //삭제된 게시글은 댓글 조회 불가
+//            throw new BaseException(IMPOSSIBLE_POST); //게시글이 존재하지 않음
+//        }
+//        try {
+//            List<PostCommentDto.GetPostCommentRes> getPostCommentRes = postCommentRepository.getCommentsByPostIdx(postIdx);
+//            return getPostCommentRes;
+//        } catch (Exception exception) {
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//    }
+//
+
+
+
+//    // 특정 게시글별 댓글 수 조회
+//    public List<PostCommentDto.GetCommentCntRes> getCommentCntByPostIdx(int postIdx) throws BaseException {
+//        String status = postCommentRepository.getStatusByPostIdx(postIdx);
+//        if(status.equals("inactive")) { //삭제된 게시글은 댓글 수 조회 불가
+//            throw new BaseException(IMPOSSIBLE_POST); // 게시글이 존재하지 않음.
+//        }
+//        try {
+//            List<PostCommentDto.GetCommentCntRes> getCommentCntRes = postCommentRepository.getCommentCntByPostIdx(postIdx);
+//            return getCommentCntRes;
+//        } catch (Exception exception) {
+//            throw new BaseException(DATABASE_ERROR);
+//        }
+//    }
 }

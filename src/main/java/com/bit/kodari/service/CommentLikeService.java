@@ -9,6 +9,7 @@ import com.bit.kodari.utils.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,6 +34,7 @@ public class CommentLikeService {
         this.jwtService = jwtService; // JWT부분은 7주차에 다루므로 모르셔도 됩니다!
     }
     // 토론장 댓글 좋아요 선택(POST)
+    @Transactional
     public CommentLikeDto.CommentLikeRes chooseCommentLike(CommentLikeDto.RegisterCommentLikeReq registerCommentLikeReq) throws BaseException {
         int postCommentIdx = registerCommentLikeReq.getPostCommentIdx();
         int userIdx = registerCommentLikeReq.getUserIdx();
@@ -52,6 +54,7 @@ public class CommentLikeService {
 
 
     //토론장 게시글 좋아요/싫어요 삭제
+    @Transactional
     public CommentLikeDto.CommentLikeRes deleteLike(CommentLikeDto.CommentLikeReq delete) throws BaseException {
         try {
             CommentLikeDto.CommentLikeRes deleteLikeRes = commentLikeRepository.deleteLike(delete);
@@ -65,16 +68,4 @@ public class CommentLikeService {
     }
 
 
-    // 중복된 유저가 댓글 좋아요 누를 시 삭제로 리다이렉트 하는 메서드
-    public void checkUserLike(String exist_user, int commentLikeIdx, HttpServletResponse response) throws BaseException {
-        try {
-            if(exist_user.equals("true"))
-            {
-                response.sendRedirect("/comment/likes/delete");
-            }
-            //response.
-        }catch(IOException e){
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
 }

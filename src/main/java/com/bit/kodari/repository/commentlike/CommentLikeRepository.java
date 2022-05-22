@@ -26,33 +26,6 @@ public class CommentLikeRepository {
         return new CommentLikeDto.CommentLikeRes(like.getUserIdx(), keyHolder.getKey().intValue());
     }
 
-    //commentLikeIdx로 좋아요한 userIdx 가져오기
-    public int getUserIdxByCommentLikeIdx(int commentLikeIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", commentLikeIdx);
-        return namedParameterJdbcTemplate.query(commentLikeSql.GET_LIKE_USER_IDX, parameterSource, rs -> {
-            int userIdx = 0;
-            if (rs.next()) {
-                userIdx = rs.getInt("userIdx");
-            }
-
-            return userIdx;
-        });
-    }
-
-
-
-    //commentLikeIdx로 좋아요 postCommentIdx 가져오기
-    public int getPostCommentIdxByCommentLikeIdx(int commentLikeIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", commentLikeIdx);
-        return namedParameterJdbcTemplate.query(commentLikeSql.GET_LIKE_POST_IDX, parameterSource, rs -> {
-            int postCommentIdx = 0;
-            if (rs.next()) {
-                postCommentIdx = rs.getInt("postCommentIdx");
-            }
-
-            return postCommentIdx;
-        });
-    }
 
     //userIdx와 postCommentIdx로 commentLikeIdx가져오기
     public int getCommentLikeIdxByIdx(int userIdx, int postCommentIdx) {
@@ -95,31 +68,68 @@ public class CommentLikeRepository {
         });
     }
 
-    //postCommentIdx로 게시글의 Status 가져오기
-    public String getPostStatusByPostCommentIdx(int postCommentIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
-        return namedParameterJdbcTemplate.query(commentLikeSql.GET_POST_STATUS, parameterSource, rs -> {
-            String post_status = " ";
-            if (rs.next()) {
-                post_status = rs.getString("status");
-            }
-
-            return post_status;
-        });
+    //댓글 좋아요 삭제
+    public CommentLikeDto.CommentLikeRes deleteLike(CommentLikeDto.CommentLikeReq deleteLikeReq) {
+        String qry = CommentLikeSql.DELETE_COMMENT_LIKE;
+        int commentLikeId = deleteLikeReq.getCommentLikeIdx();
+        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", deleteLikeReq.getCommentLikeIdx());
+        namedParameterJdbcTemplate.update(qry, parameterSource);
+        CommentLikeDto.CommentLikeRes deleteLikeRes = new CommentLikeDto.CommentLikeRes(deleteLikeReq.getUserIdx(), commentLikeId);
+        return deleteLikeRes;
     }
 
-    //commentLikeIdx로 like 가져오기
-    public int getLikeByCommentLikeIdx(int commentLikeIdx) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", commentLikeIdx);
-        return namedParameterJdbcTemplate.query(commentLikeSql.GET_LIKE, parameterSource, rs -> {
-            int like = 0;
-            if (rs.next()) {
-                like = rs.getInt("like");
-            }
+//    //postCommentIdx로 게시글의 Status 가져오기
+//    public String getPostStatusByPostCommentIdx(int postCommentIdx) {
+//        SqlParameterSource parameterSource = new MapSqlParameterSource("postCommentIdx", postCommentIdx);
+//        return namedParameterJdbcTemplate.query(commentLikeSql.GET_POST_STATUS, parameterSource, rs -> {
+//            String post_status = " ";
+//            if (rs.next()) {
+//                post_status = rs.getString("status");
+//            }
+//
+//            return post_status;
+//        });
+//    }
+//
+//    //commentLikeIdx로 like 가져오기
+//    public int getLikeByCommentLikeIdx(int commentLikeIdx) {
+//        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", commentLikeIdx);
+//        return namedParameterJdbcTemplate.query(commentLikeSql.GET_LIKE, parameterSource, rs -> {
+//            int like = 0;
+//            if (rs.next()) {
+//                like = rs.getInt("like");
+//            }
+//
+//            return like;
+//        });
+//    }
 
-            return like;
-        });
-    }
+    //    //commentLikeIdx로 좋아요한 userIdx 가져오기
+//    public int getUserIdxByCommentLikeIdx(int commentLikeIdx) {
+//        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", commentLikeIdx);
+//        return namedParameterJdbcTemplate.query(commentLikeSql.GET_LIKE_USER_IDX, parameterSource, rs -> {
+//            int userIdx = 0;
+//            if (rs.next()) {
+//                userIdx = rs.getInt("userIdx");
+//            }
+//
+//            return userIdx;
+//        });
+//    }
+//
+//    //commentLikeIdx로 좋아요 postCommentIdx 가져오기
+//    public int getPostCommentIdxByCommentLikeIdx(int commentLikeIdx) {
+//        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", commentLikeIdx);
+//        return namedParameterJdbcTemplate.query(commentLikeSql.GET_LIKE_POST_IDX, parameterSource, rs -> {
+//            int postCommentIdx = 0;
+//            if (rs.next()) {
+//                postCommentIdx = rs.getInt("postCommentIdx");
+//            }
+//
+//            return postCommentIdx;
+//        });
+//    }
+
 
 //    //댓글 좋아요 수정
 //    public int modifyLike(CommentLikeDto.PatchLikeReq patchLikeReq) {
@@ -130,14 +140,6 @@ public class CommentLikeRepository {
 //    }
 
 
-    //댓글 좋아요 삭제
-    public CommentLikeDto.CommentLikeRes deleteLike(CommentLikeDto.CommentLikeReq deleteLikeReq) {
-        String qry = CommentLikeSql.DELETE_COMMENT_LIKE;
-        int commentLikeId = deleteLikeReq.getCommentLikeIdx();
-        SqlParameterSource parameterSource = new MapSqlParameterSource("commentLikeIdx", deleteLikeReq.getCommentLikeIdx());
-        namedParameterJdbcTemplate.update(qry, parameterSource);
-        CommentLikeDto.CommentLikeRes deleteLikeRes = new CommentLikeDto.CommentLikeRes(deleteLikeReq.getUserIdx(), commentLikeId);
-        return deleteLikeRes;
-    }
+
 
 }

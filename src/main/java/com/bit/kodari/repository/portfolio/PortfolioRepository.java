@@ -1,11 +1,9 @@
 package com.bit.kodari.repository.portfolio;
 
-import com.bit.kodari.dto.AccountDto;
-import com.bit.kodari.dto.PortfolioDto;
-import com.bit.kodari.dto.RepresentDto;
-import com.bit.kodari.dto.UserCoinDto;
+import com.bit.kodari.dto.*;
 import com.bit.kodari.repository.Represent.RepresentSql;
 import com.bit.kodari.repository.account.AccountSql;
+import com.bit.kodari.repository.profit.ProfitSql;
 import com.bit.kodari.repository.usercoin.UserCoinRepository;
 import com.bit.kodari.repository.usercoin.UserCoinSql;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +64,10 @@ public class PortfolioRepository {
             PortfolioDto.GetPortfolioRes getPortfolioRes = namedParameterJdbcTemplate.queryForObject(PortfolioSql.GET_PORTFOLIO, parameterSource, (rs, rowNum) -> {
 
                 List<UserCoinDto.UserCoin> userCoinList = getUserCoin(accountIdx);
+                List<RepresentDto.GetRepresentRes> representCoinList= getRepresent(portIdx);
+                List<ProfitDto.GetProfitRes> profitList = getProfitByAccountIdx(accountIdx);
                     PortfolioDto.GetPortfolioRes portfolio = new PortfolioDto.GetPortfolioRes(rs.getInt("portIdx"),rs.getInt("accountIdx"),rs.getString("accountName"),
-                            rs.getDouble("property"),rs.getDouble("totalProperty"), rs.getInt("userIdx") ,rs.getString("marketName"), userCoinList);
+                            rs.getDouble("property"),rs.getDouble("totalProperty"), rs.getInt("userIdx") ,rs.getString("marketName"), userCoinList, representCoinList, profitList);
                     return portfolio;
             }
             );
@@ -117,6 +117,14 @@ public class PortfolioRepository {
     }
 
 
+    // 포트폴리오 삭제 : 전체 삭제
+    public int deleteAllPortfolioByUserIdx(int userIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("userIdx", userIdx);
+
+        return namedParameterJdbcTemplate.update(PortfolioSql.DELETE_ALL, parameterSource);
+    }
+
+
     /**
      * 가져오기
      */
@@ -159,6 +167,19 @@ public class PortfolioRepository {
         });
     }
 
+    // accountIdx로 marketIdx 가져오기
+    public int getMarketIdxByAccountIdx(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(PortfolioSql.GET_MARKET_IDX_BY_ACCOUNT, parameterSource, rs -> {
+            int marketIdx = 0;
+            if (rs.next()) {
+                marketIdx = rs.getInt("marketIdx");
+            }
+
+            return marketIdx;
+        });
+    }
+
     // 모든 포트폴리오 가져오기 - List
     public List<PortfolioDto.GetAllPortfolioRes> getAllPortfolio(){
         try {
@@ -198,6 +219,10 @@ public class PortfolioRepository {
                             rs.getInt("userCoinIdx"),
                             rs.getInt("userIdx"),
                             rs.getInt("coinIdx"),
+                            rs.getString("coinName"),
+                            rs.getString("symbol"),
+                            rs.getString("coinImg"),
+                            rs.getString("twitter"),
                             rs.getInt("accountIdx"),
                             rs.getDouble("priceAvg"),
                             rs.getDouble("amount"),
@@ -208,6 +233,37 @@ public class PortfolioRepository {
         }catch(EmptyResultDataAccessException e){
             return null;
         }
+    }
+
+    // 대표 코인 조회 - userIdx
+    public List<RepresentDto.GetRepresentRes> getRepresent(int portIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("portIdx", portIdx);
+        List<RepresentDto.GetRepresentRes> getRepresentRes = namedParameterJdbcTemplate.query(RepresentSql.FIND_USER_REPRESENT, parameterSource,
+                (rs, rowNum) -> new RepresentDto.GetRepresentRes(
+                        rs.getInt("representIdx"),
+                        rs.getInt("portIdx"),
+                        rs.getInt("coinIdx"),
+                        rs.getString("coinName"),
+                        rs.getString("symbol"),
+                        rs.getString("coinImg"),
+                        rs.getString("status")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        );
+        return getRepresentRes;
+    }
+
+    // Profit 수익내역 조회: 특정 계좌의 수익내역 조회
+    public List<ProfitDto.GetProfitRes> getProfitByAccountIdx(int accountIdx){
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        List<ProfitDto.GetProfitRes> getProfitRes = namedParameterJdbcTemplate.query(ProfitSql.FIND_BY_ACCOUNTIDX, parameterSource,
+                (rs, rowNum) -> new ProfitDto.GetProfitRes(
+                        rs.getInt("profitIdx"),
+                        rs.getInt("accountIdx"),
+                        rs.getDouble("profitRate"),
+                        rs.getString("earning"),
+                        rs.getString("status"),
+                        rs.getString("createAt")) // RowMapper(위의 링크 참조): 원하는 결과값 형태로 받기
+        );
+        return getProfitRes;
     }
 
     // accountIdx로 모든 userCoinIdx 가져오기 - List
@@ -223,6 +279,19 @@ public class PortfolioRepository {
         }catch(EmptyResultDataAccessException e){
             return null;
         }
+    }
+
+    //accountIdx로 계좌 userIdx 가져오기
+    public int getAccountUserIdx(int accountIdx) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource("accountIdx", accountIdx);
+        return namedParameterJdbcTemplate.query(PortfolioSql.GET_ACCOUNT_USER, parameterSource, rs -> {
+            int userIdx = 0;
+            if (rs.next()) {
+                userIdx = rs.getInt("userIdx");
+            }
+
+            return userIdx;
+        });
     }
 
 }

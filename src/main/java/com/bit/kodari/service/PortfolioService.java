@@ -1,11 +1,14 @@
 package com.bit.kodari.service;
 
 import com.bit.kodari.config.BaseException;
+import com.bit.kodari.config.BaseResponseStatus;
+import com.bit.kodari.dto.AccountDto;
 import com.bit.kodari.dto.PortfolioDto;
 import com.bit.kodari.repository.portfolio.PortfolioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,10 +23,28 @@ public class PortfolioService {
 
     //포트폴리오 등록
     //비티코인, 이더리움, 솔라나 로 자동 넣어주기
+    //해당 계좌의 유저가 맞는지 확인
+    @Transactional
     public PortfolioDto.PostPortfolioRes registerPortfolio(PortfolioDto.PostPortfolioReq postPortfolioReq) throws BaseException {
         //계좌 활성 상태 확인
         int accountIdx = postPortfolioReq.getAccountIdx();
         String status = portfolioRepository.getAccountStatus(accountIdx);
+        // accountIdx로 불러온 userIdx
+        int accountUser = portfolioRepository.getAccountUserIdx(accountIdx);
+        int marketIdx = portfolioRepository.getMarketIdxByAccountIdx(accountIdx);
+
+
+        //계좌 오류 validation 추가하기
+//        List<AccountDto.GetAccountIdxRes> getAccountIdxRes = accountRepository.getAccountIdxByIdx(userIdx, marketIdx);
+//
+//        if(getAccountIdxRes.size() >= 3){
+//            throw  new BaseException(OVER_ACCOUNT_THREE); //3042
+//        }
+
+        //해당 유저의 계좌인지 확인
+        if(accountUser != postPortfolioReq.getUserIdx()){
+            throw new BaseException(NO_MATCH_USER_ACCOUNT); //2042
+        }
 
         List<PortfolioDto.GetAllPortfolioRes> getAllPortfolioRes = portfolioRepository.getAllPortfolio();
         // userIdx로 모든 portIdx 가져오기
@@ -44,12 +65,24 @@ public class PortfolioService {
         try {
             PortfolioDto.PostPortfolioRes postPortfolioRes = portfolioRepository.insert(postPortfolioReq);
             int portIdx = postPortfolioRes.getPortIdx();
-            //비트코인
-            PortfolioDto.GetRepresentRes getRepresentRes1 = portfolioRepository.insertRepresent(portIdx, 16);
-            //이더리움
-            PortfolioDto.GetRepresentRes getRepresentRes2 = portfolioRepository.insertRepresent(portIdx, 32);
-            //솔라나
-            PortfolioDto.GetRepresentRes getRepresentRes3 = portfolioRepository.insertRepresent(portIdx, 82);
+            //업비트
+            if(marketIdx == 1){
+                //비트코인
+                PortfolioDto.GetRepresentRes getRepresentRes1 = portfolioRepository.insertRepresent(portIdx, 16);
+                //이더리움
+                PortfolioDto.GetRepresentRes getRepresentRes2 = portfolioRepository.insertRepresent(portIdx, 32);
+                //솔라나
+                PortfolioDto.GetRepresentRes getRepresentRes3 = portfolioRepository.insertRepresent(portIdx, 82);
+            }
+            //빗썸
+            if(marketIdx == 2){
+                //비트코인
+                PortfolioDto.GetRepresentRes getRepresentRes1 = portfolioRepository.insertRepresent(portIdx, 113);
+                //이더리움
+                PortfolioDto.GetRepresentRes getRepresentRes2 = portfolioRepository.insertRepresent(portIdx, 115);
+                //리플코인
+                PortfolioDto.GetRepresentRes getRepresentRes3 = portfolioRepository.insertRepresent(portIdx, 114);
+            }
             return postPortfolioRes;
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
@@ -61,6 +94,7 @@ public class PortfolioService {
     //포트폴리오 조회
     // userCoinIdx 대괄호로 쫘르륵...? -> LIST
     // 수익률, 소득, 대표코인 (코인별로)
+    @Transactional
     public PortfolioDto.GetPortfolioRes getPortfolio(int portIdx) throws BaseException {
         //status가 inactive인 account는 오류 메시지
         //String status = accountRepository.getStatusByAccountIdx(accountIdx);
@@ -76,6 +110,7 @@ public class PortfolioService {
     }
 
     // 포트폴리오 전체 조회 userIdx
+    @Transactional
     public List<PortfolioDto.GetAllPortIdxRes> getPortListByUserIdx(int userIdx) throws BaseException {
         try{
             List<PortfolioDto.GetAllPortIdxRes> getAllPortByUserRes = portfolioRepository.getAllPortByUserIdx(userIdx);
@@ -86,6 +121,7 @@ public class PortfolioService {
     }
 
     //포트폴리오 삭제
+    @Transactional
     public void deleteByPortIdx(PortfolioDto.PatchPortfolioDelReq patchPortfolioDelReq) throws BaseException{
         int portIdx = patchPortfolioDelReq.getPortIdx();
         int accountIdx = portfolioRepository.getAccountIdx(portIdx);
@@ -107,6 +143,18 @@ public class PortfolioService {
             }
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
             throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
+    // 계좌 삭제: 전체삭제
+    @Transactional
+    public void deleteAllPortfolioByUserIdx(int userIdx) throws BaseException{
+
+        // 포트폴리오 삭제 요청
+        int result = portfolioRepository.deleteAllPortfolioByUserIdx(userIdx);
+        if (result == 0) {// result값이 0이면 과정이 실패한 것이므로 에러 메서지를 보냅니다.
+            throw new BaseException(BaseResponseStatus.REQUEST_ERROR);
         }
     }
 

@@ -11,6 +11,14 @@ public enum BaseResponseStatus {
      * 1000 : 요청 성공
      */
     SUCCESS(true, 1000, "요청에 성공하였습니다."),
+    SUCCESS_POST_LIKE_DELETE(true, 1001, "게시글 좋아요/싫어요 삭제를 성공하였습니다."),
+    SUCCESS_POST_LIKE_REGISTER(true, 1002, "게시글 좋아요/싫어요 등록을 성공하였습니다."),
+    SUCCESS_COMMENT_LIKE_DELETE(true, 1003, "댓글 좋아요 삭제를 성공하였습니다."),
+    SUCCESS_COMMENT_LIKE_REGISTER(true, 1004, "댓글 좋아요 등록을 성공하였습니다."),
+    SUCCESS_POST_REPORT_REGISTER(true, 1005, "게시글 신고를 성공하였습니다."),
+    SUCCESS_POST_DELETE(true, 1006, "게시글 신고 횟수가 초과되어 삭제되었습니다."),
+    SUCCESS_COMMENT_REPORT_REGISTER(true, 1007, "댓글 신고를 성공하였습니다."),
+    SUCCESS_COMMENT_DELETE(true, 1008, "댓글 신고 횟수가 초과되어 삭제되었습니다."),
 
 
     /**
@@ -34,7 +42,7 @@ public enum BaseResponseStatus {
     POST_USERS_EMPTY_PASSWORD(false, 2019, "비밀번호를 입력해주세요."),
     POST_USERS_EXISTS_NICKNAME(false,2020,"중복된 닉네임입니다."),
     POST_USERS_LENGTH_NICKNAME(false,2029,"닉네임 길이는 최소 1자 최대 15자입니다."),
-    POST_USERS_INVALID_PASSWORD(false,2030,"비밀번호는 영문과 특수문자 숫자를 포함하며 8자 이상이고 특수문자는 !@#$%^*+=-만 사용 가능합니다."),
+    POST_USERS_INVALID_PASSWORD(false,2030,"특수 문자를 포함하여 8자 이상 입력해주세요."),
     POST_USERS_INVALID_NICKNAME(false,2031,"닉네임은 영어,한글,숫자만 입력해주세요."),
 
     // [Patch] /trades
@@ -48,8 +56,13 @@ public enum BaseResponseStatus {
     ACCONTIDX_RANGE_ERROR(false,2028,"계좌 인덱스를 확인해주세요."),
     LACK_OF_PROPERTY(false,2032,"계좌의 현금 잔액 부족"),
     LACK_OF_AMOUNT(false,2033,"계좌의 코인 갯수 부족"),
+    DENOMINATOR_ZERO(false, 2034, "나누려는 분모가 0입니다."),
+    MARKETIDX_RANGE_ERROR(false, 2035, "마켓인덱스를 확인해주세요."),
     POST_ACCOUNT_NAME_NULL(false, 2040, "계좌이름을 입력해주세요."),
     INACTIVE_PORTFOLIO(false, 2041, "삭제된 포트폴리오입니다."),
+
+    //
+    NO_MATCH_USER_ACCOUNT(false, 2042, "유저의 계좌가 아닙니다."),
 
 
 
@@ -65,11 +78,12 @@ public enum BaseResponseStatus {
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
 
 
+
     // [GET] /users
     GET_USERS_NOT_EXISTS(false,3015,"등록된 유저가 없습니다."),
     GET_USERS_NOT_EXISTS_NICKNAME(false,3016,"없는 닉네임 입니다."),
     GET_USERS_NOT_EXISTS_EMAIL(false,3017,"없는 이메일 입니다."),
-    GET_USERS_NOT_EXISTS_USERIDX(false,3021,"없는 유저인덱스 입니다."),
+
 
     GET_TRADES_NOT_EXISTS(false,3018,"없는 포트폴리오 및 코인 입니다."),
 
@@ -80,11 +94,17 @@ public enum BaseResponseStatus {
     ALREADY_DELETED_USER(false,3022,"이미 삭제된 회원입니다."),
 
     ALREADY_DELETED_TRADE(false,3023,"이미 삭제된 거래내역입니다."),
-
+    GET_USERS_NOT_EXISTS_USERIDX(false,3024,"없는 유저인덱스 입니다."),
+    FAILED_TO_CHECKPASSWORD(false, 3025, "비밀번호가 틀렸습니다."),
+    GET_EXCHANGERATE_NOT_EXISTS(false,3026,"환율내역이 없습니다."),
+    ALREADY_CERTIFICATION_USER(false, 3027, "이미 인증된 회원입니다."),
+    GET_REGISTERCOINALARM_NOT_EXISTS(false,3028,"등록된 코인지적가격이 없습니다."),
 
     FAILED_TO_PROPERTY_RES(false,3040,"없는 계좌입니다."),
     OVER_PORT_THREE(false, 3041, "등록할 수 있는 포트폴리오 갯수를 초과하였습니다."),
     OVER_ACCOUNT_THREE(false, 3042, "등록할 수 있는 계좌 갯수를 초과하였습니다."),
+
+
 
 
 
@@ -101,6 +121,8 @@ public enum BaseResponseStatus {
 
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
+    GET_BITHUMBAPI_ERROR(false, 4015, "빗썸 API 응답 에러입니다."),
+
     //40-69
     MODIFY_FAIL_ACCOUNTNAME(false, 4040, "계좌 이름 수정 실패"),
     MODIFY_FAIL_PROPERTY(false, 4041, "현금 자산 수정 실패"),
@@ -119,6 +141,8 @@ public enum BaseResponseStatus {
     COIN_AMOUNT_OVER(false, 4054, "매도하는 코인이 기존보다 많습니다."),
     DELETE_FAIL_REPRESENT(false, 4055, "대표 코인 삭제에 실패하였습니다."),
     COIN_AMOUNT_ZERO(false, 4056, "코인이 전부 매도되었습니다."),
+    NO_USER_COIN(false, 4057, "해당 계좌의 코인이 존재하지 않습니다."),
+    ALREADY_REPRESENT(false, 4058, "해당 코인은 이미 대표코인으로 등록되어 있습니다."),
 
     //수정 실패
     MODIFY_FAIL_POST(false, 4070, "게시글 수정에 실패하였습니다."),
@@ -142,13 +166,22 @@ public enum BaseResponseStatus {
     //글 존재여부
     IMPOSSIBLE_POST(false, 4083, "게시글이 존재하지 않습니다."),
     IMPOSSIBLE_POST_COMMENT(false, 4084, "댓글이 존재하지 않습니다."),
+    IMPOSSIBLE_POST_REPORT(false, 4085, "신고할 수 없습니다."),
 
     //내용확인
-    EMPTY_CONTENT(false, 4085, "내용이 없습니다."),
+    EMPTY_CONTENT(false, 4086, "내용이 없습니다."),
 
     //글자수 확인
-    OVER_CONTENT(false, 4086, "글자수가 초과되었습니다.");
+    OVER_CONTENT(false, 4087, "글자수가 초과되었습니다."),
 
+    //유저 존재 여부
+    ALREADY_REPORT(false, 4088, "이미 신고하셨습니다."),
+
+    //유저 REPORT 추가 실패
+    FAIL_REPORT_ADD(false, 4089, "유저 신고가 되지 않았습니다."),
+
+    //신고로 인한 토론장 접근 제한
+    BLOCKED_USER(false, 4090, "운영원칙에 위배되어 차단된 사용자입니다.");
 
 
 
